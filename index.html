@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AUTO PRO CONTENT BĐS — AI Tạo Nội Dung Đa Nền Tảng</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0f14;--bg2:#13161e;--bg3:#1a1e28;--card:#1e2230;--card2:#242838;--border:#2e3347;--ac:#f5a623;--a2:#e8891a;--bl:#4c9cf5;--gr:#3ecf8e;--pk:#f06292;--pu:#9c6ef5;--rd:#ef5350;--tx:#e8eaf0;--t2:#9ca3b8;--t3:#6b7490;--r:12px;--sh:0 8px 32px rgba(0,0,0,.4)}
+.lm{--bg:#f0f2f8;--bg2:#e8eaf4;--bg3:#dde1f0;--card:#fff;--card2:#f5f7ff;--border:#d0d5e8;--tx:#1a1e2e;--t2:#4a5070;--t3:#8890a8}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;transition:background .3s,color .3s}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+a{color:inherit;text-decoration:none}
+.hdr{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 18px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;backdrop-filter:blur(12px)}
+.logo{display:flex;align-items:center;gap:9px;font-weight:900;font-size:.98rem;color:var(--ac);cursor:pointer;user-select:none}
+.logo .bdg{background:linear-gradient(135deg,var(--ac),var(--a2));color:#000;font-size:.56rem;padding:2px 7px;border-radius:20px;font-weight:800}
+.hdr-r{display:flex;align-items:center;gap:6px}
+.ib{background:var(--card);border:1px solid var(--border);color:var(--t2);width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.88rem;transition:.2s;outline:none;flex-shrink:0}
+.ib:hover{background:var(--card2);color:var(--tx)}
+.tsw{display:flex;align-items:center;gap:4px;font-size:.72rem;color:var(--t3)}
+.tgl{position:relative;width:32px;height:17px;flex-shrink:0}
+.tgl input{opacity:0;width:0;height:0}
+.sldr{position:absolute;inset:0;background:var(--border);border-radius:17px;cursor:pointer;transition:.3s}
+.sldr:before{content:'';position:absolute;width:13px;height:13px;left:2px;top:2px;background:#fff;border-radius:50%;transition:.3s}
+.tgl input:checked+.sldr{background:var(--ac)}.tgl input:checked+.sldr:before{transform:translateX(15px)}
+.layout{display:flex;height:calc(100vh - 56px)}
+.sb{width:218px;background:var(--bg2);border-right:1px solid var(--border);padding:12px 7px;overflow-y:auto;flex-shrink:0;transition:width .3s}
+.sb.col{width:48px}.sb.col .nlbl,.sb.col .ntxt,.sb.col .nbdg{display:none}.sb.col .ni{justify-content:center;padding:9px}
+.main{flex:1;overflow-y:auto;padding:20px}
+.pg{display:none}.pg.on{display:block}
+.nsec{margin-bottom:14px}
+.nlbl{font-size:.6rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1.4px;padding:0 8px 5px;display:block}
+.ni{display:flex;align-items:center;gap:7px;padding:7px 9px;border-radius:8px;cursor:pointer;font-size:.78rem;color:var(--t2);transition:.15s;margin-bottom:1px;white-space:nowrap}
+.ni:hover{background:var(--card);color:var(--tx)}
+.ni.on{background:linear-gradient(135deg,rgba(245,166,35,.2),rgba(232,137,26,.1));color:var(--ac);font-weight:700}
+.ni .ic{font-size:.88rem;width:17px;text-align:center;flex-shrink:0}
+.nbdg{background:var(--ac);color:#000;font-size:.53rem;font-weight:800;padding:1px 5px;border-radius:7px;margin-left:auto;min-width:16px;text-align:center}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.ctit{font-size:.81rem;font-weight:700;color:var(--tx);margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.ctit .dot{width:6px;height:6px;border-radius:50%;background:var(--ac);flex-shrink:0}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.fg{display:flex;flex-direction:column;gap:4px}.fg.full{grid-column:1/-1}
+label{font-size:.71rem;font-weight:600;color:var(--t2)}
+input,select,textarea{background:var(--bg3);border:1px solid var(--border);color:var(--tx);border-radius:8px;padding:7px 10px;font-size:.78rem;font-family:inherit;transition:.2s;width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px rgba(245,166,35,.1)}
+textarea{resize:vertical;min-height:78px}
+select option{background:var(--bg3)}
+.sgr{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.sgc{background:var(--bg3);border:1px solid var(--border);color:var(--t3);font-size:.64rem;padding:2px 7px;border-radius:12px;cursor:pointer;transition:.15s;white-space:nowrap}
+.sgc:hover{border-color:var(--ac);color:var(--ac)}
+.pgr{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
+.pill{background:var(--bg3);border:1px solid var(--border);color:var(--t2);font-size:.71rem;padding:4px 11px;border-radius:17px;cursor:pointer;transition:.15s;user-select:none}
+.pill:hover{border-color:var(--ac);color:var(--ac)}
+.pill.on{background:rgba(245,166,35,.15);border-color:var(--ac);color:var(--ac);font-weight:700}
+.gpill.on[data-v="Chốt nhanh"]{background:rgba(239,83,80,.15);border-color:var(--rd);color:var(--rd)}
+.gpill.on[data-v="Thu lead"]{background:rgba(62,207,142,.15);border-color:var(--gr);color:var(--gr)}
+.gpill.on[data-v="Tăng tương tác"]{background:rgba(156,110,245,.15);border-color:var(--pu);color:var(--pu)}
+.btn{padding:8px 16px;border-radius:9px;font-size:.79rem;font-weight:600;cursor:pointer;border:none;transition:.2s;font-family:inherit;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn-p{background:linear-gradient(135deg,var(--ac),var(--a2));color:#fff;box-shadow:0 4px 14px rgba(245,166,35,.3)}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(245,166,35,.4)}
+.btn-s{background:var(--card2);color:var(--t2);border:1px solid var(--border)}.btn-s:hover{background:var(--card);color:var(--tx)}
+.btn-g{background:linear-gradient(135deg,#3ecf8e,#2da870);color:#fff}
+.btn-b{background:linear-gradient(135deg,#4c9cf5,#2979e0);color:#fff}
+.btn-r{background:rgba(239,83,80,.12);color:var(--rd);border:1px solid rgba(239,83,80,.3)}.btn-r:hover{background:rgba(239,83,80,.2)}
+.btn-full{width:100%;justify-content:center;padding:11px}
+.btn-sm{padding:5px 11px;font-size:.71rem}.btn-xs{padding:3px 7px;font-size:.65rem}
+.out{display:none}.out.on{display:block}
+.ptabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.ptab{padding:6px 13px;border-radius:8px;font-size:.74rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--t2);transition:.15s;display:flex;align-items:center;gap:4px}
+.ptab.on{background:var(--ac);color:#000;border-color:var(--ac)}
+.cbox{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;position:relative;min-height:70px}
+.cbox pre{white-space:pre-wrap;font-family:'Be Vietnam Pro',sans-serif;font-size:.78rem;line-height:1.78;color:var(--tx);padding-right:52px}
+.cpbtn{position:absolute;top:8px;right:8px;background:var(--card);border:1px solid var(--border);color:var(--t3);padding:3px 9px;border-radius:6px;font-size:.67rem;cursor:pointer;transition:.15s}
+.cpbtn:hover{color:var(--ac);border-color:var(--ac)}
+.vtabs{display:flex;gap:5px;margin-bottom:12px;overflow-x:auto;padding-bottom:3px}
+.vtab{padding:5px 11px;border-radius:7px;font-size:.69rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--t3);transition:.15s;white-space:nowrap;flex-shrink:0}
+.vtab.on{font-weight:700}
+.vtab[data-v="0"].on{background:rgba(245,166,35,.15);border-color:var(--ac);color:var(--ac)}
+.vtab[data-v="1"].on{background:rgba(239,83,80,.15);border-color:var(--rd);color:var(--rd)}
+.vtab[data-v="2"].on{background:rgba(76,156,245,.15);border-color:var(--bl);color:var(--bl)}
+.vtab[data-v="3"].on{background:rgba(156,110,245,.15);border-color:var(--pu);color:var(--pu)}
+.vtab[data-v="4"].on{background:rgba(62,207,142,.15);border-color:var(--gr);color:var(--gr)}
+.ibdg{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 11px;margin-bottom:11px;font-size:.72rem;color:var(--t3);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ibdg strong{color:var(--ac)}
+.sbar{height:6px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-top:5px}
+.sfill{height:100%;border-radius:4px;transition:width .8s ease}
+.sec{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.3px;color:var(--t3);margin-bottom:7px;margin-top:14px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.hidden{display:none!important}
+.ld{display:none;flex-direction:column;align-items:center;gap:11px;padding:28px;text-align:center}
+.ld.on{display:flex}
+.spin{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--ac);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ldst{display:flex;flex-direction:column;gap:4px;text-align:left}
+.lst{font-size:.71rem;color:var(--t3);display:flex;align-items:center;gap:5px;opacity:.4;transition:.3s}
+.lst.done{opacity:1;color:var(--gr)}.lst.cur{opacity:1;color:var(--ac)}
+.crmt{width:100%;border-collapse:collapse;font-size:.74rem}
+.crmt th{background:var(--card2);color:var(--t3);font-weight:600;padding:7px 11px;text-align:left;border-bottom:1px solid var(--border)}
+.crmt td{padding:7px 11px;border-bottom:1px solid var(--border);color:var(--t2);vertical-align:middle}
+.crmt tr:hover td{background:var(--card2)}
+.abg{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.abc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px;position:relative}
+.abl{position:absolute;top:8px;right:8px;font-size:.65rem;font-weight:700;padding:2px 6px;border-radius:8px}
+.abc.a .abl{background:rgba(76,156,245,.2);color:var(--bl)}.abc.b .abl{background:rgba(240,98,146,.2);color:var(--pk)}
+.absc{font-size:2.2rem;font-weight:900;margin:5px 0 2px;font-family:'Space Mono',monospace}
+.abc.a .absc{color:var(--bl)}.abc.b .absc{color:var(--pk)}
+/* SCHEDULE */
+.sch-week{display:flex;flex-direction:column;gap:8px}
+.sch-day{background:var(--card);border:1px solid var(--border);border-radius:11px;overflow:hidden;transition:.15s}
+.sch-day:hover{border-color:rgba(245,166,35,.3)}
+.sch-head{display:flex;align-items:center;cursor:pointer;padding:10px 12px;user-select:none}
+.sdl{font-weight:800;font-size:.78rem;color:var(--ac);width:28px;flex-shrink:0}
+.sdt{flex:1;margin-left:7px}
+.sdtt{font-weight:700;font-size:.8rem;color:var(--tx)}
+.sdtb{font-size:.65rem;color:var(--t3);margin-top:1px;display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.ptg{background:var(--bg3);border-radius:4px;padding:1px 6px;font-size:.62rem}
+.htag-time{font-size:.63rem;color:var(--gr);font-weight:600;background:rgba(62,207,142,.1);border-radius:4px;padding:1px 6px}
+.sch-arr{font-size:.73rem;color:var(--t3);transition:.3s;flex-shrink:0}
+.sch-day.open .sch-arr{transform:rotate(180deg)}
+.sch-body{display:none;padding:0 12px 12px;border-top:1px solid var(--border)}
+.sch-day.open .sch-body{display:block}
+.sch-tabs{display:flex;gap:5px;margin:8px 0 6px;flex-wrap:wrap}
+.sch-tab{padding:3px 10px;border-radius:6px;font-size:.67rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--bg3);color:var(--t3);transition:.15s}
+.sch-tab.on{background:var(--ac);color:#000;border-color:var(--ac)}
+.sch-ca{background:var(--bg3);border-radius:8px;padding:10px;font-size:.76rem;color:var(--t2);line-height:1.7;position:relative;min-height:50px}
+.sch-ca pre{white-space:pre-wrap;font-family:'Be Vietnam Pro',sans-serif;font-size:.75rem;line-height:1.75;padding-right:50px}
+/* PSYCH */
+.psy-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+.psy-card{border-radius:10px;padding:11px;border:1.5px solid transparent;cursor:pointer;transition:.2s}
+.psy-card.sel{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.2)}
+.psy-card[data-p="Tham"]{background:rgba(245,166,35,.07);border-color:rgba(245,166,35,.25)}.psy-card[data-p="Tham"].sel{border-color:var(--ac);background:rgba(245,166,35,.14)}
+.psy-card[data-p="Sân"]{background:rgba(239,83,80,.06);border-color:rgba(239,83,80,.22)}.psy-card[data-p="Sân"].sel{border-color:var(--rd);background:rgba(239,83,80,.14)}
+.psy-card[data-p="Si"]{background:rgba(76,156,245,.06);border-color:rgba(76,156,245,.22)}.psy-card[data-p="Si"].sel{border-color:var(--bl);background:rgba(76,156,245,.14)}
+.psy-card[data-p="Ngạo mạn"]{background:rgba(156,110,245,.06);border-color:rgba(156,110,245,.22)}.psy-card[data-p="Ngạo mạn"].sel{border-color:var(--pu);background:rgba(156,110,245,.14)}
+.psy-card[data-p="Nghi ngờ"]{background:rgba(62,207,142,.06);border-color:rgba(62,207,142,.22)}.psy-card[data-p="Nghi ngờ"].sel{border-color:var(--gr);background:rgba(62,207,142,.14)}
+.psy-emo{font-size:1.4rem}.psy-name{font-weight:800;font-size:.82rem;color:var(--tx)}
+.pky{font-size:.6rem;padding:2px 6px;border-radius:9px;background:var(--bg3);color:var(--t3);border:1px solid var(--border)}
+/* FORMULA */
+.frm-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;cursor:pointer;transition:.2s;display:flex;gap:10px;align-items:flex-start;margin-bottom:6px}
+.frm-card:hover{border-color:rgba(245,166,35,.4)}.frm-card.sel{border-color:var(--ac);background:rgba(245,166,35,.06)}
+.frm-letter{width:38px;height:38px;border-radius:8px;background:linear-gradient(135deg,var(--ac),var(--a2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;color:#000;flex-shrink:0}
+.frm-name{font-weight:800;font-size:.8rem;color:var(--tx);margin-bottom:1px}
+.frm-steps{font-size:.66rem;color:var(--ac);margin-bottom:2px;font-weight:600}
+.frm-desc{font-size:.68rem;color:var(--t2);line-height:1.5;margin-bottom:3px}
+.frm-ex{font-size:.66rem;color:var(--t3);font-style:italic;background:var(--bg3);border-radius:5px;padding:3px 7px}
+/* CMP */
+.cmp-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cmp-col{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px}
+.cmp-hd{display:flex;align-items:center;gap:6px;margin-bottom:10px;font-weight:700;font-size:.8rem}
+.cmp-hd.red{color:var(--rd)}.cmp-hd.green{color:var(--gr)}
+.cmp-srow{display:flex;align-items:center;gap:6px;margin-bottom:7px}
+.cmp-slbl{font-size:.71rem;color:var(--t2);width:86px;flex-shrink:0}
+.cmp-sbar{flex:1;height:6px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.cmp-sfill{height:100%;border-radius:4px}
+.cmp-snum{font-size:.68rem;font-weight:700;width:22px;text-align:right;flex-shrink:0}
+/* SURVEY */
+.sv-step{background:var(--card);border:1px solid var(--border);border-radius:11px;overflow:hidden;margin-bottom:8px;transition:.15s}
+.sv-step:hover{border-color:rgba(245,166,35,.3)}
+.sv-head{display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;user-select:none}
+.sv-num{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--a2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.72rem;color:#000;flex-shrink:0}
+.sv-title{flex:1;font-weight:700;font-size:.8rem;color:var(--tx)}
+.sv-arr{font-size:.72rem;color:var(--t3);transition:.3s}
+.sv-step.open .sv-arr{transform:rotate(180deg)}
+.sv-body{display:none;padding:0 12px 12px;border-top:1px solid var(--border)}
+.sv-step.open .sv-body{display:block}
+.sv-ck{display:flex;gap:7px;margin-bottom:6px;align-items:flex-start}
+.sv-cb{width:17px;height:17px;border:2px solid var(--border);border-radius:4px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:.15s;background:var(--bg3);font-size:.7rem;line-height:1}
+.sv-cb.checked{background:var(--gr);border-color:var(--gr);color:#fff}
+.sv-ct{font-size:.76rem;color:var(--t2);line-height:1.5}
+/* SALE SCRIPTS */
+.sale-cats{display:flex;gap:6px;margin-bottom:11px;flex-wrap:wrap}
+.scat{padding:5px 12px;border-radius:8px;font-size:.72rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--t2);transition:.15s}
+.scat.on{background:var(--ac);color:#000;border-color:var(--ac)}
+.sale-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:7px;position:relative;transition:.15s}
+.sale-item:hover{border-color:rgba(245,166,35,.35)}
+.sale-sit{font-size:.67rem;font-weight:700;color:var(--ac);margin-bottom:4px}
+.sale-txt{font-size:.78rem;color:var(--t2);line-height:1.7;font-style:italic}
+/* TOOL TABS */
+.tool-tabs{display:flex;gap:6px;margin-bottom:13px;flex-wrap:wrap}
+.tool-tab{padding:6px 13px;border-radius:8px;font-size:.73rem;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--t2);transition:.15s}
+.tool-tab.on{background:var(--ac);color:#000;border-color:var(--ac)}
+.tool-pg{display:none}.tool-pg.on{display:block}
+/* FENGSHUI */
+.elgr{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:8px}
+.elc{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;cursor:pointer;transition:.2s}
+.elc:hover,.elc.on{transform:translateY(-2px);box-shadow:var(--sh)}
+.elc[data-e="Kim"].on{border-color:#c0c0c0;background:rgba(192,192,192,.1)}
+.elc[data-e="Mộc"].on{border-color:var(--gr);background:rgba(62,207,142,.1)}
+.elc[data-e="Thuỷ"].on{border-color:var(--bl);background:rgba(76,156,245,.1)}
+.elc[data-e="Hoả"].on{border-color:var(--rd);background:rgba(239,83,80,.1)}
+.elc[data-e="Thổ"].on{border-color:var(--ac);background:rgba(245,166,35,.1)}
+.eemi{font-size:1.5rem;margin-bottom:3px}.enm{font-weight:700;font-size:.76rem;color:var(--tx)}
+/* HOME */
+.hero{text-align:center;padding:26px 14px 18px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(245,166,35,.12) 0%,transparent 68%);pointer-events:none}
+.hero h1{font-size:1.75rem;font-weight:900;line-height:1.2;margin-bottom:7px;background:linear-gradient(135deg,var(--ac) 0%,#fff 50%,var(--bl) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero .sub{font-size:.82rem;color:var(--t2);max-width:440px;margin:0 auto 14px;line-height:1.7}
+.strow{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:13px}
+.stc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:11px;text-align:center}
+.stnum{font-size:1.55rem;font-weight:900;font-family:'Space Mono',monospace;color:var(--ac)}
+.stlbl{font-size:.64rem;color:var(--t3);margin-top:2px}
+.fgr{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:9px;margin-bottom:13px}
+.fc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.fc:hover{transform:translateY(-2px);box-shadow:var(--sh);border-color:rgba(245,166,35,.35)}
+.fci{font-size:1.4rem;margin-bottom:5px}.fct{font-weight:700;font-size:.79rem;color:var(--tx);margin-bottom:2px}.fcd{font-size:.67rem;color:var(--t3);line-height:1.5}
+.fcb{position:absolute;top:7px;right:7px;font-size:.54rem;font-weight:800;padding:2px 5px;border-radius:6px}
+.fcb.or{background:rgba(245,166,35,.2);color:var(--ac)}.fcb.gr{background:rgba(62,207,142,.2);color:var(--gr)}.fcb.bl{background:rgba(76,156,245,.2);color:var(--bl)}.fcb.rd{background:rgba(240,98,146,.2);color:var(--pk)}
+.cbar{display:flex;align-items:center;gap:5px;margin-bottom:11px;flex-wrap:wrap}
+.cbi{background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.3);border-radius:7px;padding:3px 10px;font-size:.68rem;font-weight:700;color:var(--ac);cursor:pointer;transition:.2s}
+.cbi:hover{background:rgba(245,166,35,.2)}.cbi.dim{opacity:.5}
+.cbar-arr{color:var(--t3);font-size:.8rem}
+.exrow{display:flex;gap:7px;margin-top:11px;padding-top:11px;border-top:1px solid var(--border);flex-wrap:wrap}
+.ptit{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:13px;gap:10px}
+.ptit h2{font-size:1.05rem;font-weight:800;color:var(--tx)}
+.ptit p{font-size:.72rem;color:var(--t3);margin-top:2px}
+/* AVATAR */
+.aav{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--a2));display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 9px;box-shadow:0 4px 14px rgba(245,166,35,.35);overflow:hidden;cursor:pointer;position:relative}
+.aav img{width:100%;height:100%;object-fit:cover}
+.aav-ov{position:absolute;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;font-size:.6rem;color:#fff;font-weight:700;text-align:center}
+.aav:hover .aav-ov{display:flex}
+.acrd{background:linear-gradient(135deg,rgba(245,166,35,.1),rgba(76,156,245,.07));border:1px solid rgba(245,166,35,.25);border-radius:var(--r);padding:16px;text-align:center}
+.anm{font-weight:800;font-size:.96rem;color:var(--tx);margin-bottom:2px}
+.atit{font-size:.72rem;color:var(--t3);margin-bottom:8px}
+.aqt{font-size:.72rem;color:var(--t2);font-style:italic;line-height:1.6;margin-bottom:10px;padding:8px;background:var(--bg3);border-radius:7px;border-left:3px solid var(--ac)}
+.ccrow{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.cchip{background:var(--card);border:1px solid var(--border);color:var(--t2);font-size:.7rem;padding:4px 10px;border-radius:17px;display:flex;align-items:center;gap:4px}
+/* AGENTS */
+.agr{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.agc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px;transition:.2s}
+.agc:hover{border-color:var(--ac);transform:translateY(-2px);box-shadow:var(--sh)}
+.agi{font-size:1.6rem;margin-bottom:6px}.agn{font-weight:700;font-size:.82rem;color:var(--tx);margin-bottom:3px}
+.agd{font-size:.7rem;color:var(--t3);line-height:1.5;margin-bottom:8px}
+.agl{color:var(--bl);font-size:.69rem;display:flex;align-items:center;gap:3px}.agl:hover{color:var(--ac)}
+/* READ KH */
+.rk-opt{background:var(--bg3);border:1.5px solid var(--border);border-radius:8px;padding:8px 11px;cursor:pointer;font-size:.77rem;color:var(--t2);transition:.15s}
+.rk-opt:hover{border-color:rgba(245,166,35,.4);color:var(--tx)}
+.rk-opt.sel{background:rgba(245,166,35,.12);border-color:var(--ac);color:var(--ac)}
+/* MODAL */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-ov.on{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:16px;width:100%;max-width:460px;max-height:85vh;overflow-y:auto;padding:19px}
+.modal-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}
+.modal-hd h3{font-size:.9rem;font-weight:800;color:var(--tx)}
+.modal-close{background:none;border:none;color:var(--t3);font-size:1.1rem;cursor:pointer;padding:4px}
+.modal-close:hover{color:var(--tx)}
+#toast{position:fixed;bottom:16px;right:16px;background:var(--gr);color:#fff;padding:7px 13px;border-radius:9px;font-size:.76rem;font-weight:600;z-index:9999;transform:translateY(60px);opacity:0;transition:.3s;pointer-events:none;max-width:250px}
+#toast.on{transform:translateY(0);opacity:1}
+@media(max-width:768px){.sb{width:170px}.fg2{grid-template-columns:1fr}.main{padding:13px}.strow{grid-template-columns:1fr 1fr}.fgr{grid-template-columns:1fr 1fr}.elgr{grid-template-columns:repeat(3,1fr)}.abg{grid-template-columns:1fr}.psy-grid{grid-template-columns:1fr}.cmp-cols{grid-template-columns:1fr}}
+@media(max-width:560px){.sb{position:fixed;left:-222px;top:56px;height:calc(100vh - 56px);z-index:150;transition:left .3s;width:218px!important}.sb.mob{left:0;box-shadow:4px 0 20px rgba(0,0,0,.5)}.main{padding:11px}.strow{grid-template-columns:1fr 1fr}.fgr{grid-template-columns:1fr}.psy-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="logo" onclick="nav('home')">🏠 AUTO PRO CONTENT <span class="bdg">BĐS AI</span></div>
+  <div class="hdr-r">
+    <div class="tsw">☀️<label class="tgl"><input type="checkbox" id="thm" onchange="document.body.classList.toggle('lm')"><span class="sldr"></span></label>🌙</div>
+    <button class="ib" onclick="doExportAll()" title="Xuất .txt">📤</button>
+    <button class="ib" onclick="doBackup()" title="Backup JSON">💾</button>
+    <button class="ib" onclick="doRestore()" title="Restore JSON">🔄</button>
+    <button class="ib" onclick="toggleSb()" title="Menu">☰</button>
+  </div>
+</div>
+
+<div class="layout">
+<!-- SIDEBAR -->
+<div class="sb" id="sb">
+  <div class="nsec">
+    <span class="nlbl">Trang Chủ</span>
+    <div class="ni" onclick="nav('home')"><span class="ic">🏠</span><span class="ntxt">Tổng Quan</span></div>
+  </div>
+  <div class="nsec">
+    <span class="nlbl">📝 Tạo Content</span>
+    <div class="ni" onclick="nav('gen')"><span class="ic">✍️</span><span class="ntxt">Tạo Content</span></div>
+    <div class="ni" onclick="nav('sch')"><span class="ic">📅</span><span class="ntxt">Lịch 7 Ngày</span></div>
+    <div class="ni" onclick="nav('scr')"><span class="ic">🎯</span><span class="ntxt">Chấm Điểm</span></div>
+    <div class="ni" onclick="nav('ab')"><span class="ic">⚡</span><span class="ntxt">A/B Testing</span></div>
+    <div class="ni" onclick="nav('remix')"><span class="ic">🔁</span><span class="ntxt">Biến Tấu Content</span></div>
+  </div>
+  <div class="nsec">
+    <span class="nlbl">🏠 Thực Chiến</span>
+    <div class="ni" onclick="nav('survey')"><span class="ic">🔍</span><span class="ntxt">Khảo Sát Nhà</span><span class="nbdg" style="background:var(--gr);color:#000">9</span></div>
+    <div class="ni" onclick="nav('valuation')"><span class="ic">🏷️</span><span class="ntxt">Định Giá BĐS</span></div>
+    <div class="ni" onclick="nav('readkh')"><span class="ic">🎭</span><span class="ntxt">Đọc Vị KH</span></div>
+    <div class="ni" onclick="nav('guidetour')"><span class="ic">🏡</span><span class="ntxt">Dẫn Xem Nhà</span></div>
+    <div class="ni" onclick="nav('salescripts')"><span class="ic">💬</span><span class="ntxt">Câu Chốt Sale</span></div>
+  </div>
+  <div class="nsec">
+    <span class="nlbl">🛠️ Công Cụ</span>
+    <div class="ni" onclick="nav('tools')"><span class="ic">🔧</span><span class="ntxt">Hộp Công Cụ</span><span class="nbdg" style="background:var(--bl);color:#fff">8</span></div>
+    <div class="ni" onclick="nav('cmp')"><span class="ic">📊</span><span class="ntxt">So Sánh Đối Thủ</span></div>
+    <div class="ni" onclick="nav('fs')"><span class="ic">🔮</span><span class="ntxt">Phong Thuỷ</span></div>
+  </div>
+  <div class="nsec">
+    <span class="nlbl">📚 Kiến Thức</span>
+    <div class="ni" onclick="nav('handbook')"><span class="ic">📖</span><span class="ntxt">Cẩm Nang Bách Thắng</span></div>
+  </div>
+  <div class="nsec">
+    <span class="nlbl">⚙️ Quản Lý</span>
+    <div class="ni" onclick="nav('tpl')"><span class="ic">📌</span><span class="ntxt">Templates</span></div>
+    <div class="ni" onclick="nav('crm')"><span class="ic">🗄️</span><span class="ntxt">Mini CRM</span><span class="nbdg" id="crmbdg">0</span></div>
+    <div class="ni" onclick="nav('ag')"><span class="ic">🤖</span><span class="ntxt">AI Agents</span></div>
+    <div class="ni" onclick="nav('earn')"><span class="ic">💰</span><span class="ntxt">Kiếm Tiền</span></div>
+    <div class="ni" onclick="nav('charity')"><span class="ic">❤️</span><span class="ntxt">Trái Tim Nhân Ái</span></div>
+    <div class="ni" onclick="nav('prof')"><span class="ic">👤</span><span class="ntxt">Hồ Sơ</span></div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- HOME -->
+<div class="pg on" id="pg-home">
+  <div class="hero">
+    <div style="display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-bottom:16px">
+      <span style="background:var(--card);border:1px solid var(--border);color:var(--t3);font-size:.68rem;padding:2px 9px;border-radius:17px;font-weight:600">📘 Facebook</span>
+      <span style="background:var(--card);border:1px solid var(--border);color:var(--t3);font-size:.68rem;padding:2px 9px;border-radius:17px;font-weight:600">💬 Zalo</span>
+      <span style="background:var(--card);border:1px solid var(--border);color:var(--t3);font-size:.68rem;padding:2px 9px;border-radius:17px;font-weight:600">🎵 TikTok</span>
+      <span style="background:var(--card);border:1px solid var(--border);color:var(--t3);font-size:.68rem;padding:2px 9px;border-radius:17px;font-weight:600">🌐 Website</span>
+    </div>
+    <h1>AUTO PRO CONTENT BĐS</h1>
+    <p class="sub">Trợ lý AI tạo nội dung tin đăng đa nền tảng — tối ưu chuyển đổi theo tâm lý khách hàng.</p>
+    <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-p" onclick="nav('gen')">🚀 Bắt Đầu Tạo Content</button>
+      <button class="btn btn-s" onclick="nav('survey')">🔍 Khảo Sát Nhà</button>
+      <button class="btn btn-s" onclick="nav('handbook')">📖 Cẩm Nang</button>
+    </div>
+  </div>
+  <div class="strow">
+    <div class="stc"><div class="stnum" id="stTotal">0</div><div class="stlbl">Tin đã tạo</div></div>
+    <div class="stc"><div class="stnum" id="stTpl">0</div><div class="stlbl">Templates</div></div>
+    <div class="stc"><div class="stnum">4</div><div class="stlbl">Nền tảng</div></div>
+    <div class="stc"><div class="stnum">5</div><div class="stlbl">Tâm lý KH</div></div>
+  </div>
+  <div class="sec" style="margin-top:0">🔗 QUY TRÌNH LIÊN KẾT</div>
+  <div style="display:flex;align-items:center;gap:0;margin-bottom:13px;overflow-x:auto;padding-bottom:3px" id="wfRow"></div>
+  <div class="sec">🛠️ TẤT CẢ TÍNH NĂNG</div>
+  <div class="fgr" id="featureGrid"></div>
+  <div class="sec">📋 TIN GẦN ĐÂY</div>
+  <div id="homeRecent"></div>
+</div>
+
+<!-- GENERATOR -->
+<div class="pg" id="pg-gen">
+  <div class="ptit"><div><h2>✍️ Tạo Content BĐS Đa Nền Tảng</h2><p>1 input → 4 nền tảng → tối ưu tâm lý KH</p></div></div>
+  <div class="cbar">
+    <div class="cbi">✍️ Tạo Content</div><span class="cbar-arr">→</span>
+    <div class="cbi dim" onclick="nav('sch')">📅 Lịch 7 Ngày</div><span class="cbar-arr">→</span>
+    <div class="cbi dim" onclick="nav('scr')">🎯 Chấm Điểm</div>
+  </div>
+  <div class="card">
+    <div class="ctit"><span class="dot"></span>Thông tin BĐS</div>
+    <div class="fg2">
+      <div class="fg"><label>🏠 Loại nhà</label><input type="text" id="i_type" placeholder="Nhà phố, căn hộ..."><div class="sgr" id="sg_type"></div></div>
+      <div class="fg"><label>💰 Giá</label><input type="text" id="i_price" placeholder="5.5 tỷ..."><div class="sgr" id="sg_price"></div></div>
+      <div class="fg"><label>📐 Diện tích</label><input type="text" id="i_area" placeholder="80m²..."><div class="sgr" id="sg_area"></div></div>
+      <div class="fg"><label>📍 Khu vực</label><input type="text" id="i_loc" placeholder="Quận 7..."><div class="sgr" id="sg_loc"></div></div>
+      <div class="fg full"><label>⭐ Điểm mạnh</label><input type="text" id="i_pros" placeholder="Hẻm xe hơi, sổ hồng riêng..."><div class="sgr" id="sg_pros"></div></div>
+      <div class="fg full"><label>🎯 Điểm khác biệt</label><input type="text" id="i_diff" placeholder="View sông, giá thấp hơn TT 10%..."><div class="sgr" id="sg_diff"></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ctit"><span class="dot"></span>Tuỳ chọn nâng cao</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)">
+      <div><div style="font-size:.79rem;font-weight:600;color:var(--tx)">⚡ AUTO SMART</div><div style="font-size:.68rem;color:var(--t3);margin-top:2px">AI tự phân tích tâm lý, mệnh & công thức tối ưu</div></div>
+      <label class="tgl"><input type="checkbox" id="autoSmart" checked onchange="toggleAuto()"><span class="sldr"></span></label>
+    </div>
+    <div id="manOpts" class="hidden" style="padding-top:13px">
+      <div style="margin-bottom:12px">
+        <label style="display:block;margin-bottom:3px;font-size:.74rem;font-weight:700;color:var(--tx)">🧠 Tâm lý KH <span style="color:var(--t3);font-weight:400">(click chọn)</span></label>
+        <div class="psy-grid" id="psyGrid"></div>
+      </div>
+      <div>
+        <label style="display:block;margin-bottom:3px;font-size:.74rem;font-weight:700;color:var(--tx)">📝 Công thức copywriting</label>
+        <div id="frmGrid"></div>
+      </div>
+    </div>
+    <div style="padding-top:12px;border-top:1px solid var(--border);margin-top:4px">
+      <label style="display:block;margin-bottom:3px">🎯 Mục tiêu <span style="color:var(--t3);font-size:.66rem;font-weight:400">(chọn nhiều)</span></label>
+      <div class="pgr" id="goalPills_gen">
+        <div class="pill gpill on" data-v="Chốt nhanh" onclick="tgGoal(this)">⚡ Chốt nhanh</div>
+        <div class="pill gpill" data-v="Thu lead" onclick="tgGoal(this)">📩 Thu lead</div>
+        <div class="pill gpill" data-v="Tăng tương tác" onclick="tgGoal(this)">💬 Tương tác</div>
+      </div>
+      <div id="goalHint" style="margin-top:6px;background:var(--bg3);border-radius:7px;padding:5px 9px;font-size:.67rem;color:var(--t3)"></div>
+    </div>
+    <div style="padding-top:12px;border-top:1px solid var(--border);margin-top:12px">
+      <label style="display:block;margin-bottom:6px">📋 Số phiên bản</label>
+      <div class="pgr" id="verPills">
+        <div class="pill on" data-v="1" onclick="spill(this,'ver','1')">1 Phiên bản</div>
+        <div class="pill" data-v="5" onclick="spill(this,'ver','5')">5 Phiên bản (5 tâm lý)</div>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:12px">
+    <button class="btn btn-p btn-full" onclick="doGenerate()" style="flex:1">🚀 TẠO CONTENT NGAY</button>
+    <button class="btn btn-r" onclick="clearGen()">🗑️</button>
+  </div>
+  <div class="ld" id="ldArea"><div class="spin"></div><div class="ldst" id="ldSteps"></div></div>
+  <div class="out" id="outArea">
+    <div class="ibdg" id="outMeta"><span>📊</span><span id="metaTxt"></span></div>
+    <div id="vTabsRow" class="hidden"><div class="vtabs" id="vTabs"></div></div>
+    <div class="ptabs">
+      <div class="ptab on" onclick="showPlt(this,'fb')">📘 Facebook</div>
+      <div class="ptab" onclick="showPlt(this,'zalo')">💬 Zalo</div>
+      <div class="ptab" onclick="showPlt(this,'tiktok')">🎵 TikTok</div>
+      <div class="ptab" onclick="showPlt(this,'web')">🌐 Website</div>
+    </div>
+    <div id="pltContent"></div>
+    <div class="exrow">
+      <button class="btn btn-g btn-sm" onclick="saveCRM()">💾 Lưu CRM</button>
+      <button class="btn btn-b btn-sm" onclick="expTxt()">📄 Xuất .txt</button>
+      <button class="btn btn-s btn-sm" onclick="saveTpl()">📌 Template</button>
+      <button class="btn btn-s btn-sm" onclick="goSch()">📅 → Lịch 7 Ngày</button>
+      <button class="btn btn-s btn-sm" onclick="goScr()">🎯 → Chấm Điểm</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCHEDULE -->
+<div class="pg" id="pg-sch">
+  <div class="ptit"><div><h2>📅 Lịch 7 Ngày Thông Minh</h2><p>Tự động từ content đã tạo · Giờ vàng · Click xem full content</p></div></div>
+  <div class="cbar">
+    <div class="cbi dim" onclick="nav('gen')">✍️ Tạo Content</div><span class="cbar-arr">→</span>
+    <div class="cbi">📅 Lịch 7 Ngày</div><span class="cbar-arr">→</span>
+    <div class="cbi dim" onclick="nav('scr')">🎯 Chấm Điểm</div>
+  </div>
+  <div class="card">
+    <div class="ctit"><span class="dot"></span>Cài đặt lịch</div>
+    <div class="fg2">
+      <div class="fg">
+        <label>🏠 BĐS <span style="color:var(--gr);font-size:.63rem">(tự động từ content vừa tạo)</span></label>
+        <div style="display:flex;gap:6px"><input type="text" id="sch_prop" placeholder="VD: Nhà phố Quận 7, 5.5 tỷ" style="flex:1"><button class="btn btn-s btn-xs" onclick="autoFillSch()">⚡ Auto</button></div>
+      </div>
+      <div class="fg"><label>🎯 Mục tiêu tuần</label>
+        <div class="pgr" id="goalPills_sch" style="margin-top:4px">
+          <div class="pill gpill on" data-v="Chốt nhanh" onclick="tgGoal(this)">⚡ Chốt nhanh</div>
+          <div class="pill gpill" data-v="Thu lead" onclick="tgGoal(this)">📩 Thu lead</div>
+          <div class="pill gpill" data-v="Tăng tương tác" onclick="tgGoal(this)">💬 Tương tác</div>
+        </div>
+      </div>
+    </div>
+    <div id="schNoContent" class="hidden" style="background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.3);border-radius:9px;padding:10px;margin-top:10px;font-size:.77rem;color:var(--ac)">⚠️ Bấm "⚡ Auto" để lấy dữ liệu, hoặc <span style="cursor:pointer;text-decoration:underline" onclick="nav('gen')">Tạo content trước →</span></div>
+    <button class="btn btn-p btn-full" style="margin-top:11px" onclick="doSchedule()">📅 Tạo Lịch 7 Ngày</button>
+  </div>
+  <div id="schOut" class="hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px">
+      <div class="sec" style="margin:0">📆 Click từng ngày để xem full content</div>
+      <div style="display:flex;gap:6px"><button class="btn btn-g btn-sm" onclick="expSch()">📄 Xuất .txt</button><button class="btn btn-r btn-sm" onclick="clearSch()">🗑️</button></div>
+    </div>
+    <div class="sch-week" id="schWeek"></div>
+    <div style="margin-top:9px;text-align:right"><button class="btn btn-s btn-sm" onclick="nav('scr')">🎯 → Chấm Điểm</button></div>
+  </div>
+</div>
+
+<!-- SCORE -->
+<div class="pg" id="pg-scr">
+  <div class="ptit"><div><h2>🎯 Chấm Điểm Content</h2><p>AI đánh giá từ 1–10 theo 6 tiêu chí</p></div></div>
+  <div class="cbar"><div class="cbi dim" onclick="nav('gen')">✍️ Tạo Content</div><span class="cbar-arr">→</span><div class="cbi dim" onclick="nav('sch')">📅 Lịch 7 Ngày</div><span class="cbar-arr">→</span><div class="cbi">🎯 Chấm Điểm</div></div>
+  <div class="card">
+    <div class="ctit"><span class="dot"></span>Nhập content cần chấm</div>
+    <div style="display:flex;gap:6px;margin-bottom:8px">
+      <button class="btn btn-s btn-xs" onclick="autoFillScr('fb')">📘 Lấy FB</button>
+      <button class="btn btn-s btn-xs" onclick="autoFillScr('zalo')">💬 Lấy Zalo</button>
+      <button class="btn btn-s btn-xs" onclick="autoFillScr('tiktok')">🎵 TikTok</button>
+      <button class="btn btn-s btn-xs" onclick="autoFillScr('web')">🌐 Website</button>
+    </div>
+    <textarea id="scrTxt" style="min-height:140px" placeholder="Dán content hoặc bấm nút lấy từ Tạo Content..."></textarea>
+    <div style="margin-top:10px"><label style="display:block;margin-bottom:4px">🎯 Mục tiêu</label>
+      <div class="pgr" id="goalPills_scr">
+        <div class="pill gpill on" data-v="Chốt nhanh" onclick="tgGoal(this)">⚡ Chốt nhanh</div>
+        <div class="pill gpill" data-v="Thu lead" onclick="tgGoal(this)">📩 Thu lead</div>
+        <div class="pill gpill" data-v="Tăng tương tác" onclick="tgGoal(this)">💬 Tương tác</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:7px;margin-top:11px">
+      <button class="btn btn-p" style="flex:1;justify-content:center" onclick="doScore()">🎯 Chấm Điểm</button>
+      <button class="btn btn-r" onclick="clearScr()">🗑️</button>
+    </div>
+  </div>
+  <div id="scrOut" class="hidden">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div class="sec" style="margin:0">Kết quả</div><button class="btn btn-r btn-sm" onclick="document.getElementById('scrOut').classList.add('hidden')">🗑️</button></div>
+    <div id="scrCards"></div>
+  </div>
+</div>
+
+<!-- AB TEST -->
+<div class="pg" id="pg-ab">
+  <div class="ptit"><div><h2>⚡ A/B Testing Hook</h2><p>So sánh 2 hook, phân tích điểm mạnh yếu chi tiết</p></div></div>
+  <div class="card">
+    <div class="ctit"><span class="dot"></span>Thông tin</div>
+    <div class="fg" style="margin-bottom:10px"><label>📝 Mô tả BĐS</label><input type="text" id="ab_prop" placeholder="Nhà phố Bình Thạnh 80m² 6.5 tỷ sổ hồng"></div>
+    <div class="fg" style="margin-bottom:10px"><label>🎯 Mục tiêu</label>
+      <div class="pgr" id="goalPills_ab">
+        <div class="pill gpill on" data-v="Chốt nhanh" onclick="tgGoal(this)">⚡ Chốt nhanh</div>
+        <div class="pill gpill" data-v="Thu lead" onclick="tgGoal(this)">📩 Thu lead</div>
+        <div class="pill gpill" data-v="Tăng tương tác" onclick="tgGoal(this)">💬 Tương tác</div>
+      </div>
+    </div>
+    <div class="fg"><label>📱 Nền tảng</label>
+      <div class="pgr" id="abPlt">
+        <div class="pill on" data-v="FB" onclick="spill(this,'abp','FB')">Facebook</div>
+        <div class="pill" data-v="Zalo" onclick="spill(this,'abp','Zalo')">Zalo</div>
+        <div class="pill" data-v="TikTok" onclick="spill(this,'abp','TikTok')">TikTok</div>
+        <div class="pill" data-v="Website" onclick="spill(this,'abp','Website')">Website</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:7px;margin-top:11px">
+      <button class="btn btn-p" style="flex:1;justify-content:center" onclick="doAB()">⚡ Chạy A/B Test</button>
+      <button class="btn btn-r" onclick="document.getElementById('abOut').classList.add('hidden')">🗑️</button>
+    </div>
+  </div>
+  <div id="abOut" class="hidden">
+    <div class="sec">Kết quả A/B Test</div>
+    <div class="abg">
+      <div class="abc a"><div class="abl">Phiên bản A</div><div class="absc" id="abSA">--</div><div style="font-size:.65rem;color:var(--t3);margin-bottom:7px">/ 100 điểm</div><div class="cbox" style="padding:10px"><pre id="abHA">...</pre></div><div id="abRA" style="font-size:.69rem;color:var(--t3);margin-top:5px;line-height:1.5"></div></div>
+      <div class="abc b"><div class="abl">Phiên bản B</div><div class="absc" id="abSB">--</div><div style="font-size:.65rem;color:var(--t3);margin-bottom:7px">/ 100 điểm</div><div class="cbox" style="padding:10px"><pre id="abHB">...</pre></div><div id="abRB" style="font-size:.69rem;color:var(--t3);margin-top:5px;line-height:1.5"></div></div>
+    </div>
+    <div id="abWin" style="margin-top:11px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px;font-size:.78rem;color:var(--t2)"></div>
+  </div>
+</div>
+
+<!-- REMIX -->
+<div class="pg" id="pg-remix">
+  <div class="ptit"><div><h2>🔁 Biến Tấu Content</h2><p>Chẩn đoán tại sao chưa viral → Viết lại 3 phiên bản hay hơn</p></div></div>
+  <div class="card">
+    <div style="background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.3);border-radius:9px;padding:10px;margin-bottom:11px;font-size:.75rem;color:var(--t2)">💡 AI sẽ: <strong style="color:var(--ac)">① Chẩn đoán tại sao bài cũ chưa viral</strong> → <strong style="color:var(--gr)">② Viết lại 3 phiên bản hay hơn, cảm xúc hơn</strong></div>
+    <div class="fg" style="margin-bottom:10px"><label>📋 Dán bài viết cũ</label><textarea id="remix_old" style="min-height:120px" placeholder="Dán bài viết BĐS cũ của bạn vào đây..."></textarea></div>
+    <div class="fg"><label>🎯 Mục tiêu phiên bản mới</label>
+      <div class="pgr" id="goalPills_remix">
+        <div class="pill gpill on" data-v="Chốt nhanh" onclick="tgGoal(this)">⚡ Chốt nhanh</div>
+        <div class="pill gpill" data-v="Thu lead" onclick="tgGoal(this)">📩 Thu lead</div>
+        <div class="pill gpill" data-v="Tăng tương tác" onclick="tgGoal(this)">💬 Tương tác</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:7px;margin-top:11px">
+      <button class="btn btn-p" style="flex:1;justify-content:center" onclick="doRemix()">🔁 Biến Tấu Ngay</button>
+      <button class="btn btn-r" onclick="clearRemix()">🗑️</button>
+    </div>
+  </div>
+  <div id="remixOut" class="hidden"></div>
+</div>
+
+<!-- SURVEY -->
+<div class="pg" id="pg-survey">
+  <div class="ptit"><div><h2>🔍 Khảo Sát Nhà Thông Minh</h2><p>9 bước chuẩn · Checklist tích hợp · Tự động sinh báo cáo 5x5 → Content</p></div></div>
+  <div class="card" style="border-color:rgba(245,166,35,.35)">
+    <div class="ctit"><span class="dot"></span>📞 Trước khi đi — Gọi xác nhận đầu chủ</div>
+    <div style="background:rgba(245,166,35,.07);border-radius:9px;padding:12px;margin-bottom:12px;font-size:.77rem;color:var(--t2);line-height:1.85;white-space:pre-line">✅ "Nhà còn bán không ạ? Cho em xin địa chỉ, link map ạ"
+✅ "Giá hiện tại bao nhiêu ạ?"
+✅ "Nhà có vay bank không? Chủ tự rút sổ hay nhờ khách rút ạ?"
+✅ "Có gì cần lưu ý khi khảo sát không ạ?"
+❌ Nếu đã bán: "Anh/chị có căn nào khu vực gần đây gửi em khảo sát luôn không ạ?"</div>
+    <div class="fg2">
+      <div class="fg"><label>🏠 Địa chỉ BĐS</label><input type="text" id="sv_addr" placeholder="Số nhà, hẻm, đường, phường, quận..."></div>
+      <div class="fg"><label>💰 Giá rao bán</label><input type="text" id="sv_price" placeholder="VD: 7.9 tỷ"></div>
+      <div class="fg"><label>📐 Diện tích (m²)</label><input type="number" id="sv_area" placeholder="82"></div>
+      <div class="fg"><label>🏗️ Số tầng</label><input type="number" id="sv_floors" placeholder="3"></div>
+      <div class="fg"><label>↔️ Ngang (m)</label><input type="number" id="sv_w" placeholder="4.7" step="0.1"></div>
+      <div class="fg"><label>↕️ Dài (m)</label><input type="number" id="sv_d" placeholder="17.5" step="0.1"></div>
+    </div>
+  </div>
+  <div class="sec" style="margin-top:0">📋 9 BƯỚC KIỂM TRA KHI KHẢO SÁT (Click để mở)</div>
+  <div id="svSteps"></div>
+  <div class="card" style="margin-top:4px">
+    <div class="ctit"><span class="dot"></span>📊 Báo Cáo 5x5 — Tổng hợp sau khảo sát</div>
+    <div style="font-size:.75rem;color:var(--t2);margin-bottom:11px;background:rgba(245,166,35,.07);border-radius:8px;padding:9px">💡 Đây là nguyên liệu để: Viết bài đăng bán, Lên kịch bản video, Xử lý từ chối KH</div>
+    <div class="fg2">
+      <div class="fg"><label style="color:var(--gr)">✅ 5 Ưu điểm (Vàng)</label><textarea id="sv_pros" style="min-height:110px" placeholder="1. Hẻm ô tô vào tận cửa&#10;2. Khu dân trí cao&#10;3. Gần chợ&#10;4. &#10;5. "></textarea></div>
+      <div class="fg"><label style="color:var(--rd)">❌ 5 Nhược điểm (Đá)</label><textarea id="sv_cons" style="min-height:110px" placeholder="1. Hẻm hơi nhỏ&#10;2. Gần chùa&#10;3. Thiếu chỗ đậu xe&#10;4. &#10;5. "></textarea></div>
+    </div>
+    <div class="fg2" style="margin-top:11px">
+      <div class="fg"><label>🔍 Lý do bán (đọc vị)</label><input type="text" id="sv_reason" placeholder="Nợ nần, chia tài sản..."></div>
+      <div class="fg"><label>📋 Pháp lý</label><input type="text" id="sv_legal" placeholder="Sổ hồng riêng, ODT..."></div>
+    </div>
+    <div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap">
+      <button class="btn btn-p" onclick="doSurveyReport()">📊 Tổng Hợp Báo Cáo</button>
+      <button class="btn btn-g" onclick="svToContent()">✍️ → Tạo Content</button>
+      <button class="btn btn-b" onclick="svToValuation()">🏷️ → Định Giá</button>
+      <button class="btn btn-r" onclick="clearSurvey()">🗑️ Xóa</button>
+    </div>
+  </div>
+  <div id="svReport" class="hidden"></div>
+</div>
+
+<!-- VALUATION -->
+<div class="pg" id="pg-valuation">
+  <div class="ptit"><div><h2>🏷️ Định Giá Bất Động Sản</h2><p>Bóc tách giá đất + giá xây dựng · Công thức Thuật Giả Kim</p></div></div>
+  <div style="background:linear-gradient(135deg,rgba(62,207,142,.1),rgba(76,156,245,.07));border:1px solid rgba(62,207,142,.3);border-radius:11px;padding:13px 15px;margin-bottom:13px"><div style="font-weight:800;font-size:.88rem;color:var(--gr);margin-bottom:4px">📐 Công thức Giả Kim</div><div style="font-size:.77rem;color:var(--t2);line-height:1.7">Giá BĐS = <strong style="color:var(--ac)">Giá Đất</strong> + <strong style="color:var(--bl)">Giá Xây Dựng</strong> → Biết đơn giá đất thực để xác định BĐS "giá hời" hay không</div></div>
+  <div class="card">
+    <div class="ctit"><span class="dot"></span>Thông tin BĐS</div>
+    <div class="fg2">
+      <div class="fg"><label>📍 Địa chỉ</label><input type="text" id="val_addr" placeholder="VD: 124/7A Cộng Hòa, Tân Bình"><button class="btn btn-s btn-xs" style="margin-top:5px" onclick="autoFillVal()">⚡ Lấy từ Khảo Sát</button></div>
+      <div class="fg"><label>💰 Giá rao (tỷ đồng)</label><input type="number" id="val_total" placeholder="7.9" step="0.1"></div>
+      <div class="fg"><label>📐 Diện tích (m²)</label><input type="number" id="val_area" placeholder="82"></div>
+      <div class="fg"><label>🏗️ Số tầng</label><input type="number" id="val_floors" placeholder="3" min="1" max="10"></div>
+      <div class="fg"><label>↔️ Ngang (m)</label><input type="number" id="val_w" placeholder="4.7" step="0.1"></div>
+      <div class="fg"><label>↕️ Dài (m)</label><input type="number" id="val_d" placeholder="17.5" step="0.1"></div>
+      <div class="fg"><label>🏢 Chất lượng xây dựng</label>
+        <select id="val_quality"><option value="2.5">Cơ bản (2.5 tr/m²/tầng)</option><option value="3.5" selected>Trung bình (3.5 tr/m²/tầng)</option><option value="4.5">Tốt (4.5 tr/m²/tầng)</option><option value="6">Cao cấp (6 tr/m²/tầng)</option><option value="8">Luxury (8+ tr/m²/tầng)</option></select>
+      </div>
+      <div class="fg"><label>📊 Đơn giá thị trường (tr/m²)</label><input type="number" id="val_market" placeholder="95" step="1"></div>
+      <div class="fg"><label>❓ Lý do bán</label><input type="text" id="val_reason" placeholder="Nợ nần, chia tài sản..."></div>
+      <div class="fg"><label>📋 Pháp lý</label><input type="text" id="val_legal" placeholder="Sổ hồng riêng, ODT..."></div>
+      <div class="fg full"><label>✅ 5 Ưu điểm</label><textarea id="val_pros" style="min-height:80px" placeholder="1. &#10;2. &#10;3. &#10;4. &#10;5. "></textarea></div>
+      <div class="fg full"><label>❌ 5 Nhược điểm</label><textarea id="val_cons" style="min-height:80px" placeholder="1. &#10;2. &#10;3. &#10;4. &#10;5. "></textarea></div>
+    </div>
+    <div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap">
+      <button class="btn btn-p" style="flex:1;justify-content:center" onclick="doValuation()">🏷️ Định Giá Ngay</button>
+      <button class="btn btn-r" onclick="clearValuation()">🗑️</button>
+    </div>
+  </div>
+  <div id="valOut" class="hidden"></div>
+</div>
+
+<!-- READ KH -->
+<div class="pg" id="pg-readkh">
+  <div class="ptit"><div><h2>🎭 Đọc Vị Khách Hàng</h2><p>10 câu hỏi thông minh xác định tâm lý KH trước khi tư vấn</p></div></div>
+  <div style="background:linear-gradient(135deg,rgba(156,110,245,.1),rgba(76,156,245,.07));border:1px solid rgba(156,110,245,.3);border-radius:11px;padding:13px;margin-bottom:13px"><div style="font-weight:700;font-size:.87rem;color:var(--pu);margin-bottom:4px">🎯 Biết tâm lý KH → Chọn đúng ngôn ngữ → Tăng tỷ lệ chốt 3x</div><div style="font-size:.75rem;color:var(--t2)">Hỏi tự nhiên trong cuộc trò chuyện. Quan sát cách KH TRẢ LỜI, không chỉ nội dung.</div></div>
+  <div id="rkQuestions"></div>
+  <div class="card" style="margin-top:4px">
+    <div class="ctit"><span class="dot"></span>🧠 Kết quả đọc vị</div>
+    <div id="rkResult" style="font-size:.79rem;color:var(--t3);text-align:center;padding:20px">Trả lời các câu hỏi bên trên để xem kết quả phân tích</div>
+    <div style="display:flex;gap:7px;margin-top:10px;flex-wrap:wrap">
+      <button class="btn btn-r btn-sm" onclick="clearReadKH()">🗑️ Reset</button>
+    </div>
+  </div>
+</div>
+
+<!-- GUIDE TOUR -->
+<div class="pg" id="pg-guidetour">
+  <div class="ptit"><div><h2>🏡 Kịch Bản Dẫn Xem Nhà</h2><p>Script từng phòng · Tích hợp dữ liệu khảo sát · Xử lý phản ứng KH</p></div></div>
+  <div class="card">
+    <div class="ctit"><span class="dot"></span>Thông tin buổi xem nhà</div>
+    <div class="fg2">
+      <div class="fg"><label>🏠 BĐS</label><div style="display:flex;gap:5px"><input type="text" id="gt_prop" placeholder="Nhà phố Q7, 80m², 6.5 tỷ" style="flex:1"><button class="btn btn-s btn-xs" onclick="autoFillGT()">⚡</button></div></div>
+      <div class="fg"><label>🧠 Tâm lý KH</label><select id="gt_psy"><option value="Si">🤔 Si — Phân vân</option><option value="Tham">💰 Tham — Ham deal</option><option value="Sân">🔥 Sân — Nóng tính</option><option value="Ngạo mạn">👑 Ngạo mạn</option><option value="Nghi ngờ">🔍 Nghi ngờ</option></select></div>
+      <div class="fg"><label>⭐ 3 điểm mạnh nổi bật</label><input type="text" id="gt_pros" placeholder="Hẻm rộng, view đẹp, gần chợ..."></div>
+      <div class="fg"><label>⚠️ Nhược điểm cần chuẩn bị</label><input type="text" id="gt_cons" placeholder="Nhà cũ, hẻm nhỏ..."></div>
+    </div>
+    <button class="btn btn-p btn-full" style="margin-top:11px" onclick="doGuideTour()">🏡 Tạo Kịch Bản</button>
+  </div>
+  <div id="gtOut" class="hidden"></div>
+</div>
+
+<!-- SALE SCRIPTS -->
+<div class="pg" id="pg-salescripts">
+  <div class="ptit"><div><h2>💬 Thư Viện Câu Chốt Sale</h2><p>50+ câu chốt theo tình huống · Copy ngay dùng liền</p></div></div>
+  <div class="card">
+    <div class="ctit"><span class="dot"></span>Thêm câu chốt của bạn</div>
+    <div class="fg2">
+      <div class="fg"><label>📌 Tình huống</label><input type="text" id="ss_sit" placeholder="VD: KH nói giá đắt..."></div>
+      <div class="fg"><label>🗂️ Danh mục</label><select id="ss_cat"><option value="Chốt deal">Chốt deal</option><option value="Xử lý phản đối">Xử lý phản đối</option><option value="Tạo urgency">Tạo urgency</option><option value="Xây dựng trust">Xây dựng trust</option><option value="Follow-up">Follow-up</option></select></div>
+      <div class="fg full"><label>💬 Câu chốt</label><textarea id="ss_txt" style="min-height:70px" placeholder="Nhập câu chốt của bạn..."></textarea></div>
+    </div>
+    <div style="display:flex;gap:7px;margin-top:10px">
+      <button class="btn btn-p" onclick="addSaleScript()">➕ Thêm vào thư viện</button>
+      <button class="btn btn-r btn-sm" onclick="clearSSForm()">🗑️</button>
+    </div>
+  </div>
+  <div class="sale-cats" id="saleCats"></div>
+  <div id="saleList"></div>
+</div>
+
+<!-- TOOLS -->
+<div class="pg" id="pg-tools">
+  <div class="ptit"><div><h2>🔧 Hộp Công Cụ Thực Chiến</h2><p>8 công cụ hỗ trợ môi giới hàng ngày</p></div></div>
+  <div class="tool-tabs">
+    <div class="tool-tab on" onclick="showTool(this,'calc')">🧮 Trả Góp</div>
+    <div class="tool-tab" onclick="showTool(this,'objection')">🗣️ Phản Đối</div>
+    <div class="tool-tab" onclick="showTool(this,'story')">📱 Story/Reels</div>
+    <div class="tool-tab" onclick="showTool(this,'hashtag')">🏷️ Hashtag</div>
+    <div class="tool-tab" onclick="showTool(this,'coldcall')">📞 Cold Call</div>
+    <div class="tool-tab" onclick="showTool(this,'checklist')">📋 Checklist PL</div>
+    <div class="tool-tab" onclick="showTool(this,'persona')">🎭 Persona KH</div>
+    <div class="tool-tab" onclick="showTool(this,'email')">📧 Email Chuỗi</div>
+  </div>
+  <div class="tool-pg on" id="tool-calc"><div class="card"><div class="ctit"><span class="dot"></span>🧮 Máy Tính Trả Góp</div><div class="fg2"><div class="fg"><label>💰 Giá nhà (tỷ)</label><input type="number" id="calc_price" placeholder="5.5" step="0.1"></div><div class="fg"><label>🏦 % Vay NH</label><input type="number" id="calc_pct" placeholder="70"></div><div class="fg"><label>📅 Kỳ hạn (năm)</label><input type="number" id="calc_years" placeholder="20"></div><div class="fg"><label>📊 Lãi suất/năm (%)</label><input type="number" id="calc_rate" placeholder="8.5" step="0.1"></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doCalc()">🧮 Tính Ngay</button></div><div id="calcOut" class="hidden"></div></div>
+  <div class="tool-pg" id="tool-objection"><div class="card"><div class="ctit"><span class="dot"></span>🗣️ Kịch Bản Xử Lý Phản Đối</div><div class="fg" style="margin-bottom:10px"><label>🏠 BĐS</label><input type="text" id="obj_prop" placeholder="Nhà phố Q7, 80m², 6.5 tỷ"></div><div class="fg"><label>❓ Phản đối</label><div class="pgr" id="objPills"><div class="pill on" onclick="spill(this,'obj','price')" data-v="price">Sao đắt vậy?</div><div class="pill" onclick="spill(this,'obj','legal')" data-v="legal">Pháp lý chắc?</div><div class="pill" onclick="spill(this,'obj','think')" data-v="think">Suy nghĩ thêm</div><div class="pill" onclick="spill(this,'obj','compare')" data-v="compare">Chỗ khác rẻ</div><div class="pill" onclick="spill(this,'obj','money')" data-v="money">Chưa đủ tiền</div></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doObj()">🗣️ Sinh Kịch Bản</button></div><div id="objOut" class="hidden"></div></div>
+  <div class="tool-pg" id="tool-story"><div class="card"><div class="ctit"><span class="dot"></span>📱 Script Story/Reels FB & Zalo</div><div class="fg2"><div class="fg"><label>🏠 BĐS</label><input type="text" id="story_prop" placeholder="Nhà phố Q7, 80m², 6.5 tỷ"></div><div class="fg"><label>⏱️ Thời lượng</label><div class="pgr" style="margin-top:4px"><div class="pill on" onclick="spill(this,'story_dur','15s')" data-v="15s">15 giây</div><div class="pill" onclick="spill(this,'story_dur','30s')" data-v="30s">30 giây</div><div class="pill" onclick="spill(this,'story_dur','60s')" data-v="60s">60s Reels</div></div></div><div class="fg full"><label>📱 Nền tảng</label><div class="pgr" style="margin-top:4px"><div class="pill on" onclick="spill(this,'story_plt','FB Story')" data-v="FB Story">📘 FB Story</div><div class="pill" onclick="spill(this,'story_plt','FB Reels')" data-v="FB Reels">📘 FB Reels</div><div class="pill" onclick="spill(this,'story_plt','Zalo Story')" data-v="Zalo Story">💬 Zalo Story</div></div></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doStory()">📱 Tạo Script</button></div><div id="storyOut" class="hidden"></div></div>
+  <div class="tool-pg" id="tool-hashtag"><div class="card"><div class="ctit"><span class="dot"></span>🏷️ Hashtag Generator</div><div class="fg2"><div class="fg"><label>🏠 Loại nhà</label><input type="text" id="ht_type" placeholder="Nhà phố, căn hộ..."></div><div class="fg"><label>📍 Khu vực</label><input type="text" id="ht_loc" placeholder="Quận 7..."></div><div class="fg full"><label>📱 Nền tảng</label><div class="pgr" style="margin-top:4px"><div class="pill on" onclick="spill(this,'ht_plt','FB')" data-v="FB">Facebook</div><div class="pill" onclick="spill(this,'ht_plt','Zalo')" data-v="Zalo">Zalo</div><div class="pill" onclick="spill(this,'ht_plt','TikTok')" data-v="TikTok">TikTok</div></div></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doHashtag()">🏷️ Tạo Hashtag</button></div><div id="hashtagOut" class="hidden"></div></div>
+  <div class="tool-pg" id="tool-coldcall"><div class="card"><div class="ctit"><span class="dot"></span>📞 Script Cold Call</div><div class="fg2"><div class="fg"><label>🏠 BĐS</label><input type="text" id="cc_prop" placeholder="Nhà phố Q7, 6.5 tỷ"></div><div class="fg"><label>🧠 Tâm lý KH</label><select id="cc_psy"><option value="Tham">💰 Tham</option><option value="Si">🤔 Si</option><option value="Sân">🔥 Sân</option><option value="Nghi ngờ">🔍 Nghi ngờ</option></select></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doColdCall()">📞 Tạo Script</button></div><div id="ccOut" class="hidden"></div></div>
+  <div class="tool-pg" id="tool-checklist"><div class="card"><div class="ctit"><span class="dot"></span>📋 Checklist Pháp Lý BĐS</div><div style="font-size:.76rem;color:var(--t2);margin-bottom:11px">Tặng KH → Tăng uy tín chuyên gia → KH tin tưởng hơn khi mua qua bạn.</div><div class="fg"><label>🏠 Loại BĐS</label><div class="pgr" style="margin-top:4px"><div class="pill on" onclick="spill(this,'cl_type','Nhà phố')" data-v="Nhà phố">Nhà phố</div><div class="pill" onclick="spill(this,'cl_type','Căn hộ')" data-v="Căn hộ">Căn hộ</div><div class="pill" onclick="spill(this,'cl_type','Đất nền')" data-v="Đất nền">Đất nền</div></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doChecklist()">📋 Tạo Checklist</button></div><div id="clOut" class="hidden"></div></div>
+  <div class="tool-pg" id="tool-persona"><div class="card"><div class="ctit"><span class="dot"></span>🎭 Tạo Persona KH</div><div class="fg2"><div class="fg"><label>🏠 BĐS cần bán</label><input type="text" id="ps_prop" placeholder="Căn hộ 2PN, 2.5 tỷ, Quận 7"></div><div class="fg"><label>💰 Phân khúc giá</label><select id="ps_seg"><option value="budget">Bình dân (dưới 3 tỷ)</option><option value="mid">Trung cấp (3–7 tỷ)</option><option value="high">Cao cấp (7–15 tỷ)</option><option value="luxury">Luxury (trên 15 tỷ)</option></select></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doPersona()">🎭 Tạo Persona</button></div><div id="personaOut" class="hidden"></div></div>
+  <div class="tool-pg" id="tool-email"><div class="card"><div class="ctit"><span class="dot"></span>📧 Chuỗi Email Nurture Lead</div><div style="font-size:.76rem;color:var(--t2);margin-bottom:11px">5 email từ Cold → Warm → Hot. Gửi đúng lúc tăng tỷ lệ chốt 2x.</div><div class="fg2"><div class="fg"><label>🏠 BĐS</label><input type="text" id="em_prop" placeholder="Nhà phố Q7, 6.5 tỷ, sổ hồng"></div><div class="fg"><label>🎯 Mục tiêu</label><select id="em_goal"><option value="buy">Mua ở</option><option value="invest">Đầu tư</option><option value="rent">Thuê</option></select></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doEmail()">📧 Tạo Chuỗi Email</button></div><div id="emailOut" class="hidden"></div></div>
+</div>
+
+<!-- COMPETITOR -->
+<div class="pg" id="pg-cmp">
+  <div class="ptit"><div><h2>📊 So Sánh Đối Thủ</h2><p>2 cột song song · Chấm điểm từng tiêu chí · Gợi ý vượt trội</p></div></div>
+  <div class="card"><div class="ctit"><span class="dot"></span>Nhập thông tin so sánh</div>
+    <div class="cmp-cols"><div class="fg"><label style="color:var(--rd)">❌ Content đối thủ</label><textarea id="cmp_txt" style="min-height:130px" placeholder="Dán content của đối thủ..."></textarea></div><div class="fg"><label style="color:var(--gr)">✅ BĐS / Content của bạn</label><textarea id="cmp_mine" style="min-height:130px" placeholder="Mô tả BĐS hoặc content của bạn..."></textarea></div></div>
+    <div style="display:flex;gap:7px;margin-top:11px"><button class="btn btn-p" style="flex:1;justify-content:center" onclick="doCmp()">📊 Phân Tích</button><button class="btn btn-r" onclick="clearCmp()">🗑️</button></div>
+  </div>
+  <div id="cmpOut" class="hidden"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px"><div class="sec" style="margin:0">So sánh song song</div><button class="btn btn-r btn-sm" onclick="document.getElementById('cmpOut').classList.add('hidden')">🗑️</button></div><div id="cmpRes"></div></div>
+</div>
+
+<!-- FENGSHUI -->
+<div class="pg" id="pg-fs">
+  <div class="ptit"><div><h2>🔮 Mệnh Phong Thuỷ</h2><p>Gợi ý từ ngữ hợp mệnh để tăng duyên với khách</p></div></div>
+  <div class="card"><div class="ctit"><span class="dot"></span>Chọn mệnh KH</div><div class="elgr" id="elGrid"></div><button class="btn btn-p btn-full" style="margin-top:13px" onclick="doFS()">🔮 Xem Gợi Ý</button></div>
+  <div id="fsOut" class="hidden"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div class="sec" style="margin:0">Gợi ý</div><button class="btn btn-r btn-sm" onclick="document.getElementById('fsOut').classList.add('hidden')">🗑️</button></div><div id="fsRes"></div></div>
+</div>
+
+<!-- HANDBOOK -->
+<div class="pg" id="pg-handbook">
+  <div class="ptit"><div><h2>📖 Cẩm Nang Bách Thắng — Môi Giới Thực Chiến</h2><p>Phiên bản đầy đủ · 10 Module thực chiến · Trần Thế Vinh · #aihockiemtien</p></div></div>
+  <div style="background:linear-gradient(135deg,rgba(245,166,35,.12),rgba(76,156,245,.08));border:1px solid rgba(245,166,35,.35);border-radius:11px;padding:13px 15px;margin-bottom:13px;display:flex;align-items:center;gap:11px;flex-wrap:wrap">
+    <div style="font-size:1.9rem;flex-shrink:0">🏆</div>
+    <div style="flex:1;min-width:180px"><div style="font-weight:800;font-size:.9rem;color:var(--ac)">Flip Book tương tác — Đầy đủ 10 Module</div><div style="font-size:.74rem;color:var(--t2);margin-top:2px">"Khảo sát không phải là đi xem một căn nhà — Khảo sát là quá trình đào bới để tìm ra MỘT LÝ DO khiến khách hàng khao khát nó."</div></div>
+    <a href="https://heyzine.com/flip-book/e755ec9c04.html#page/1" target="_blank" class="btn btn-p btn-sm" style="flex-shrink:0">🔗 Mở toàn màn hình</a>
+  </div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px" id="hbModules"></div>
+  <div style="background:var(--bg3);border:1px solid var(--border);border-radius:11px;overflow:hidden">
+    <div style="padding:8px 13px;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+      <div style="font-size:.75rem;font-weight:600;color:var(--tx)">📖 Cẩm Nang Bách Thắng — Trần Thế Vinh</div>
+      <a href="https://heyzine.com/flip-book/e755ec9c04.html#page/1" target="_blank" class="btn btn-s btn-xs">⛶ Full screen</a>
+    </div>
+    <iframe src="https://heyzine.com/flip-book/e755ec9c04.html#page/1" style="width:100%;height:80vh;border:none;display:block" allowfullscreen loading="lazy" title="Cẩm Nang Bách Thắng"></iframe>
+  </div>
+  <div style="margin-top:8px;text-align:center;font-size:.71rem;color:var(--t3)">💡 Lật trang bằng click/kéo · Bấm ⛶ xem toàn màn hình</div>
+</div>
+
+<!-- TEMPLATES -->
+<div class="pg" id="pg-tpl">
+  <div class="ptit"><div><h2>📌 Template Library</h2><p>Lưu & tái sử dụng template hay</p></div><button class="btn btn-r btn-sm" onclick="clearAllTpl()">🗑️ Xóa tất cả</button></div>
+  <div id="tplList"></div>
+</div>
+
+<!-- CRM -->
+<div class="pg" id="pg-crm">
+  <div class="ptit"><div><h2>🗄️ Mini CRM</h2><p>Lịch sử các tin đã tạo</p></div><button class="btn btn-r btn-sm" onclick="clearAllCRM()">🗑️ Xóa tất cả</button></div>
+  <div class="card" style="overflow-x:auto"><table class="crmt"><thead><tr><th>#</th><th>Loại nhà</th><th>Khu vực</th><th>Giá</th><th>Pbản</th><th>Thời gian</th><th>Thao tác</th></tr></thead><tbody id="crmBody"></tbody></table></div>
+</div>
+
+<!-- AGENTS -->
+<div class="pg" id="pg-ag">
+  <div class="ptit"><div><h2>🤖 AI Agent Tools</h2><p>Công cụ AI chuyên biệt hỗ trợ content</p></div></div>
+  <div class="agr" id="agGrid"></div>
+</div>
+
+<!-- EARN -->
+<div class="pg" id="pg-earn">
+  <div class="ptit"><div><h2>💰 Kiếm Tiền</h2><p>Cơ hội thu nhập BĐS Thiên Khôi</p></div></div>
+  <div class="card" style="background:linear-gradient(135deg,rgba(245,166,35,.08),rgba(62,207,142,.05));border-color:rgba(245,166,35,.3)">
+    <div style="text-align:center;padding:6px 0 15px"><div style="font-size:2.1rem;margin-bottom:8px">🎓</div><div style="font-size:1.05rem;font-weight:800;color:var(--ac);margin-bottom:5px">ĐÀO TẠO MÔI GIỚI MIỄN PHÍ 100%</div><div style="font-size:.81rem;color:var(--t2);max-width:440px;margin:0 auto;line-height:1.7">"Tôi đã tiết kiệm hơn <strong style="color:var(--ac)">20 triệu đồng</strong> khi tham gia tại <strong>BĐS Thiên Khôi!</strong>"</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:15px"><div style="background:var(--card);border-radius:9px;padding:9px;display:flex;gap:6px"><span>✅</span><span style="font-size:.76rem;color:var(--t2)"><strong>MIỄN PHÍ 100%</strong> (20–25 triệu)</span></div><div style="background:var(--card);border-radius:9px;padding:9px;display:flex;gap:6px"><span>✅</span><span style="font-size:.76rem;color:var(--t2)">Cấp <strong>chứng nhận</strong></span></div><div style="background:var(--card);border-radius:9px;padding:9px;display:flex;gap:6px"><span>✅</span><span style="font-size:.76rem;color:var(--t2)">Nhận việc tại <strong>Thiên Khôi</strong></span></div><div style="background:var(--card);border-radius:9px;padding:9px;display:flex;gap:6px"><span>🚀</span><span style="font-size:.76rem;color:var(--t2)"><strong>Thu nhập không giới hạn</strong></span></div></div>
+    <div style="background:rgba(239,83,80,.1);border:1px solid rgba(239,83,80,.3);border-radius:9px;padding:9px;text-align:center;margin-bottom:13px"><div style="font-weight:800;color:var(--rd);font-size:.85rem">🚀 Chỉ 10 ứng viên mỗi khu vực!</div></div>
+    <div id="earnCtc"></div>
+  </div>
+</div>
+
+<!-- CHARITY -->
+<div class="pg" id="pg-charity">
+  <div class="ptit"><div><h2>❤️ Trái Tim Nhân Ái</h2><p>Lan tỏa yêu thương đến những em nhỏ cần được chăm sóc</p></div></div>
+  <div style="background:linear-gradient(135deg,rgba(240,98,146,.12),rgba(245,166,35,.08));border:1px solid rgba(240,98,146,.35);border-radius:16px;padding:20px;margin-bottom:14px;text-align:center">
+    <div style="font-size:2.8rem;margin-bottom:10px">💛</div>
+    <div style="font-weight:900;font-size:1.1rem;color:var(--tx);margin-bottom:8px;line-height:1.4">AUTO PRO CONTENT BĐS<br><span style="color:var(--pk)">được tạo ra với trái tim nhân ái</span></div>
+    <div style="font-size:.82rem;color:var(--t2);line-height:1.85;max-width:520px;margin:0 auto 14px">Nếu công cụ này giúp anh/chị <strong>tạo content nhanh hơn, có thêm khách hàng, tăng tương tác, hoặc may mắn chốt thêm giao dịch…</strong><br><br>thì AUTO PRO CONTENT hy vọng anh/chị có thể lan tỏa một phần yêu thương bằng cách hỗ trợ tùy tâm cho các bé tại <strong style="color:var(--pk)">Mái Ấm Mai Tâm ❤️</strong></div>
+  </div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:13px">
+    <div style="background:linear-gradient(135deg,rgba(240,98,146,.15),rgba(245,166,35,.1));padding:14px 16px;border-radius:11px;margin-bottom:15px"><div style="display:flex;align-items:center;gap:10px"><div style="font-size:2.2rem">🏠</div><div><div style="font-weight:800;font-size:.97rem;color:var(--tx)">Mái Ấm Mai Tâm</div><div style="font-size:.76rem;color:var(--pk);font-style:italic;margin-top:1px">"Nơi niềm tin được thắp lại"</div></div></div></div>
+    <div style="font-size:.81rem;color:var(--t2);line-height:1.85;margin-bottom:14px">Đây là ngôi nhà của các bà mẹ đơn thân cùng trẻ nhỏ mồ côi sống và chịu ảnh hưởng bởi HIV/AIDS. <strong>Mai Tâm đón nhận và chăm sóc các em như vòng tay của người mẹ</strong>, mang đến sự chữa lành và thắp lên hy vọng.</div>
+    <div style="background:linear-gradient(135deg,rgba(62,207,142,.1),rgba(76,156,245,.08));border:1px solid rgba(62,207,142,.3);border-radius:11px;padding:15px;margin-bottom:13px">
+      <div style="font-weight:800;font-size:.9rem;color:var(--tx);text-align:center;margin-bottom:13px">💳 CHIA SẺ LÀ YÊU THƯƠNG</div>
+      <div style="display:grid;gap:9px">
+        <div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border-radius:8px;padding:10px"><div style="font-size:1.2rem">🏦</div><div><div style="font-size:.69rem;color:var(--t3)">Ngân hàng</div><div style="font-weight:700;color:var(--tx)">Ngân hàng TMCP Á Châu — ACB</div></div></div>
+        <div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border-radius:8px;padding:10px"><div style="font-size:1.2rem">🔢</div><div style="flex:1"><div style="font-size:.69rem;color:var(--t3)">Số tài khoản</div><div style="font-weight:900;font-size:1.05rem;color:var(--ac);font-family:'Space Mono',monospace">4541027</div></div><button class="btn btn-s btn-xs" onclick="cpTxt('4541027')">📋 Copy</button></div>
+        <div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border-radius:8px;padding:10px"><div style="font-size:1.2rem">👤</div><div><div style="font-size:.69rem;color:var(--t3)">Tên tài khoản</div><div style="font-weight:700;color:var(--tx)">CTY TNHH DNXH MAI TAM</div></div></div>
+      </div>
+    </div>
+    <div style="background:var(--bg3);border-radius:10px;padding:12px;margin-bottom:12px"><div style="font-size:.79rem;color:var(--t2);line-height:1.8">📱 Hotline: <strong>085 701 3969</strong><br>📧 Email: <strong>contact@maitam.org</strong><br>🌐 Website: <a href="https://maitam.org/" target="_blank" style="color:var(--bl);font-weight:700">maitam.org</a></div></div>
+    <a href="https://maitam.org/" target="_blank" class="btn btn-p btn-full">❤️ Tìm hiểu thêm về Mái Ấm Mai Tâm</a>
+  </div>
+  <div style="text-align:center;padding:16px;background:var(--card);border:1px solid var(--border);border-radius:11px"><div style="font-size:1.4rem;margin-bottom:7px">💛</div><div style="font-size:.86rem;color:var(--t2);font-style:italic;line-height:1.8">Cảm ơn anh/chị đã vừa phát triển công việc,<br>vừa cùng lan tỏa sự tử tế đến những em nhỏ cần được yêu thương.</div><div style="margin-top:8px;font-weight:800;font-size:.87rem;color:var(--ac)">#aihockiemtien — AUTO PRO CONTENT BĐS</div></div>
+</div>
+
+<!-- PROFILE -->
+<div class="pg" id="pg-prof">
+  <div class="ptit"><div><h2>👤 Hồ Sơ</h2><p>Thông tin tự động gắn vào mọi content</p></div></div>
+  <div class="card">
+    <div class="ctit"><span class="dot"></span>Thông tin cá nhân</div>
+    <div style="display:flex;gap:15px;align-items:flex-start;flex-wrap:wrap">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:7px;flex-shrink:0">
+        <div class="aav" id="avPreview" onclick="triggerAv()" title="Click đổi ảnh"><span id="avEmoji">👤</span><img id="avImg" style="display:none" alt="avatar"><div class="aav-ov">📷<br>Đổi ảnh</div></div>
+        <button class="btn btn-s btn-xs" onclick="triggerAv()">📷 Upload</button>
+        <button class="btn btn-r btn-xs" onclick="removeAv()">🗑️ Xóa</button>
+        <input type="file" id="avFile" accept="image/*" style="display:none" onchange="loadAv(this)">
+      </div>
+      <div style="flex:1;min-width:190px">
+        <div class="fg2">
+          <div class="fg"><label>👤 Họ tên</label><input type="text" id="p_name" placeholder="Trần Thế Vinh"></div>
+          <div class="fg"><label>🏢 Chức danh</label><input type="text" id="p_title" placeholder="Chuyên gia tư vấn BĐS"></div>
+          <div class="fg"><label>📞 Điện thoại</label><input type="text" id="p_phone" placeholder="0938.121.937"></div>
+          <div class="fg"><label>💬 Zalo</label><input type="text" id="p_zalo" placeholder="0792.227.522"></div>
+          <div class="fg full"><label>💭 Slogan</label><textarea id="p_quote" style="min-height:58px" placeholder="Lời nói có thể truyền cảm hứng..."></textarea></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:7px;margin-top:11px">
+      <button class="btn btn-p" onclick="saveProf()">💾 Lưu hồ sơ</button>
+      <button class="btn btn-r" onclick="resetProf()">🗑️ Reset</button>
+    </div>
+  </div>
+  <div class="card"><div class="ctit"><span class="dot"></span>Preview</div><div class="acrd" id="profPrev"></div></div>
+</div>
+
+</div><!-- end main -->
+</div><!-- end layout -->
+
+<!-- MODAL -->
+<div class="modal-ov" id="mainModal" onclick="if(event.target===this)this.classList.remove('on')">
+  <div class="modal"><div class="modal-hd"><h3 id="modalTitle">Chi tiết</h3><button class="modal-close" onclick="document.getElementById('mainModal').classList.remove('on')">✕</button></div><div id="modalBody"></div></div>
+</div>
+
+<div id="toast"></div>
+
+<!-- LOAD JAVASCRIPT FILE -->
+<script src="app-logic.js"></script>
+</body>
+</html>
