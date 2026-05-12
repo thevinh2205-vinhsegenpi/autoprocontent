@@ -531,18 +531,51 @@ async function doStory(){
 // HASHTAG
 async function doHashtag(){
   const type=V('ht_type')||'nhà phố',loc=V('ht_loc')||'TPHCM',plt=pst.ht_plt||'FB';
+  const seg=V('ht_seg')||'mid',goal=V('ht_goal')||'sell';
   document.getElementById('hashtagOut').classList.add('hidden');await sleep(280);
   const lc=loc.replace(/[^a-zA-ZÀ-ỹ0-9 ]/g,'').replace(/ /g,'');
   const tc=type.replace(/ /g,'');
+  const goalTags={sell:['#banNhaNhanh','#canBanGap','#nhaDepGiaTot'],rent:['#choThueNha','#timPhongThue','#canChoThue'],invest:['#dauTuBatDongSan','#dauTuNhadat','#batDongSanSinhLoi']};
+  const segTags={budget:['#nhaGiaRe','#nhaGiaBinhDan','#muaNhaDuoi3Ty'],mid:['#nhaGiaTot','#trungCap','#muaNhaTphcm'],high:['#nhaCaoCap','#luxuryHome','#batDongSanCaoCap'],luxury:['#luxuryRealEstate','#penthouse','#villaHoChiMinh']};
   const sets={
-    FB:{main:[`#${tc}${lc}`,`#BanNha${lc}`,`#BatDongSan${lc}`,`#NhaDat${lc}`,`#MuaBanNha${lc}`],support:['#BatDongSanVietNam','#SoHongRieng','#VayMuaNha','#AnCuLapNghiep','#NhaDatMoi'],trending:['#batdongsan','#muanhatphcm','#nhadatviet','#homebuying']},
-    Zalo:{main:[`#${tc}${lc}`,`#BanNha${lc}`,`#NhaDat${lc}`],support:['#SoHongRieng','#PhapLySach','#MoiGioiUyTin'],trending:['#batdongsan','#nhadat']},
-    TikTok:{main:[`#${tc.toLowerCase()}${lc.toLowerCase()}`,`#bannha${lc.toLowerCase()}`,`#batdongsantphcm`],support:['#nhapho','#muanhasaigon','#bdsreview','#homesofvietnam'],trending:['#xuhuong','#viral','#realestatelife']}
+    FB:{main:[`#${tc}${lc}`,`#BanNha${lc}`,`#BatDongSan${lc}`,`#NhaDat${lc}`,`#MuaBanNha${lc}`],support:['#BatDongSanVietNam','#SoHongRieng','#VayMuaNha','#AnCuLapNghiep','#NhaDatMoi','#MoiGioiBDS'],goal:goalTags[goal]||[],seg:segTags[seg]||[],trending:['#batdongsan','#muanhatphcm','#nhadatviet','#homebuying','#realestatevietnam']},
+    Zalo:{main:[`#${tc}${lc}`,`#BanNha${lc}`,`#NhaDat${lc}`],support:['#SoHongRieng','#PhapLySach','#MoiGioiUyTin'],goal:goalTags[goal]?.slice(0,2)||[],seg:[],trending:['#batdongsan','#nhadat']},
+    TikTok:{main:[`#${tc.toLowerCase()}${lc.toLowerCase()}`,`#bannha${lc.toLowerCase()}`,`#batdongsantphcm`,`#batdongsan${lc.toLowerCase()}`],support:['#nhapho','#muanhasaigon','#bdsreview','#homesofvietnam','#tourdulieu'],goal:[],seg:[],trending:['#xuhuong','#viral','#realestatelife','#househunting','#batdongsanvietnam']},
+    Website:{main:[`${type}-${loc.toLowerCase().replace(/ /g,'-')}`,`ban-nha-${lc.toLowerCase()}`,`bat-dong-san-${lc.toLowerCase()}`],support:['bat-dong-san','nha-dat','so-hong-rieng','phap-ly-sach'],goal:[],seg:[],trending:['mua-ban-nha','bat-dong-san-tphcm','nha-dat-viet-nam']}
   };
-  const s=sets[plt]||sets.FB;const all=[...s.main,...s.support,...s.trending];
-  document.getElementById('hashtagOut').innerHTML=`<div class="card"><div class="ctit"><span class="dot"></span>🏷️ Hashtag cho ${plt} — ${type} · ${loc}</div><div style="margin-bottom:10px"><div style="font-size:.69rem;font-weight:700;color:var(--ac);margin-bottom:5px">🎯 Hashtag chính</div><div style="display:flex;flex-wrap:wrap;gap:5px">${s.main.map(h=>`<span style="background:rgba(245,166,35,.15);border:1px solid rgba(245,166,35,.4);border-radius:8px;padding:3px 9px;font-size:.72rem;color:var(--ac)">${h}</span>`).join('')}</div></div><div style="margin-bottom:10px"><div style="font-size:.69rem;font-weight:700;color:var(--bl);margin-bottom:5px">💬 Hỗ trợ</div><div style="display:flex;flex-wrap:wrap;gap:5px">${s.support.map(h=>`<span style="background:rgba(76,156,245,.1);border:1px solid rgba(76,156,245,.3);border-radius:8px;padding:3px 9px;font-size:.72rem;color:var(--bl)">${h}</span>`).join('')}</div></div><div style="margin-bottom:13px"><div style="font-size:.69rem;font-weight:700;color:var(--gr);margin-bottom:5px">🔥 Trending</div><div style="display:flex;flex-wrap:wrap;gap:5px">${s.trending.map(h=>`<span style="background:rgba(62,207,142,.1);border:1px solid rgba(62,207,142,.3);border-radius:8px;padding:3px 9px;font-size:.72rem;color:var(--gr)">${h}</span>`).join('')}</div></div><div style="display:flex;gap:7px"><button class="btn btn-g btn-sm" onclick="cpTxt('${all.join(' ')}')">📋 Copy tất cả</button><button class="btn btn-r btn-sm" onclick="document.getElementById('hashtagOut').classList.add('hidden')">🗑️ Xóa</button></div></div>`;
+  const s=sets[plt]||sets.FB;
+  const isWeb=plt==='Website';
+  const allMain=[...s.main,...(s.goal||[]),...(s.seg||[]),...s.support,...s.trending];
+  const allStr=isWeb?allMain.join(', '):allMain.join(' ');
+  const tagStyle=isWeb?
+    'background:rgba(76,156,245,.1);border:1px solid rgba(76,156,245,.3);border-radius:6px;padding:3px 9px;font-size:.71rem;color:var(--bl);font-family:monospace':
+    'background:rgba(245,166,35,.15);border:1px solid rgba(245,166,35,.4);border-radius:8px;padding:3px 9px;font-size:.72rem;color:var(--ac)';
+  const supStyle='background:rgba(76,156,245,.1);border:1px solid rgba(76,156,245,.3);border-radius:8px;padding:3px 9px;font-size:.72rem;color:var(--bl)';
+  const trStyle='background:rgba(62,207,142,.1);border:1px solid rgba(62,207,142,.3);border-radius:8px;padding:3px 9px;font-size:.72rem;color:var(--gr)';
+  const goalStyle='background:rgba(156,110,245,.1);border:1px solid rgba(156,110,245,.3);border-radius:8px;padding:3px 9px;font-size:.72rem;color:var(--pu)';
+  const htid='ht_all_'+Date.now();
+  document.getElementById('hashtagOut').innerHTML=`
+    <div class="card">
+      <div class="ctit"><span class="dot"></span>🏷️ Hashtag ${isWeb?'SEO Keywords':'Set'} — ${plt} · ${type} · ${loc}</div>
+      ${isWeb?`<div style="background:rgba(76,156,245,.08);border:1px solid rgba(76,156,245,.25);border-radius:9px;padding:10px;margin-bottom:12px;font-size:.76rem;color:var(--t2)">💡 <strong style="color:var(--bl)">Website / SEO:</strong> Đây là từ khoá (keywords) dạng slug để dùng trong URL, meta tags, và thẻ bài viết — không dùng dấu #</div>`:''}
+      <div style="margin-bottom:10px">
+        <div style="font-size:.69rem;font-weight:700;color:var(--ac);margin-bottom:5px">🎯 ${isWeb?'Keywords chính':'Hashtag chính'}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">${s.main.map(h=>`<span style="${tagStyle}">${isWeb?h:'#'+h.replace(/^#/,'')}</span>`).join('')}</div>
+      </div>
+      ${s.goal?.length?`<div style="margin-bottom:10px"><div style="font-size:.69rem;font-weight:700;color:var(--pu);margin-bottom:5px">🎯 Theo mục đích (${goal==='sell'?'Bán':goal==='rent'?'Cho thuê':'Đầu tư'})</div><div style="display:flex;flex-wrap:wrap;gap:5px">${s.goal.map(h=>`<span style="${goalStyle}">${h}</span>`).join('')}</div></div>`:''}
+      ${s.seg?.length?`<div style="margin-bottom:10px"><div style="font-size:.69rem;font-weight:700;color:var(--gr);margin-bottom:5px">💰 Theo phân khúc</div><div style="display:flex;flex-wrap:wrap;gap:5px">${s.seg.map(h=>`<span style="${trStyle}">${h}</span>`).join('')}</div></div>`:''}
+      <div style="margin-bottom:10px"><div style="font-size:.69rem;font-weight:700;color:var(--bl);margin-bottom:5px">💬 ${isWeb?'Keywords hỗ trợ':'Hashtag hỗ trợ'}</div><div style="display:flex;flex-wrap:wrap;gap:5px">${s.support.map(h=>`<span style="${supStyle}">${h}</span>`).join('')}</div></div>
+      <div style="margin-bottom:13px"><div style="font-size:.69rem;font-weight:700;color:var(--gr);margin-bottom:5px">🔥 ${isWeb?'Long-tail keywords':'Trending'}</div><div style="display:flex;flex-wrap:wrap;gap:5px">${s.trending.map(h=>`<span style="${trStyle}">${h}</span>`).join('')}</div></div>
+      <div id="${htid}" style="display:none">${allStr}</div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap">
+        <button class="btn btn-g btn-sm" onclick="cpEl('${htid}')">📋 Copy tất cả</button>
+        <button class="btn btn-b btn-sm" onclick="saveHT('${htid}','${type} ${loc} ${plt}')">💾 Lưu</button>
+        <button class="btn btn-r btn-sm" onclick="document.getElementById('hashtagOut').classList.add('hidden')">🗑️ Xóa</button>
+      </div>
+    </div>`;
   document.getElementById('hashtagOut').classList.remove('hidden');
 }
+function saveHT(id,name){const el=document.getElementById(id);if(!el)return;const content=el.textContent;tpl.unshift({id:Date.now(),name:'🏷️ Hashtag: '+name,time:new Date().toLocaleString('vi-VN'),vs:[{py:'Hashtag',frm:'',gs:[],fb:content,zalo:content,tiktok:content,web:content}]});saveSt();buildTpl();toast('💾 Đã lưu vào Templates!');}
 
 // COLD CALL
 async function doColdCall(){
