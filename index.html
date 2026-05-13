@@ -352,12 +352,27 @@ select option{background:var(--bg3)}
     <div class="ctit"><span class="dot"></span>Thông tin BĐS</div>
     <div class="fg2">
       <div class="fg"><label>🏠 Loại nhà</label><input type="text" id="i_type" placeholder="Nhà phố, căn hộ..."><div class="sgr" id="sg_type"></div></div>
-      <div class="fg"><label>💰 Giá</label><input type="text" id="i_price" placeholder="5.5 tỷ..."><div class="sgr" id="sg_price"></div></div>
+      <div class="fg"><label>📋 Loại giao dịch</label>
+        <div class="pgr" style="margin-top:4px" id="txnPills">
+          <div class="pill on" data-v="Bán" onclick="spill(this,'txn','Bán')">🏷️ Bán</div>
+          <div class="pill" data-v="Cho thuê" onclick="spill(this,'txn','Cho thuê')">🔑 Cho thuê</div>
+          <div class="pill" data-v="Sang nhượng" onclick="spill(this,'txn','Sang nhượng')">🤝 Sang nhượng</div>
+        </div>
+      </div>
+      <div class="fg"><label>💰 Giá <span id="priceLabel" style="color:var(--t3);font-weight:400">(bán)</span></label><input type="text" id="i_price" placeholder="5.5 tỷ..."><div class="sgr" id="sg_price"></div></div>
       <div class="fg"><label>📐 Diện tích</label><input type="text" id="i_area" placeholder="80m²..."><div class="sgr" id="sg_area"></div></div>
       <div class="fg"><label>📍 Khu vực</label><input type="text" id="i_loc" placeholder="Quận 7..."><div class="sgr" id="sg_loc"></div></div>
-      <div class="fg full"><label>⭐ Điểm mạnh</label><input type="text" id="i_pros" placeholder="Hẻm xe hơi, sổ hồng riêng..."><div class="sgr" id="sg_pros"></div></div>
-      <div class="fg full"><label>🎯 Điểm khác biệt</label><input type="text" id="i_diff" placeholder="View sông, giá thấp hơn TT 10%..."><div class="sgr" id="sg_diff"></div></div>
+      <div class="fg"><label>🎯 Khách hàng mục tiêu</label>
+        <div class="pgr" style="margin-top:4px" id="buyerPills">
+          <div class="pill on" data-v="Mua ở" onclick="spill(this,'buyer','Mua ở')">🏠 Mua ở</div>
+          <div class="pill" data-v="Đầu tư" onclick="spill(this,'buyer','Đầu tư')">📈 Đầu tư</div>
+          <div class="pill" data-v="Cho thuê lại" onclick="spill(this,'buyer','Cho thuê lại')">💰 Cho thuê lại</div>
+        </div>
+      </div>
+      <div class="fg full"><label>⭐ Điểm mạnh nổi bật <span style="color:var(--t3);font-size:.63rem;font-weight:400">— Pháp lý, vị trí, kết cấu, tiện ích...</span></label><input type="text" id="i_pros" placeholder="VD: Sổ hồng riêng, hẻm xe hơi, gần trường, không ngập..."><div class="sgr" id="sg_pros"></div></div>
+      <div class="fg full"><label>💎 Điểm khác biệt <span style="color:var(--t3);font-size:.63rem;font-weight:400">— Lý do KH chọn căn này thay vì căn khác</span></label><input type="text" id="i_diff" placeholder="VD: Giá thấp hơn TT 10%, tặng full nội thất, view sông..."><div class="sgr" id="sg_diff"></div></div>
     </div>
+    <div id="genTip" style="display:none;margin-top:9px;background:rgba(62,207,142,.08);border:1px solid rgba(62,207,142,.25);border-radius:8px;padding:8px 11px;font-size:.72rem;color:var(--gr)"></div>
   </div>
   <div class="card">
     <div class="ctit"><span class="dot"></span>Tuỳ chọn nâng cao</div>
@@ -394,7 +409,7 @@ select option{background:var(--bg3)}
   </div>
   <div style="display:flex;gap:8px;margin-bottom:12px">
     <button class="btn btn-p btn-full" onclick="doGenerate()" style="flex:1">🚀 TẠO CONTENT NGAY</button>
-    <button class="btn btn-r" onclick="clearGen()">🗑️</button>
+    <button class="btn btn-r" onclick="clearGen()" title="Xóa form">🗑️</button>
   </div>
   <div class="ld" id="ldArea"><div class="spin"></div><div class="ldst" id="ldSteps"></div></div>
   <div class="out" id="outArea">
