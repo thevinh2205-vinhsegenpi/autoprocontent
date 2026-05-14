@@ -147,7 +147,7 @@ const DEFAULT_SCRIPTS=[
 
 // ===================== STATE =====================
 let VS=[],VI=0,PLT='fb',
-pst={ver:'1',abp:'FB',obj:'price',story_dur:'15s',story_plt:'FB Story',ht_plt:'FB',cl_type:'Nhà phố',txn:'Bán',buyer:'Mua ở',sv_txn:'Bán',sv_buyer:'Mua ở'},
+pst={ver:'1',abp:'FB',obj:'price',story_dur:'15s',story_plt:'FB Story',ht_plt:'FB',cl_type:'Nhà phố'},
 crm=[],tpl=[],
 authorProf={name:'Trần Thế Vinh',title:'Chuyên gia tư vấn BĐS TP.HCM',phone:'0938.121.937',zalo:'0792.227.522',quote:'Lời nói có thể truyền cảm hứng, nhưng chỉ có hành động mới mang bạn đến gần ước mơ.',avatar:'',link:'https://zalo.me/0792227522',social:'@tranthevinh.bds'},
 prof={name:'',title:'',phone:'',zalo:'',quote:'',avatar:''},
@@ -227,22 +227,6 @@ function buildSg(){
   const mp={type:'sg_type',price:'sg_price',area:'sg_area',loc:'sg_loc',pros:'sg_pros',diff:'sg_diff'};
   const im={type:'i_type',price:'i_price',area:'i_area',loc:'i_loc',pros:'i_pros',diff:'i_diff'};
   for(const k in mp){const el=document.getElementById(mp[k]);if(!el)continue;el.innerHTML='';SG[k].slice(0,6).forEach(s=>{const c=document.createElement('span');c.className='sgc';c.textContent=s;c.onclick=()=>{const i=document.getElementById(im[k]);i.value=i.value?i.value+', '+s:s;};el.appendChild(c);});}
-
-  // Thêm gợi ý cho survey type
-  const svTypeEl = document.getElementById('sg_sv_type');
-  if(svTypeEl) {
-    svTypeEl.innerHTML = '';
-    SG['type'].slice(0,6).forEach(s=>{
-      const c = document.createElement('span');
-      c.className = 'sgc';
-      c.textContent = s;
-      c.onclick = () => {
-        const i = document.getElementById('sv_type');
-        if(i) i.value = s;
-      };
-      svTypeEl.appendChild(c);
-    });
-  }
 }
 
 // ===================== PSYCH & FORMULA =====================
@@ -267,46 +251,12 @@ function toggleAuto(){document.getElementById('manOpts').classList.toggle('hidde
 function V(id){const e=document.getElementById(id);return e?e.value.trim():'';}
 
 // ===================== CONTENT GENERATION =====================
-function gfd(){return{
-  type:V('i_type')||'Nhà phố',
-  price:V('i_price')||'5',
-  priceUnit:V('i_price')?.includes('tháng')?'triệu/tháng':'tỷ',
-  area:V('i_area')||'80',
-  loc:V('i_loc')||'TP.HCM',
-  pros:V('i_pros')||'Sổ hồng riêng, hẻm xe hơi',
-  diff:V('i_diff')||'Giá tốt, vị trí đẹp',
-  floors:V('i_floors')||'1',
-  w:V('i_w')||'',
-  d:V('i_d')||'',
-  reason:V('i_reason')||'',
-  legal:V('i_legal')||'',
-  txn:pst.txn||'Bán',
-  buyer:pst.buyer||'Mua ở'
-};}
-function autoPsy(d){
-  const priceNum = parseFloat(d.price) || 0;
-  const type = (d.type || '').toLowerCase();
-  const diff = (d.diff || '').toLowerCase();
-  const pros = (d.pros || '').toLowerCase();
-  const reason = (d.reason || '').toLowerCase();
-
-  if(priceNum >= 10 || type.includes('biệt thự') || type.includes('penthouse') || type.includes('luxury')) return 'Ngạo mạn';
-  if(diff.match(/giá.*(tốt|hời|thấp|rẻ)|chủ cần bán gấp/)) return 'Tham';
-  if(reason.match(/gấp|nợ|chia/) && priceNum < 8) return 'Tham';
-  if(pros.includes('sổ hồng') || pros.includes('pháp lý') || pros.includes('chính chủ')) return 'Nghi ngờ';
-  if(type.includes('căn hộ') || type.includes('chung cư')) return 'Si';
-  return 'Si';
-}
+function gfd(){return{type:V('i_type')||'Nhà phố',price:V('i_price')||'5 tỷ',area:V('i_area')||'80m²',loc:V('i_loc')||'TP.HCM',pros:V('i_pros')||'Sổ hồng riêng, hẻm xe hơi',diff:V('i_diff')||'Giá tốt, vị trí đẹp'};}
+function autoPsy(d){if(parseFloat(d.price)>=10||d.type.includes('biệt thự'))return'Ngạo mạn';if(d.diff.toLowerCase().match(/giá.*(tốt|hời|thấp|rẻ)/))return'Tham';if(d.pros.includes('sổ hồng')||d.pros.includes('pháp lý'))return'Nghi ngờ';return'Si';}
 function autoFrm(py){return{'Tham':'AIDA','Sân':'PAS','Si':'FAB','Ngạo mạn':'4P','Nghi ngờ':'BAB'}[py]||'AIDA';}
 
 function mkFB(d,py,frm,gs,ct){
-  // Chuẩn hóa giá hiển thị
-  const priceDisplay = d.price ? (parseFloat(d.price) > 0 ? d.price + ' tỷ' : d.price) : 'Thương lượng';
-  const areaDisplay = d.area ? d.area + 'm²' : '';
-  const dimDisplay = (d.w && d.d) ? (${d.w}m × ${d.d}m) : '';
-  const floorDisplay = d.floors ? (${d.floors} tầng) : '';
-
-  const hooks={'Tham':[`💥 HIẾM CÓ! ${d.type} ${d.loc} chỉ ${priceDisplay} — Cơ hội không tới lần 2!`,`🔥 Deal hời: ${d.type} ${areaDisplay} tại ${d.loc} giá ${priceDisplay}`],'Sân':[`✅ ${d.type.toUpperCase()} ${d.loc} — ${priceDisplay} — ${areaDisplay} — SỔ HỒNG — LIÊN HỆ NGAY`,`⚡ Cần nhà? Đây. ${d.type} ${d.loc} — ${priceDisplay}. Không lòng vòng.`],'Si':[`🤔 Đang phân vân mua nhà? Xem căn ${d.type} này — mọi thứ rõ ràng A-Z!`,`📖 Lần đầu mua nhà? Tôi giải thích toàn bộ về ${d.type} ${d.loc} này!`],'Ngạo mạn':[`👑 Không phải ai cũng đủ tầm sở hữu ${d.type} này tại ${d.loc}`,`💎 LIMITED — Chỉ 1 căn độc bản: ${d.type} ${areaDisplay} ${d.loc} ${priceDisplay}`],'Nghi ngờ':[`✅ CAM KẾT THẬT: ${d.type} ${d.loc} — Sổ hồng chính chủ, pháp lý 100% rõ`,`🔍 KIỂM CHỨNG ĐƯỢC: Công chứng ngay, không ẩn phí`]};
+  const hooks={'Tham':[`💥 HIẾM CÓ! ${d.type} ${d.loc} chỉ ${d.price} — Cơ hội không tới lần 2!`,`🔥 Deal hời: ${d.type} ${d.area} tại ${d.loc} giá ${d.price}`],'Sân':[`✅ ${d.type.toUpperCase()} ${d.loc} — ${d.price} — ${d.area} — SỔ HỒNG — LIÊN HỆ NGAY`,`⚡ Cần nhà? Đây. ${d.type} ${d.loc} — ${d.price}. Không lòng vòng.`],'Si':[`🤔 Đang phân vân mua nhà? Xem căn ${d.type} này — mọi thứ rõ ràng A-Z!`,`📖 Lần đầu mua nhà? Tôi giải thích toàn bộ về ${d.type} ${d.loc} này!`],'Ngạo mạn':[`👑 Không phải ai cũng đủ tầm sở hữu ${d.type} này tại ${d.loc}`,`💎 LIMITED — Chỉ 1 căn độc bản: ${d.type} ${d.area} ${d.loc} ${d.price}`],'Nghi ngờ':[`✅ CAM KẾT THẬT: ${d.type} ${d.loc} — Sổ hồng chính chủ, pháp lý 100% rõ`,`🔍 KIỂM CHỨNG ĐƯỢC: Công chứng ngay, không ẩn phí`]};
   const hk=hooks[py]||hooks['Si'];const mh=hk[0];
   const cta=gs.includes('Chốt nhanh')?`\n⏰ CHỈ HÔM NAY — Nhắn ngay trước khi ai chốt!\n📲 ${ct}`:gs.includes('Thu lead')?`\n💬 Nhắn "XEM NHÀ" nhận thêm ảnh + thông tin\n📲 ${ct}`:`\n❓ Bạn đang tìm loại nhà nào? Comment bên dưới!\n👍 Like & Share nếu hữu ích!`;
   let body='';
@@ -375,7 +325,7 @@ function renderPlt(){
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function cpEl(id){const el=document.getElementById(id);if(!el)return;cpTxt(el.textContent||el.innerText);}
 function cpTxt(t){navigator.clipboard.writeText(t).then(()=>toast('✅ Đã sao chép!')).catch(()=>{const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');document.body.removeChild(a);toast('✅ Đã sao chép!');});}
-function clearGen(){['i_type','i_price','i_area','i_loc','i_pros','i_diff','i_floors','i_w','i_d','i_reason','i_legal'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});document.getElementById('outArea').classList.remove('on');VS=[];}
+function clearGen(){['i_type','i_price','i_area','i_loc','i_pros','i_diff'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});document.getElementById('outArea').classList.remove('on');VS=[];}
 function goSch(){if(schedProp)document.getElementById('sch_prop').value=schedProp;nav('sch');}
 function goScr(){if(VS.length)document.getElementById('scrTxt').value=VS[VI][PLT]||VS[VI].fb||'';nav('scr');}
 function autoFillSch(){if(schedProp){document.getElementById('sch_prop').value=schedProp;toast('✅ Đã lấy từ content!');}else document.getElementById('schNoContent').classList.remove('hidden');}
@@ -463,247 +413,102 @@ function toggleSv(i){document.getElementById('svs'+i).classList.toggle('open');}
 function toggleCb(i,j){const cb=document.getElementById(`cb_${i}_${j}`);cb.classList.toggle('checked');cb.textContent=cb.classList.contains('checked')?'✓':'';}
 
 function doSurveyReport(){
-  const type=V('sv_type')||'',addr=V('sv_addr')||'BĐS',price=V('sv_price'),area=V('sv_area'),floors=V('sv_floors'),w=V('sv_w'),d=V('sv_d'),pros=V('sv_pros'),cons=V('sv_cons'),reason=V('sv_reason'),legal=V('sv_legal');
+  const addr=V('sv_addr')||'BĐS',price=V('sv_price'),area=V('sv_area'),floors=V('sv_floors'),w=V('sv_w'),d=V('sv_d'),pros=V('sv_pros'),cons=V('sv_cons'),reason=V('sv_reason'),legal=V('sv_legal');
   const pArr=pros.split('\n').filter(x=>x.trim());const cArr=cons.split('\n').filter(x=>x.trim());
   const checked=[];SURVEY_STEPS.forEach((s,i)=>{s.items.forEach((item,j)=>{if(document.getElementById(`cb_${i}_${j}`)?.classList.contains('checked'))checked.push(`[Bước ${s.num}] ${item}`);});});
-  svData={type,addr,price,area,floors,w,d,pros,cons,reason,legal,txn:pst.sv_txn||'Bán',buyer:pst.sv_buyer||'Mua ở'};
+  svData={addr,price,area,floors,w,d,pros,cons,reason,legal};
   document.getElementById('svReport').innerHTML=`<div class="sec">📊 Báo cáo 5x5 — ${addr}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:12px"><div class="card" style="border-color:rgba(62,207,142,.3)"><div class="ctit" style="margin-bottom:8px"><span style="color:var(--gr)">✅</span>5 Ưu Điểm</div>${pArr.length?pArr.map((p,i)=>`<div style="display:flex;gap:5px;margin-bottom:5px;font-size:.76rem;color:var(--t2)"><span style="color:var(--gr);font-weight:700">${i+1}.</span>${p}</div>`).join(''):'<div style="font-size:.74rem;color:var(--t3)">Chưa nhập</div>'}</div><div class="card" style="border-color:rgba(239,83,80,.3)"><div class="ctit" style="margin-bottom:8px"><span style="color:var(--rd)">❌</span>5 Nhược Điểm</div>${cArr.length?cArr.map((c,i)=>`<div style="display:flex;gap:5px;margin-bottom:5px;font-size:.76rem;color:var(--t2)"><span style="color:var(--rd);font-weight:700">${i+1}.</span>${c}</div>`).join(''):'<div style="font-size:.74rem;color:var(--t3)">Chưa nhập</div>'}</div></div>${reason||legal?`<div class="card" style="margin-bottom:11px"><div class="ctit" style="margin-bottom:8px"><span class="dot"></span>🔍 Đọc vị</div>${reason?`<div style="font-size:.77rem;color:var(--t2);margin-bottom:5px">❓ Lý do bán: <strong>${reason}</strong></div>`:''} ${legal?`<div style="font-size:.77rem;color:var(--t2)">📋 Pháp lý: <strong>${legal}</strong></div>`:''}</div>`:''} ${checked.length?`<div class="card" style="margin-bottom:11px"><div class="ctit" style="margin-bottom:8px"><span class="dot"></span>✅ Đã kiểm tra ${checked.length}/${SURVEY_STEPS.reduce((s,st)=>s+st.items.length,0)} mục</div>${checked.map(item=>`<div style="font-size:.72rem;color:var(--gr);margin-bottom:4px">✓ ${item}</div>`).join('')}</div>`:''}<div style="display:flex;gap:7px;flex-wrap:wrap"><button class="btn btn-g btn-sm" onclick="cpTxt(buildSvTxt())">📋 Copy báo cáo</button><button class="btn btn-b btn-sm" onclick="dlTxt(buildSvTxt(),'bao-cao-khao-sat.txt')">📄 Xuất .txt</button><button class="btn btn-b btn-sm" onclick="saveOutputToLibrary('📋 Khảo sát: '+(svData.addr||'BĐS'),buildSvTxt(),'survey')">💾 Lưu</button><button class="btn btn-r btn-sm" onclick="document.getElementById('svReport').classList.add('hidden')">🗑️</button></div>`;
   document.getElementById('svReport').classList.remove('hidden');
 }
 function buildSvTxt(){const d=svData;return`BÁO CÁO KHẢO SÁT NHÀ\n${'='.repeat(40)}\nĐịa chỉ: ${d.addr}\nGiá: ${d.price} | DT: ${d.area}m² | ${d.floors} tầng (${d.w}x${d.d}m)\n\n✅ 5 ƯU ĐIỂM:\n${d.pros}\n\n❌ 5 NHƯỢC ĐIỂM:\n${d.cons}\n\nLý do bán: ${d.reason}\nPháp lý: ${d.legal}\n${'='.repeat(40)}`;}
 function svToContent(){
-  if(!svData.addr && !document.getElementById('sv_addr')?.value){
-    return toast('⚠️ Chưa có dữ liệu khảo sát! Hãy nhập thông tin trước.');
-  }
-
-  // Đọc trực tiếp từ form survey nếu svData chưa được lưu
-  const d = {
-    type: document.getElementById('sv_type')?.value || svData.type || '',
-    price: document.getElementById('sv_price')?.value || svData.price || '',
-    area: document.getElementById('sv_area')?.value || svData.area || '',
-    addr: document.getElementById('sv_addr')?.value || svData.addr || '',
-    floors: document.getElementById('sv_floors')?.value || svData.floors || '',
-    w: document.getElementById('sv_w')?.value || svData.w || '',
-    d: document.getElementById('sv_d')?.value || svData.d || '',
-    pros: document.getElementById('sv_pros')?.value || svData.pros || '',
-    cons: document.getElementById('sv_cons')?.value || svData.cons || '',
-    reason: document.getElementById('sv_reason')?.value || svData.reason || '',
-    legal: document.getElementById('sv_legal')?.value || svData.legal || '',
-    txn: pst.sv_txn || 'Bán',
-    buyer: pst.sv_buyer || 'Mua ở'
-  };
-
-  if(!d.addr) return toast('⚠️ Chưa có địa chỉ! Nhập địa chỉ trước khi chuyển.');
-
-  // Clear form gen
-  ['i_type','i_price','i_area','i_loc','i_pros','i_diff','i_floors','i_w','i_d','i_reason','i_legal'].forEach(id=>{
-    const e=document.getElementById(id); if(e) e.value='';
+  if(!svData.addr)return toast('⚠️ Chưa có dữ liệu khảo sát!');
+  // Clear form
+  ['i_type','i_price','i_area','i_loc','i_pros','i_diff'].forEach(id=>{
+    const e=document.getElementById(id);if(e)e.value='';
   });
 
-  // 1. Loại nhà
-  let houseType = d.type || 'Nhà phố';
-  if(!d.type && d.floors) {
-    if(parseInt(d.floors) > 4) houseType = 'Biệt thự';
-    else if(parseFloat(d.area) < 50 && parseInt(d.floors) <= 1) houseType = 'Đất nền';
-  }
-  document.getElementById('i_type').value = houseType;
+  // 1. Loại nhà: detect thông minh
+  let houseType='Nhà phố';
+  if(svData.floors && parseInt(svData.floors)>4) houseType='Biệt thự';
+  else if(svData.area && parseFloat(svData.area)<50 && (!svData.floors || parseInt(svData.floors)<=1)) houseType='Đất nền';
+  document.getElementById('i_type').value=houseType;
 
-  // 2. Giá - chuẩn hóa
-  const priceNum = parseFloat(d.price);
-  if(priceNum > 0) {
-    document.getElementById('i_price').value = priceNum;
-  }
+  // 2. Giá
+  document.getElementById('i_price').value=svData.price||'';
 
-  // 3. Diện tích - number
-  const areaNum = parseFloat(d.area);
-  if(areaNum > 0) {
-    document.getElementById('i_area').value = areaNum;
-  }
+  // 3. Diện tích
+  document.getElementById('i_area').value=svData.area?svData.area+'m²':'';
 
   // 4. Vị trí
-  document.getElementById('i_loc').value = d.addr;
+  document.getElementById('i_loc').value=svData.addr;
 
-  // 5. Số tầng, ngang, dài
-  if(d.floors) document.getElementById('i_floors').value = d.floors;
-  if(d.w) document.getElementById('i_w').value = d.w;
-  if(d.d) document.getElementById('i_d').value = d.d;
-
-  // 6. Lý do bán, pháp lý
-  if(d.reason) document.getElementById('i_reason').value = d.reason;
-  if(d.legal) document.getElementById('i_legal').value = d.legal;
-
-  // 7. PROS: ưu điểm + pháp lý (nếu chưa có trong pros)
-  let prosArr = [];
-  if(d.pros) {
-    prosArr = d.pros.split('\n').map(s=>s.trim()).filter(s=>s.length>0 && !s.match(/^\d+[\.\)]/));
+  // 5. PROS: TẤT CẢ ưu điểm + pháp lý
+  let prosArr=[];
+  if(svData.pros){
+    prosArr=svData.pros.split('\n').map(s=>s.trim()).filter(s=>s.length>0);
   }
-  if(d.legal && !prosArr.some(p=>p.toLowerCase().includes('sổ') || p.toLowerCase().includes('pháp lý'))) {
-    prosArr.unshift(d.legal);
+  if(svData.legal && !prosArr.some(p=>p.toLowerCase().includes('sổ')||p.toLowerCase().includes('pháp lý'))){
+    prosArr.unshift(svData.legal);
   }
-  document.getElementById('i_pros').value = prosArr.join(', ');
+  document.getElementById('i_pros').value=prosArr.join(', ');
 
-  // 8. DIFF: điểm khác biệt (logic thông minh nhưng có kiểm soát)
-  let diffArr = [];
-  // Lấy ưu điểm nổi bật nhất
-  if(prosArr.length > 0) diffArr.push(prosArr[0]);
-
-  // Lý do bán gấp
-  if(d.reason && d.reason.toLowerCase().match(/gấp|nợ|chia|chuyển|kẹt/)) {
-    diffArr.push('Chủ cần bán gấp — cơ hội thương lượng tốt');
+  // 6. DIFF: Logic chuyên nghiệp
+  let diffArr=[];
+  if(prosArr.length>0) diffArr.push(prosArr[0]); // standout
+  if(svData.reason && svData.reason.toLowerCase().match(/gấp|nợ|chia/)){
+    diffArr.push('Chủ cần bán gấp — cơ hội thương lượng');
   }
-
-  // Pháp lý sạch
-  if(d.legal && d.legal.toLowerCase().includes('sổ hồng') && !diffArr.some(x=>x.includes('Sổ hồng'))) {
-    diffArr.push('Sổ hồng riêng — công chứng ngay trong ngày');
+  if(svData.legal && svData.legal.toLowerCase().includes('sổ hồng')){
+    if(!diffArr.some(d=>d.includes('Sổ hồng'))) diffArr.push('Sổ hồng riêng — công chứng ngay');
   }
-
-  // Từ định giá
-  const lastVal = localStorage.getItem('bds_last_val');
-  if(lastVal) {
-    try {
-      const v = JSON.parse(lastVal);
-      if(v.isGood && v.diffPct) diffArr.push('Giá tốt hơn thị trường ' + v.diffPct + '%');
-    } catch(e) {}
+  // Từ định giá nếu có
+  const lastVal=localStorage.getItem('bds_last_val');
+  if(lastVal){
+    try{const v=JSON.parse(lastVal);if(v.isGood) diffArr.push('Giá tốt hơn thị trường '+v.diffPct+'%');}catch(e){}
   }
-
-  // Xử lý nhược điểm thành điểm mạnh
-  if(d.cons) {
-    const consArr = d.cons.split('\n').map(s=>s.trim()).filter(s=>s.length>0);
-    consArr.forEach(c => {
-      const cl = c.toLowerCase();
-      if(cl.includes('cũ') || cl.includes('xập xệ')) 
-        diffArr.push('Nhà cũ nhưng móng chắc — tiết kiệm so với xây mới');
-      if(cl.includes('nhỏ') || cl.includes('chật')) 
-        diffArr.push('Diện tích vừa phải — dễ thanh khoản, dễ cho thuê');
-      if(cl.includes('hẻm')) 
-        diffArr.push('Hẻm an ninh — ít xe qua lại, yên tĩnh');
+  // Từ nhược điểm xử lý
+  if(svData.cons){
+    const consArr=svData.cons.split('\n').map(s=>s.trim()).filter(s=>s.length>0);
+    consArr.forEach(c=>{
+      if(c.toLowerCase().includes('cũ')) diffArr.push('Nhà cũ nhưng móng chắc — tiết kiệm xây mới');
+      if(c.toLowerCase().includes('nhỏ')) diffArr.push('Diện tích vừa — dễ thanh khoản');
     });
   }
+  document.getElementById('i_diff').value=diffArr.filter((v,i,a)=>a.indexOf(v)===i).join(', ');
 
-  // Loại bỏ trùng lặp
-  document.getElementById('i_diff').value = diffArr.filter((v,i,a)=>a.indexOf(v)===i).join(', ');
-
-  // 9. Loại giao dịch từ survey
-  document.querySelectorAll('#txnPills .pill').forEach(p=>p.classList.remove('on'));
-  const txnPill = document.querySelector('#txnPills .pill[data-v="' + d.txn + '"]');
-  if(txnPill) { txnPill.classList.add('on'); pst.txn = d.txn; }
-  else { 
-    const defaultTxn = document.querySelector('#txnPills .pill[data-v="Bán"]');
-    if(defaultTxn) { defaultTxn.classList.add('on'); pst.txn = 'Bán'; }
+  // 7. Auto-detect loại giao dịch
+  const priceStr=(svData.price||'').toLowerCase();
+  if(priceStr.includes('tháng') || priceStr.includes('triệu/th')){
+    document.querySelectorAll('#txnPills .pill').forEach(p=>p.classList.remove('on'));
+    const rentPill=document.querySelector('#txnPills .pill[data-v="Cho thuê"]');
+    if(rentPill){rentPill.classList.add('on');pst.txn='Cho thuê';}
+  }else{
+    document.querySelectorAll('#txnPills .pill').forEach(p=>p.classList.remove('on'));
+    const sellPill=document.querySelector('#txnPills .pill[data-v="Bán"]');
+    if(sellPill){sellPill.classList.add('on');pst.txn='Bán';}
   }
 
-  // 10. KH mục tiêu từ survey
+  // 8. Auto-detect KH mục tiêu
+  const allText=(svData.pros+' '+svData.cons+' '+svData.reason).toLowerCase();
+  let buyerType='Mua ở';
+  if(allText.includes('đầu tư') || allText.includes('sinh lời') || allText.includes('cho thuê')) buyerType='Đầu tư';
+  else if(allText.includes('thuê lại')) buyerType='Cho thuê lại';
   document.querySelectorAll('#buyerPills .pill').forEach(p=>p.classList.remove('on'));
-  const buyerPill = document.querySelector('#buyerPills .pill[data-v="' + d.buyer + '"]');
-  if(buyerPill) { buyerPill.classList.add('on'); pst.buyer = d.buyer; }
-  else {
-    // Auto-detect nếu không có
-    const allText = (d.pros + ' ' + d.cons + ' ' + d.reason).toLowerCase();
-    let autoBuyer = 'Mua ở';
-    if(allText.includes('đầu tư') || allText.includes('sinh lời') || allText.includes('cho thuê')) autoBuyer = 'Đầu tư';
-    const autoPill = document.querySelector('#buyerPills .pill[data-v="' + autoBuyer + '"]');
-    if(autoPill) { autoPill.classList.add('on'); pst.buyer = autoBuyer; }
-  }
+  const buyerPill=document.querySelector('#buyerPills .pill[data-v="'+buyerType+'"]');
+  if(buyerPill){buyerPill.classList.add('on');pst.buyer=buyerType;}
 
   nav('gen');
-  toast('✅ Đã điền từ Khảo Sát! Kiểm tra và chỉnh sửa nếu cần.');
+  toast('✅ Đã điền đầy đủ từ Khảo Sát! Kiểm tra và chỉnh sửa nếu cần.');
 }
 function svToValuation(){if(svData.addr){document.getElementById('val_addr').value=svData.addr;document.getElementById('val_total').value=svData.price?.replace(/[^0-9.]/g,'')||'';document.getElementById('val_area').value=svData.area||'';document.getElementById('val_floors').value=svData.floors||'';document.getElementById('val_w').value=svData.w||'';document.getElementById('val_d').value=svData.d||'';document.getElementById('val_pros').value=svData.pros||'';document.getElementById('val_cons').value=svData.cons||'';document.getElementById('val_reason').value=svData.reason||'';document.getElementById('val_legal').value=svData.legal||'';}nav('valuation');toast('✅ Đã điền vào form Định Giá!');}
-function clearSurvey(){['sv_type','sv_addr','sv_price','sv_area','sv_floors','sv_w','sv_d','sv_pros','sv_cons','sv_reason','sv_legal'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});SURVEY_STEPS.forEach((s,i)=>{s.items.forEach((it,j)=>{const cb=document.getElementById(`cb_${i}_${j}`);if(cb){cb.classList.remove('checked');cb.textContent='';}});const n=document.getElementById('svn_'+i);if(n)n.value='';});document.getElementById('svReport').classList.add('hidden');svData={};document.querySelectorAll('.sv-step.open').forEach(el=>el.classList.remove('open'));toast('🗑️ Đã xóa!');}
-// ===================== GEN ↔ SURVEY SYNC =====================
-function genToSurvey(){
-  // Lấy dữ liệu từ form gen
-  const d = {
-    type: V('i_type') || '',
-    price: V('i_price') || '',
-    area: V('i_area') || '',
-    loc: V('i_loc') || '',
-    floors: V('i_floors') || '',
-    w: V('i_w') || '',
-    d: V('i_d') || '',
-    pros: V('i_pros') || '',
-    diff: V('i_diff') || '',
-    reason: V('i_reason') || '',
-    legal: V('i_legal') || '',
-    txn: pst.txn || 'Bán',
-    buyer: pst.buyer || 'Mua ở'
-  };
-
-  if(!d.loc && !d.type) return toast('⚠️ Chưa có dữ liệu Content! Nhập thông tin trước.');
-
-  // Điền vào form survey
-  if(d.type) document.getElementById('sv_type').value = d.type;
-  if(d.price) document.getElementById('sv_price').value = d.price;
-  if(d.area) document.getElementById('sv_area').value = d.area;
-  if(d.loc) document.getElementById('sv_addr').value = d.loc;
-  if(d.floors) document.getElementById('sv_floors').value = d.floors;
-  if(d.w) document.getElementById('sv_w').value = d.w;
-  if(d.d) document.getElementById('sv_d').value = d.d;
-  if(d.reason) document.getElementById('sv_reason').value = d.reason;
-  if(d.legal) document.getElementById('sv_legal').value = d.legal;
-
-  // Pros từ gen → survey (chuyển thành danh sách)
-  if(d.pros) {
-    const prosArr = d.pros.split(',').map(s=>s.trim()).filter(s=>s.length>0);
-    document.getElementById('sv_pros').value = prosArr.map((p,i) => (i+1) + '. ' + p).join('\n');
-  }
-
-  // Diff từ gen → survey cons (nếu là nhược điểm) hoặc thêm vào pros
-  if(d.diff) {
-    const diffArr = d.diff.split(',').map(s=>s.trim()).filter(s=>s.length>0);
-    // Phân loại: nếu diff chứa từ "cũ", "nhỏ", "hẻm" → cho vào cons
-    let consArr = [], extraPros = [];
-    diffArr.forEach(item => {
-      const il = item.toLowerCase();
-      if(il.includes('cũ') || il.includes('nhỏ') || il.includes('hẻm') || il.includes('thiếu')) {
-        consArr.push(item);
-      } else {
-        extraPros.push(item);
-      }
-    });
-    if(consArr.length > 0) {
-      document.getElementById('sv_cons').value = consArr.map((c,i) => (i+1) + '. ' + c).join('\n');
-    }
-    // Thêm extra pros vào sv_pros
-    if(extraPros.length > 0) {
-      const currentPros = document.getElementById('sv_pros').value || '';
-      const newPros = extraPros.map((p,i) => {
-        const idx = currentPros.split('\n').filter(l=>l.trim()).length + i + 1;
-        return idx + '. ' + p;
-      }).join('\n');
-      document.getElementById('sv_pros').value = currentPros ? currentPros + '\n' + newPros : newPros;
-    }
-  }
-
-  // Loại giao dịch
-  document.querySelectorAll('#svTxnPills .pill').forEach(p=>p.classList.remove('on'));
-  const svTxnPill = document.querySelector('#svTxnPills .pill[data-v="' + d.txn + '"]');
-  if(svTxnPill) { svTxnPill.classList.add('on'); pst.sv_txn = d.txn; }
-
-  // KH mục tiêu
-  document.querySelectorAll('#svBuyerPills .pill').forEach(p=>p.classList.remove('on'));
-  const svBuyerPill = document.querySelector('#svBuyerPills .pill[data-v="' + d.buyer + '"]');
-  if(svBuyerPill) { svBuyerPill.classList.add('on'); pst.sv_buyer = d.buyer; }
-
-  // Cập nhật svData
-  svData = { ...d, addr: d.loc, cons: document.getElementById('sv_cons').value };
-
-  nav('survey');
-  toast('✅ Đã cập nhật Khảo Sát từ Content! Kiểm tra và chỉnh sửa nếu cần.');
-}
-
-function loadFromContent(){
-  // Alias cho genToSurvey nhưng từ survey page
-  genToSurvey();
-}
-
+function clearSurvey(){['sv_addr','sv_price','sv_area','sv_floors','sv_w','sv_d','sv_pros','sv_cons','sv_reason','sv_legal'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});SURVEY_STEPS.forEach((s,i)=>{s.items.forEach((it,j)=>{const cb=document.getElementById(`cb_${i}_${j}`);if(cb){cb.classList.remove('checked');cb.textContent='';}});const n=document.getElementById('svn_'+i);if(n)n.value='';});document.getElementById('svReport').classList.add('hidden');svData={};document.querySelectorAll('.sv-step.open').forEach(el=>el.classList.remove('open'));toast('🗑️ Đã xóa!');}
 
 // ===================== VALUATION =====================
-function autoFillVal(){if(svData.addr){document.getElementById('val_addr').value=svData.addr;document.getElementById('val_total').value=svData.price||'';document.getElementById('val_area').value=svData.area||'';document.getElementById('val_floors').value=svData.floors||'';document.getElementById('val_w').value=svData.w||'';document.getElementById('val_d').value=svData.d||'';document.getElementById('val_pros').value=svData.pros||'';document.getElementById('val_cons').value=svData.cons||'';document.getElementById('val_reason').value=svData.reason||'';document.getElementById('val_legal').value=svData.legal||'';toast('✅ Đã lấy từ khảo sát!');}else toast('⚠️ Chưa có dữ liệu khảo sát!');}
+function autoFillVal(){if(svData.addr){document.getElementById('val_addr').value=svData.addr;document.getElementById('val_total').value=svData.price?.replace(/[^0-9.]/g,'')||'';document.getElementById('val_area').value=svData.area||'';document.getElementById('val_floors').value=svData.floors||'';document.getElementById('val_w').value=svData.w||'';document.getElementById('val_d').value=svData.d||'';document.getElementById('val_pros').value=svData.pros||'';document.getElementById('val_cons').value=svData.cons||'';document.getElementById('val_reason').value=svData.reason||'';document.getElementById('val_legal').value=svData.legal||'';toast('✅ Đã lấy từ khảo sát!');}else toast('⚠️ Chưa có dữ liệu khảo sát!');}
 
 async function doValuation(){
-  const addr=V('val_addr')||'BĐS',total=parseFloat(V('val_total'))||0,area=parseFloat(V('val_area'))||0,floors=parseFloat(V('val_floors'))||1,w=parseFloat(V('val_w'))||0,dv=parseFloat(V('val_d'))||0,quality=parseFloat(document.getElementById('val_quality').value)||3.5,market=parseFloat(V('val_market'))||0,pros=V('val_pros'),cons=V('val_cons'),reason=V('val_reason'),legal=V('val_legal');
-  if(total <= 0 || area <= 0) return toast('⚠️ Nhập giá và diện tích hợp lệ!');
+  const addr=V('val_addr')||'BĐS',total=parseFloat(V('val_total'))||7.9,area=parseFloat(V('val_area'))||82,floors=parseFloat(V('val_floors'))||3,w=parseFloat(V('val_w'))||4.7,dv=parseFloat(V('val_d'))||17.5,quality=parseFloat(document.getElementById('val_quality').value)||3.5,market=parseFloat(V('val_market'))||0,pros=V('val_pros'),cons=V('val_cons'),reason=V('val_reason'),legal=V('val_legal');
   document.getElementById('valOut').classList.add('hidden');await sleep(400);
   const buildCost=quality*w*dv*floors/1e3;const landVal=total-buildCost;const landUnit=landVal/area*1e3;
   const marketVal=market?market*area/1e3:0;const diff=market?total-marketVal:0;const diffPct=market?Math.abs((diff/marketVal)*100).toFixed(1):0;const isGood=market&&diff<0;
@@ -715,19 +520,12 @@ async function doValuation(){
 function clearValuation(){['val_addr','val_total','val_area','val_floors','val_w','val_d','val_market','val_pros','val_cons','val_reason','val_legal'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});document.getElementById('valOut').classList.add('hidden');toast('🗑️ Đã xóa!');}
 function valToContent(){
   const total=V('val_total'),area=V('val_area'),addr=V('val_addr');
-  const floors=V('val_floors'),w=V('val_w'),d=V('val_d');
   const pros=V('val_pros'),cons=V('val_cons'),reason=V('val_reason'),legal=V('val_legal');
   const market=V('val_market');
 
-  // Điền đầy đủ các trường
-  if(total) document.getElementById('i_price').value = total;
-  if(area) document.getElementById('i_area').value = area;
-  if(addr) document.getElementById('i_loc').value = addr;
-  if(floors) document.getElementById('i_floors').value = floors;
-  if(w) document.getElementById('i_w').value = w;
-  if(d) document.getElementById('i_d').value = d;
-  if(reason) document.getElementById('i_reason').value = reason;
-  if(legal) document.getElementById('i_legal').value = legal;
+  document.getElementById('i_price').value=total?total+' tỷ':'';
+  document.getElementById('i_area').value=area?area+'m²':'';
+  document.getElementById('i_loc').value=addr;
 
   // Pros: tất cả ưu điểm + pháp lý
   let prosArr=[];
@@ -742,10 +540,10 @@ function valToContent(){
   if(prosArr.length>0) diffArr.push(prosArr[0]);
   if(market && total && area){
     const q=parseFloat(document.getElementById('val_quality').value||3.5);
-    const wf=parseFloat(w||4);
-    const df=parseFloat(d||15);
-    const ff=parseFloat(floors||1);
-    const buildCost=q*wf*df*ff/1000;
+    const w=parseFloat(V('val_w')||4);
+    const d=parseFloat(V('val_d')||15);
+    const f=parseFloat(V('val_floors')||1);
+    const buildCost=q*w*d*f/1000;
     const landVal=parseFloat(total)-buildCost;
     const landUnit=landVal/parseFloat(area)*1000;
     const marketUnit=parseFloat(market);
