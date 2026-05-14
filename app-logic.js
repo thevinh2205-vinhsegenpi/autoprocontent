@@ -146,7 +146,7 @@ const DEFAULT_SCRIPTS=[
 ];
 
 // ===================== STATE =====================
-let VS=[],VI=0,PLT='fb',pst={ver:'1',abp:'FB',obj:'price',story_dur:'15s',story_plt:'FB Story',ht_plt:'FB',cl_type:'Nhà phố',svTxn:'Bán',svBuyer:'Mua ở',valTxn:'Bán',valBuyer:'Mua ở'},
+let VS=[],VI=0,PLT='fb',
 pst={ver:'1',abp:'FB',obj:'price',story_dur:'15s',story_plt:'FB Story',ht_plt:'FB',cl_type:'Nhà phố'},
 crm=[],tpl=[],
 authorProf={name:'Trần Thế Vinh',title:'Chuyên gia tư vấn BĐS TP.HCM',phone:'0938.121.937',zalo:'0792.227.522',quote:'Lời nói có thể truyền cảm hứng, nhưng chỉ có hành động mới mang bạn đến gần ước mơ.',avatar:'',link:'https://zalo.me/0792227522',social:'@tranthevinh.bds'},
@@ -251,7 +251,7 @@ function toggleAuto(){document.getElementById('manOpts').classList.toggle('hidde
 function V(id){const e=document.getElementById(id);return e?e.value.trim():'';}
 
 // ===================== CONTENT GENERATION =====================
-function gfd(){return{type:V('i_type')||'Nhà phố',price:V('i_price')||'5 tỷ',area:V('i_area')||'80m²',loc:V('i_loc')||'TP.HCM',pros:V('i_pros')||'Sổ hồng riêng, hẻm xe hơi',diff:V('i_diff')||'Giá tốt, vị trí đẹp',floors:V('i_floors')||'',w:V('i_w')||'',d:V('i_d')||'',reason:V('i_reason')||'',legal:V('i_legal')||'',cons:V('i_cons')||''};}
+function gfd(){return{type:V('i_type')||'Nhà phố',price:V('i_price')||'5 tỷ',area:V('i_area')||'80m²',loc:V('i_loc')||'TP.HCM',pros:V('i_pros')||'Sổ hồng riêng, hẻm xe hơi',diff:V('i_diff')||'Giá tốt, vị trí đẹp'};}
 function autoPsy(d){if(parseFloat(d.price)>=10||d.type.includes('biệt thự'))return'Ngạo mạn';if(d.diff.toLowerCase().match(/giá.*(tốt|hời|thấp|rẻ)/))return'Tham';if(d.pros.includes('sổ hồng')||d.pros.includes('pháp lý'))return'Nghi ngờ';return'Si';}
 function autoFrm(py){return{'Tham':'AIDA','Sân':'PAS','Si':'FAB','Ngạo mạn':'4P','Nghi ngờ':'BAB'}[py]||'AIDA';}
 
@@ -326,9 +326,9 @@ function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g
 function cpEl(id){const el=document.getElementById(id);if(!el)return;cpTxt(el.textContent||el.innerText);}
 function cpTxt(t){navigator.clipboard.writeText(t).then(()=>toast('✅ Đã sao chép!')).catch(()=>{const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');document.body.removeChild(a);toast('✅ Đã sao chép!');});}
 function clearGen(){['i_type','i_price','i_area','i_loc','i_pros','i_diff'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});document.getElementById('outArea').classList.remove('on');VS=[];}
-function goSch(){if(schedProp && typeof schedProp === 'string')document.getElementById('sch_prop').value=schedProp;nav('sch');}
+function goSch(){if(schedProp)document.getElementById('sch_prop').value=schedProp;nav('sch');}
 function goScr(){if(VS.length)document.getElementById('scrTxt').value=VS[VI][PLT]||VS[VI].fb||'';nav('scr');}
-function autoFillSch(){if(schedProp && typeof schedProp === 'string'){document.getElementById('sch_prop').value=schedProp;toast('✅ Đã lấy từ content!');}else document.getElementById('schNoContent').classList.remove('hidden');}
+function autoFillSch(){if(schedProp){document.getElementById('sch_prop').value=schedProp;toast('✅ Đã lấy từ content!');}else document.getElementById('schNoContent').classList.remove('hidden');}
 function autoFillScr(plt){if(VS.length){document.getElementById('scrTxt').value=VS[VI][plt]||VS[VI].fb||'';toast('✅ Đã lấy!');}else toast('⚠️ Chưa có content. Tạo content trước!');}
 
 // ===================== SCHEDULE =====================
@@ -413,67 +413,20 @@ function toggleSv(i){document.getElementById('svs'+i).classList.toggle('open');}
 function toggleCb(i,j){const cb=document.getElementById(`cb_${i}_${j}`);cb.classList.toggle('checked');cb.textContent=cb.classList.contains('checked')?'✓':'';}
 
 function doSurveyReport(){
-  const addr=V('svData.loc')||'BĐS',price=V('sv_price'),area=V('sv_area'),floors=V('sv_floors'),w=V('sv_w'),d=V('sv_d'),pros=V('sv_pros'),cons=V('sv_cons'),reason=V('sv_reason'),legal=V('sv_legal');
+  const addr=V('sv_addr')||'BĐS',price=V('sv_price'),area=V('sv_area'),floors=V('sv_floors'),w=V('sv_w'),d=V('sv_d'),pros=V('sv_pros'),cons=V('sv_cons'),reason=V('sv_reason'),legal=V('sv_legal');
   const pArr=pros.split('\n').filter(x=>x.trim());const cArr=cons.split('\n').filter(x=>x.trim());
   const checked=[];SURVEY_STEPS.forEach((s,i)=>{s.items.forEach((item,j)=>{if(document.getElementById(`cb_${i}_${j}`)?.classList.contains('checked'))checked.push(`[Bước ${s.num}] ${item}`);});});
-  svData={
-    type:V('sv_type')||'Nhà phố',
-    txn:pst.svTxn||'Bán',
-    buyer:pst.svBuyer||'Mua ở',
-    addr:V('sv_loc')||'BĐS',
-    price:V('sv_price'),
-    area:V('sv_area'),
-    floors:V('sv_floors'),
-    w:V('sv_w'),
-    d:V('sv_d'),
-    pros:V('sv_pros'),
-    cons:V('sv_cons'),
-    reason:V('sv_reason'),
-    legal:V('sv_legal'),
-    diff:V('sv_diff')||''
-  };
-  document.getElementById('svReport').innerHTML=`<div class="sec">📊 Báo cáo 5x5 — ${addr}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:12px"><div class="card" style="border-color:rgba(62,207,142,.3)"><div class="ctit" style="margin-bottom:8px"><span style="color:var(--gr)">✅</span>5 Ưu Điểm</div>${pArr.length?pArr.map((p,i)=>`<div style="display:flex;gap:5px;margin-bottom:5px;font-size:.76rem;color:var(--t2)"><span style="color:var(--gr);font-weight:700">${i+1}.</span>${p}</div>`).join(''):'<div style="font-size:.74rem;color:var(--t3)">Chưa nhập</div>'}</div><div class="card" style="border-color:rgba(239,83,80,.3)"><div class="ctit" style="margin-bottom:8px"><span style="color:var(--rd)">❌</span>5 Nhược Điểm</div>${cArr.length?cArr.map((c,i)=>`<div style="display:flex;gap:5px;margin-bottom:5px;font-size:.76rem;color:var(--t2)"><span style="color:var(--rd);font-weight:700">${i+1}.</span>${c}</div>`).join(''):'<div style="font-size:.74rem;color:var(--t3)">Chưa nhập</div>'}</div></div>${reason||legal?`<div class="card" style="margin-bottom:11px"><div class="ctit" style="margin-bottom:8px"><span class="dot"></span>🔍 Đọc vị</div>${reason?`<div style="font-size:.77rem;color:var(--t2);margin-bottom:5px">❓ Lý do bán: <strong>${reason}</strong></div>`:''} ${legal?`<div style="font-size:.77rem;color:var(--t2)">📋 Pháp lý: <strong>${legal}</strong></div>`:''}</div>`:''} ${checked.length?`<div class="card" style="margin-bottom:11px"><div class="ctit" style="margin-bottom:8px"><span class="dot"></span>✅ Đã kiểm tra ${checked.length}/${SURVEY_STEPS.reduce((s,st)=>s+st.items.length,0)} mục</div>${checked.map(item=>`<div style="font-size:.72rem;color:var(--gr);margin-bottom:4px">✓ ${item}</div>`).join('')}</div>`:''}<div style="display:flex;gap:7px;flex-wrap:wrap"><button class="btn btn-g btn-sm" onclick="cpTxt(buildSvTxt())">📋 Copy báo cáo</button><button class="btn btn-b btn-sm" onclick="dlTxt(buildSvTxt(),'bao-cao-khao-sat.txt')">📄 Xuất .txt</button><button class="btn btn-b btn-sm" onclick="saveOutputToLibrary('📋 Khảo sát: '+(svData.loc||'BĐS'),buildSvTxt(),'survey')">💾 Lưu</button><button class="btn btn-r btn-sm" onclick="document.getElementById('svReport').classList.add('hidden')">🗑️</button></div>`;
+  svData={addr,price,area,floors,w,d,pros,cons,reason,legal};
+  document.getElementById('svReport').innerHTML=`<div class="sec">📊 Báo cáo 5x5 — ${addr}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:12px"><div class="card" style="border-color:rgba(62,207,142,.3)"><div class="ctit" style="margin-bottom:8px"><span style="color:var(--gr)">✅</span>5 Ưu Điểm</div>${pArr.length?pArr.map((p,i)=>`<div style="display:flex;gap:5px;margin-bottom:5px;font-size:.76rem;color:var(--t2)"><span style="color:var(--gr);font-weight:700">${i+1}.</span>${p}</div>`).join(''):'<div style="font-size:.74rem;color:var(--t3)">Chưa nhập</div>'}</div><div class="card" style="border-color:rgba(239,83,80,.3)"><div class="ctit" style="margin-bottom:8px"><span style="color:var(--rd)">❌</span>5 Nhược Điểm</div>${cArr.length?cArr.map((c,i)=>`<div style="display:flex;gap:5px;margin-bottom:5px;font-size:.76rem;color:var(--t2)"><span style="color:var(--rd);font-weight:700">${i+1}.</span>${c}</div>`).join(''):'<div style="font-size:.74rem;color:var(--t3)">Chưa nhập</div>'}</div></div>${reason||legal?`<div class="card" style="margin-bottom:11px"><div class="ctit" style="margin-bottom:8px"><span class="dot"></span>🔍 Đọc vị</div>${reason?`<div style="font-size:.77rem;color:var(--t2);margin-bottom:5px">❓ Lý do bán: <strong>${reason}</strong></div>`:''} ${legal?`<div style="font-size:.77rem;color:var(--t2)">📋 Pháp lý: <strong>${legal}</strong></div>`:''}</div>`:''} ${checked.length?`<div class="card" style="margin-bottom:11px"><div class="ctit" style="margin-bottom:8px"><span class="dot"></span>✅ Đã kiểm tra ${checked.length}/${SURVEY_STEPS.reduce((s,st)=>s+st.items.length,0)} mục</div>${checked.map(item=>`<div style="font-size:.72rem;color:var(--gr);margin-bottom:4px">✓ ${item}</div>`).join('')}</div>`:''}<div style="display:flex;gap:7px;flex-wrap:wrap"><button class="btn btn-g btn-sm" onclick="cpTxt(buildSvTxt())">📋 Copy báo cáo</button><button class="btn btn-b btn-sm" onclick="dlTxt(buildSvTxt(),'bao-cao-khao-sat.txt')">📄 Xuất .txt</button><button class="btn btn-b btn-sm" onclick="saveOutputToLibrary('📋 Khảo sát: '+(svData.addr||'BĐS'),buildSvTxt(),'survey')">💾 Lưu</button><button class="btn btn-r btn-sm" onclick="document.getElementById('svReport').classList.add('hidden')">🗑️</button></div>`;
   document.getElementById('svReport').classList.remove('hidden');
 }
 function buildSvTxt(){const d=svData;return`BÁO CÁO KHẢO SÁT NHÀ\n${'='.repeat(40)}\nĐịa chỉ: ${d.addr}\nGiá: ${d.price} | DT: ${d.area}m² | ${d.floors} tầng (${d.w}x${d.d}m)\n\n✅ 5 ƯU ĐIỂM:\n${d.pros}\n\n❌ 5 NHƯỢC ĐIỂM:\n${d.cons}\n\nLý do bán: ${d.reason}\nPháp lý: ${d.legal}\n${'='.repeat(40)}`;}
 function svToContent(){
-  if(!svData.loc)return toast('⚠️ Chưa có dữ liệu khảo sát!');
+  if(!svData.addr)return toast('⚠️ Chưa có dữ liệu khảo sát!');
   // Clear form
-  ['i_type','i_price','i_area','i_loc','i_pros','i_diff','i_floors','i_w','i_d','i_reason','i_legal','i_cons'].forEach(id=>{
+  ['i_type','i_price','i_area','i_loc','i_pros','i_diff'].forEach(id=>{
     const e=document.getElementById(id);if(e)e.value='';
   });
-
-  // 1. Copy trực tiếp từ svData sang form Gen
-  document.getElementById('i_type').value=svData.type||'Nhà phố';
-  document.getElementById('i_price').value=svData.price||'';
-  document.getElementById('i_area').value=svData.area?svData.area+'m²':'';
-  document.getElementById('i_loc').value=svData.loc||'';
-  document.getElementById('i_pros').value=svData.pros||'';
-  document.getElementById('i_diff').value=svData.diff||'';
-  document.getElementById('i_floors').value=svData.floors||'';
-  document.getElementById('i_w').value=svData.w||'';
-  document.getElementById('i_d').value=svData.d||'';
-  document.getElementById('i_reason').value=svData.reason||'';
-  document.getElementById('i_legal').value=svData.legal||'';
-  document.getElementById('i_cons').value=svData.cons||'';
-
-  // 2. Loại giao dịch từ svData
-  if(svData.txn){
-    document.querySelectorAll('#txnPills .pill').forEach(p=>p.classList.remove('on'));
-    const txnPill=document.querySelector('#txnPills .pill[data-v="'+svData.txn+'"]');
-    if(txnPill){txnPill.classList.add('on');pst.txn=svData.txn;}
-  }
-
-  // 3. KH mục tiêu từ svData
-  if(svData.buyer){
-    document.querySelectorAll('#buyerPills .pill').forEach(p=>p.classList.remove('on'));
-    const buyerPill=document.querySelector('#buyerPills .pill[data-v="'+svData.buyer+'"]');
-    if(buyerPill){buyerPill.classList.add('on');pst.buyer=svData.buyer;}
-  }
-
-  nav('gen');
-  toast('✅ Đã điền đầy đủ từ Khảo Sát! Kiểm tra và chỉnh sửa nếu cần.');
-});
 
   // 1. Loại nhà: detect thông minh
   let houseType='Nhà phố';
@@ -488,7 +441,7 @@ function svToContent(){
   document.getElementById('i_area').value=svData.area?svData.area+'m²':'';
 
   // 4. Vị trí
-  document.getElementById('i_loc').value=svData.loc;
+  document.getElementById('i_loc').value=svData.addr;
 
   // 5. PROS: TẤT CẢ ưu điểm + pháp lý
   let prosArr=[];
@@ -548,59 +501,38 @@ function svToContent(){
   nav('gen');
   toast('✅ Đã điền đầy đủ từ Khảo Sát! Kiểm tra và chỉnh sửa nếu cần.');
 }
-function svToValuation(){if(svData.loc || svData.loc){document.getElementById('val_loc').value=svData.loc;document.getElementById('val_price').value=svData.price?.replace(/[^0-9.]/g,'')||'';document.getElementById('val_area').value=svData.area||'';document.getElementById('val_floors').value=svData.floors||'';document.getElementById('val_w').value=svData.w||'';document.getElementById('val_d').value=svData.d||'';document.getElementById('val_pros').value=svData.pros||'';document.getElementById('val_cons').value=svData.cons||'';document.getElementById('val_reason').value=svData.reason||'';document.getElementById('val_legal').value=svData.legal||'';}nav('valuation');toast('✅ Đã điền vào form Định Giá!');}
-function clearSurvey(){['sv_loc','sv_price','sv_area','sv_floors','sv_w','sv_d','sv_pros','sv_cons','sv_reason','sv_legal','sv_type','sv_diff'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});SURVEY_STEPS.forEach((s,i)=>{s.items.forEach((it,j)=>{const cb=document.getElementById(`cb_${i}_${j}`);if(cb){cb.classList.remove('checked');cb.textContent='';}});const n=document.getElementById('svn_'+i);if(n)n.value='';});document.getElementById('svReport').classList.add('hidden');svData={};document.querySelectorAll('.sv-step.open').forEach(el=>el.classList.remove('open'));toast('🗑️ Đã xóa!');}
+function svToValuation(){if(svData.addr){document.getElementById('val_addr').value=svData.addr;document.getElementById('val_total').value=svData.price?.replace(/[^0-9.]/g,'')||'';document.getElementById('val_area').value=svData.area||'';document.getElementById('val_floors').value=svData.floors||'';document.getElementById('val_w').value=svData.w||'';document.getElementById('val_d').value=svData.d||'';document.getElementById('val_pros').value=svData.pros||'';document.getElementById('val_cons').value=svData.cons||'';document.getElementById('val_reason').value=svData.reason||'';document.getElementById('val_legal').value=svData.legal||'';}nav('valuation');toast('✅ Đã điền vào form Định Giá!');}
+function clearSurvey(){['sv_addr','sv_price','sv_area','sv_floors','sv_w','sv_d','sv_pros','sv_cons','sv_reason','sv_legal'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});SURVEY_STEPS.forEach((s,i)=>{s.items.forEach((it,j)=>{const cb=document.getElementById(`cb_${i}_${j}`);if(cb){cb.classList.remove('checked');cb.textContent='';}});const n=document.getElementById('svn_'+i);if(n)n.value='';});document.getElementById('svReport').classList.add('hidden');svData={};document.querySelectorAll('.sv-step.open').forEach(el=>el.classList.remove('open'));toast('🗑️ Đã xóa!');}
 
 // ===================== VALUATION =====================
-function autoFillVal(){if(svData.loc || svData.loc){document.getElementById('val_loc').value=svData.loc;document.getElementById('val_price').value=svData.price?.replace(/[^0-9.]/g,'')||'';document.getElementById('val_type').value=svData.type||'Nhà phố';document.getElementById('val_area').value=svData.area||'';document.getElementById('val_floors').value=svData.floors||'';document.getElementById('val_w').value=svData.w||'';document.getElementById('val_d').value=svData.d||'';document.getElementById('val_pros').value=svData.pros||'';document.getElementById('val_cons').value=svData.cons||'';document.getElementById('val_reason').value=svData.reason||'';document.getElementById('val_legal').value=svData.legal||'';document.getElementById('val_diff').value=svData.diff||'';if(svData.txn){document.querySelectorAll('#valTxnPills .pill').forEach(p=>p.classList.remove('on'));const tp=document.querySelector('#valTxnPills .pill[data-v="'+svData.txn+'"]');if(tp){tp.classList.add('on');pst.valTxn=svData.txn;}}if(svData.buyer){document.querySelectorAll('#valBuyerPills .pill').forEach(p=>p.classList.remove('on'));const bp=document.querySelector('#valBuyerPills .pill[data-v="'+svData.buyer+'"]');if(bp){bp.classList.add('on');pst.valBuyer=svData.buyer;}}toast('✅ Đã lấy từ khảo sát!');}else toast('⚠️ Chưa có dữ liệu khảo sát!');}
+function autoFillVal(){if(svData.addr){document.getElementById('val_addr').value=svData.addr;document.getElementById('val_total').value=svData.price?.replace(/[^0-9.]/g,'')||'';document.getElementById('val_area').value=svData.area||'';document.getElementById('val_floors').value=svData.floors||'';document.getElementById('val_w').value=svData.w||'';document.getElementById('val_d').value=svData.d||'';document.getElementById('val_pros').value=svData.pros||'';document.getElementById('val_cons').value=svData.cons||'';document.getElementById('val_reason').value=svData.reason||'';document.getElementById('val_legal').value=svData.legal||'';toast('✅ Đã lấy từ khảo sát!');}else toast('⚠️ Chưa có dữ liệu khảo sát!');}
 
 async function doValuation(){
-  const addr=V('val_loc')||'BĐS',total=parseFloat(V('val_price'))||7.9,area=parseFloat(V('val_area'))||82,floors=parseFloat(V('val_floors'))||3,w=parseFloat(V('val_w'))||4.7,dv=parseFloat(V('val_d'))||17.5,quality=parseFloat(document.getElementById('val_quality').value)||3.5,market=parseFloat(V('val_market'))||0,pros=V('val_pros'),cons=V('val_cons'),reason=V('val_reason'),legal=V('val_legal');
+  const addr=V('val_addr')||'BĐS',total=parseFloat(V('val_total'))||7.9,area=parseFloat(V('val_area'))||82,floors=parseFloat(V('val_floors'))||3,w=parseFloat(V('val_w'))||4.7,dv=parseFloat(V('val_d'))||17.5,quality=parseFloat(document.getElementById('val_quality').value)||3.5,market=parseFloat(V('val_market'))||0,pros=V('val_pros'),cons=V('val_cons'),reason=V('val_reason'),legal=V('val_legal');
   document.getElementById('valOut').classList.add('hidden');await sleep(400);
   const buildCost=quality*w*dv*floors/1e3;const landVal=total-buildCost;const landUnit=landVal/area*1e3;
   const marketVal=market?market*area/1e3:0;const diff=market?total-marketVal:0;const diffPct=market?Math.abs((diff/marketVal)*100).toFixed(1):0;const isGood=market&&diff<0;
   const pArr=pros.split('\n').filter(x=>x.trim());const cArr=cons.split('\n').filter(x=>x.trim());
   const rptTxt=`BÁO CÁO ĐỊNH GIÁ BĐS\n${'='.repeat(42)}\nĐịa chỉ: ${addr}\nDiện tích: ${area}m² (${w}x${dv}m) · ${floors} tầng\nGiá rao: ${total} tỷ\n\nBÓC TÁCH:\n• Giá xây dựng: ${buildCost.toFixed(3)} tỷ\n• Giá đất thực: ${landVal.toFixed(3)} tỷ\n• Đơn giá đất: ${landUnit.toFixed(0)} triệu/m²\n${market?`• Thị trường: ${market} tr/m² → ${isGood?'GIÁ HỜI':'CAO HƠN TT'} ${diffPct}%`:''}\n\n✅ ƯU ĐIỂM:\n${pros}\n\n❌ NHƯỢC ĐIỂM:\n${cons}\n\nLý do bán: ${reason}\nPháp lý: ${legal}`;
-  document.getElementById('valOut').innerHTML=`<div class="sec" style="margin-top:0">📊 Kết quả định giá</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px"><div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center"><div style="font-size:.66rem;color:var(--t3);margin-bottom:3px">💰 Giá rao</div><div style="font-weight:900;font-size:1.2rem;color:var(--ac);font-family:'Space Mono',monospace">${total}tỷ</div></div><div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center"><div style="font-size:.66rem;color:var(--t3);margin-bottom:3px">🏗️ Xây dựng</div><div style="font-weight:900;font-size:1.2rem;color:var(--bl);font-family:'Space Mono',monospace">${buildCost.toFixed(2)}tỷ</div></div><div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center"><div style="font-size:.66rem;color:var(--t3);margin-bottom:3px">🌍 Giá đất</div><div style="font-weight:900;font-size:1.2rem;color:var(--gr);font-family:'Space Mono',monospace">${landVal.toFixed(2)}tỷ</div></div></div><div class="card" style="border-color:rgba(62,207,142,.3);margin-bottom:11px"><div class="ctit"><span class="dot" style="background:var(--gr)"></span>📐 Bóc tách Thuật Giả Kim</div><div style="display:grid;gap:7px;font-size:.78rem"><div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg3);border-radius:8px"><span style="color:var(--t2)">Giá xây dựng (${quality}tr/m²×${w}×${dv}×${floors}t)</span><strong style="color:var(--bl)">${buildCost.toFixed(3)} tỷ</strong></div><div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg3);border-radius:8px"><span style="color:var(--t2)">Giá đất = ${total} − ${buildCost.toFixed(3)}</span><strong style="color:var(--gr)">${landVal.toFixed(3)} tỷ</strong></div><div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg3);border-radius:8px"><span style="color:var(--t2)">Đơn giá đất (${landVal.toFixed(3)}tỷ ÷ ${area}m²)</span><strong style="color:var(--ac);font-family:'Space Mono',monospace">${landUnit.toFixed(0)} tr/m²</strong></div>${market?`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 8px;background:${isGood?'rgba(62,207,142,.12)':'rgba(239,83,80,.1)'};border-radius:8px;border:1px solid ${isGood?'rgba(62,207,142,.3)':'rgba(239,83,80,.3)'}"><span style="font-weight:700;color:var(--tx)">📊 Kết luận so với TT ${market}tr/m²</span><strong style="color:${isGood?'var(--gr)':'var(--rd)'}">${isGood?`🟢 GIÁ HỜI − ${diffPct}%`:`🔴 CAO HƠN +${diffPct}%`}</strong></div>`:''}</div></div>${pArr.length||cArr.length?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px"><div class="card" style="border-color:rgba(62,207,142,.3)"><div class="ctit" style="margin-bottom:8px"><span style="color:var(--gr)">✅</span>Ưu Điểm</div>${pArr.map(p=>`<div style="font-size:.75rem;color:var(--t2);margin-bottom:4px;display:flex;gap:5px"><span style="color:var(--gr)">●</span>${p}</div>`).join('')}</div><div class="card" style="border-color:rgba(239,83,80,.3)"><div class="ctit" style="margin-bottom:8px"><span style="color:var(--rd)">❌</span>Nhược Điểm</div>${cArr.map(c=>`<div style="font-size:.75rem;color:var(--t2);margin-bottom:4px;display:flex;gap:5px"><span style="color:var(--rd)">●</span>${c}</div>`).join('')}</div></div>`:''}<div style="display:flex;gap:7px;flex-wrap:wrap"><button class="btn btn-g btn-sm" onclick="cpTxt(${JSON.stringify(rptTxt)})">📋 Copy báo cáo</button><button class="btn btn-b btn-sm" onclick="dlTxt(${JSON.stringify(rptTxt)},'dinh-gia-bds.txt')">📄 Xuất .txt</button><button class="btn btn-p btn-sm" onclick="valToContent()">✍️ → Tạo Content</button><button class="btn btn-b btn-sm" onclick="saveOutputToLibrary('🏷️ Định giá: '+(V('val_loc')||'BĐS'),buildValTxt(),'valuation')">💾 Lưu</button><button class="btn btn-r btn-sm" onclick="clearValuation()">🗑️ Xóa</button></div>`;
+  document.getElementById('valOut').innerHTML=`<div class="sec" style="margin-top:0">📊 Kết quả định giá</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px"><div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center"><div style="font-size:.66rem;color:var(--t3);margin-bottom:3px">💰 Giá rao</div><div style="font-weight:900;font-size:1.2rem;color:var(--ac);font-family:'Space Mono',monospace">${total}tỷ</div></div><div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center"><div style="font-size:.66rem;color:var(--t3);margin-bottom:3px">🏗️ Xây dựng</div><div style="font-weight:900;font-size:1.2rem;color:var(--bl);font-family:'Space Mono',monospace">${buildCost.toFixed(2)}tỷ</div></div><div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center"><div style="font-size:.66rem;color:var(--t3);margin-bottom:3px">🌍 Giá đất</div><div style="font-weight:900;font-size:1.2rem;color:var(--gr);font-family:'Space Mono',monospace">${landVal.toFixed(2)}tỷ</div></div></div><div class="card" style="border-color:rgba(62,207,142,.3);margin-bottom:11px"><div class="ctit"><span class="dot" style="background:var(--gr)"></span>📐 Bóc tách Thuật Giả Kim</div><div style="display:grid;gap:7px;font-size:.78rem"><div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg3);border-radius:8px"><span style="color:var(--t2)">Giá xây dựng (${quality}tr/m²×${w}×${dv}×${floors}t)</span><strong style="color:var(--bl)">${buildCost.toFixed(3)} tỷ</strong></div><div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg3);border-radius:8px"><span style="color:var(--t2)">Giá đất = ${total} − ${buildCost.toFixed(3)}</span><strong style="color:var(--gr)">${landVal.toFixed(3)} tỷ</strong></div><div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg3);border-radius:8px"><span style="color:var(--t2)">Đơn giá đất (${landVal.toFixed(3)}tỷ ÷ ${area}m²)</span><strong style="color:var(--ac);font-family:'Space Mono',monospace">${landUnit.toFixed(0)} tr/m²</strong></div>${market?`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 8px;background:${isGood?'rgba(62,207,142,.12)':'rgba(239,83,80,.1)'};border-radius:8px;border:1px solid ${isGood?'rgba(62,207,142,.3)':'rgba(239,83,80,.3)'}"><span style="font-weight:700;color:var(--tx)">📊 Kết luận so với TT ${market}tr/m²</span><strong style="color:${isGood?'var(--gr)':'var(--rd)'}">${isGood?`🟢 GIÁ HỜI − ${diffPct}%`:`🔴 CAO HƠN +${diffPct}%`}</strong></div>`:''}</div></div>${pArr.length||cArr.length?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px"><div class="card" style="border-color:rgba(62,207,142,.3)"><div class="ctit" style="margin-bottom:8px"><span style="color:var(--gr)">✅</span>Ưu Điểm</div>${pArr.map(p=>`<div style="font-size:.75rem;color:var(--t2);margin-bottom:4px;display:flex;gap:5px"><span style="color:var(--gr)">●</span>${p}</div>`).join('')}</div><div class="card" style="border-color:rgba(239,83,80,.3)"><div class="ctit" style="margin-bottom:8px"><span style="color:var(--rd)">❌</span>Nhược Điểm</div>${cArr.map(c=>`<div style="font-size:.75rem;color:var(--t2);margin-bottom:4px;display:flex;gap:5px"><span style="color:var(--rd)">●</span>${c}</div>`).join('')}</div></div>`:''}<div style="display:flex;gap:7px;flex-wrap:wrap"><button class="btn btn-g btn-sm" onclick="cpTxt(${JSON.stringify(rptTxt)})">📋 Copy báo cáo</button><button class="btn btn-b btn-sm" onclick="dlTxt(${JSON.stringify(rptTxt)},'dinh-gia-bds.txt')">📄 Xuất .txt</button><button class="btn btn-p btn-sm" onclick="valToContent()">✍️ → Tạo Content</button><button class="btn btn-b btn-sm" onclick="saveOutputToLibrary('🏷️ Định giá: '+(V('val_addr')||'BĐS'),buildValTxt(),'valuation')">💾 Lưu</button><button class="btn btn-r btn-sm" onclick="clearValuation()">🗑️ Xóa</button></div>`;
   document.getElementById('valOut').classList.remove('hidden');
 }
-function clearValuation(){['val_loc','val_price','val_area','val_floors','val_w','val_d','val_market','val_pros','val_cons','val_reason','val_legal','val_type','val_diff'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});document.getElementById('valOut').classList.add('hidden');toast('🗑️ Đã xóa!');}
+function clearValuation(){['val_addr','val_total','val_area','val_floors','val_w','val_d','val_market','val_pros','val_cons','val_reason','val_legal'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});document.getElementById('valOut').classList.add('hidden');toast('🗑️ Đã xóa!');}
 function valToContent(){
-  const total=V('val_price'),area=V('val_area'),addr=V('val_loc');
-  const type=V('val_type')||'Nhà phố';
+  const total=V('val_total'),area=V('val_area'),addr=V('val_addr');
   const pros=V('val_pros'),cons=V('val_cons'),reason=V('val_reason'),legal=V('val_legal');
-  const diff=V('val_diff');
   const market=V('val_market');
 
-  document.getElementById('i_type').value=type;
   document.getElementById('i_price').value=total?total+' tỷ':'';
   document.getElementById('i_area').value=area?area+'m²':'';
   document.getElementById('i_loc').value=addr;
-  document.getElementById('i_pros').value=pros||'';
-  document.getElementById('i_diff').value=diff||'';
-  document.getElementById('i_floors').value=V('val_floors')||'';
-  document.getElementById('i_w').value=V('val_w')||'';
-  document.getElementById('i_d').value=V('val_d')||'';
-  document.getElementById('i_reason').value=reason||'';
-  document.getElementById('i_legal').value=legal||'';
-  document.getElementById('i_cons').value=cons||'';
 
-  // Loại giao dịch
-  if(pst.valTxn){
-    document.querySelectorAll('#txnPills .pill').forEach(p=>p.classList.remove('on'));
-    const tp=document.querySelector('#txnPills .pill[data-v="'+pst.valTxn+'"]');
-    if(tp){tp.classList.add('on');pst.txn=pst.valTxn;}
+  // Pros: tất cả ưu điểm + pháp lý
+  let prosArr=[];
+  if(pros) prosArr=pros.split('\n').map(s=>s.trim()).filter(s=>s.length>0);
+  if(legal && !prosArr.some(p=>p.toLowerCase().includes('sổ')||p.toLowerCase().includes('pháp lý'))){
+    prosArr.unshift(legal);
   }
-  // KH mục tiêu
-  if(pst.valBuyer){
-    document.querySelectorAll('#buyerPills .pill').forEach(p=>p.classList.remove('on'));
-    const bp=document.querySelector('#buyerPills .pill[data-v="'+pst.valBuyer+'"]');
-    if(bp){bp.classList.add('on');pst.buyer=pst.valBuyer;}
-  }
-
-  nav('gen');
-  toast('✅ Đã điền từ Định Giá! Kiểm tra lại trước khi tạo content.');
-}
   document.getElementById('i_pros').value=prosArr.join(', ');
 
   // Diff: kết hợp nhiều yếu tố
@@ -680,7 +612,7 @@ async function doGuideTour(){
   document.getElementById('gtOut').innerHTML=`<div class="ibdg"><span>${psyObj.e}</span><span>Tâm lý: <strong>${psy} — ${psyObj.tag}</strong></span></div>${rooms.map((r,i)=>{const rid='gt'+i+'_'+Date.now();return`<div class="card" style="border-left:3px solid var(--ac);margin-bottom:9px"><div class="ctit" style="margin-bottom:7px"><span>${r.r}</span></div><div style="white-space:pre-line;font-size:.77rem;color:var(--t2);line-height:1.78;margin-bottom:7px">${r.s}</div><div style="background:rgba(245,166,35,.08);border-radius:7px;padding:7px 9px;font-size:.7rem;color:var(--ac);margin-bottom:7px">💡 ${r.tip}</div><div id="${rid}" style="display:none">${r.r}\n\n${r.s}\n\nTip: ${r.tip}</div><button class="btn btn-s btn-xs" onclick="cpEl('${rid}')">📋 Copy</button></div>`;}).join('')}<div style="margin-top:5px;text-align:right"><button class="btn btn-r btn-sm" onclick="document.getElementById('gtOut').classList.add('hidden')">🗑️ Xóa</button></div>`;
   document.getElementById('gtOut').classList.remove('hidden');
 }
-function autoFillGT(){if(svData.loc || svData.loc){document.getElementById('gt_prop').value=`${svData.loc}${svData.price?' — '+svData.price:''}`;if(svData.pros)document.getElementById('gt_pros').value=svData.pros.split('\n').slice(0,3).join(', ');if(svData.cons)document.getElementById('gt_cons').value=svData.cons.split('\n').slice(0,2).join(', ');toast('✅ Đã lấy từ khảo sát!');}else toast('⚠️ Chưa có dữ liệu khảo sát!');}
+function autoFillGT(){if(svData.addr){document.getElementById('gt_prop').value=`${svData.addr}${svData.price?' — '+svData.price:''}`;if(svData.pros)document.getElementById('gt_pros').value=svData.pros.split('\n').slice(0,3).join(', ');if(svData.cons)document.getElementById('gt_cons').value=svData.cons.split('\n').slice(0,2).join(', ');toast('✅ Đã lấy từ khảo sát!');}else toast('⚠️ Chưa có dữ liệu khảo sát!');}
 
 // ===================== SALE SCRIPTS =====================
 function buildSaleScripts(){

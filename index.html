@@ -375,12 +375,6 @@ select option{background:var(--bg3)}
       </div>
       <div class="fg full"><label>⭐ Điểm mạnh nổi bật <span style="color:var(--t3);font-size:.63rem;font-weight:400">— Pháp lý, vị trí, kết cấu, tiện ích...</span></label><input type="text" id="i_pros" placeholder="VD: Sổ hồng riêng, hẻm xe hơi, gần trường, không ngập..."><div class="sgr" id="sg_pros"></div></div>
       <div class="fg full"><label>💎 Điểm khác biệt <span style="color:var(--t3);font-size:.63rem;font-weight:400">— Lý do KH chọn căn này thay vì căn khác</span></label><input type="text" id="i_diff" placeholder="VD: Giá thấp hơn TT 10%, tặng full nội thất, view sông..."><div class="sgr" id="sg_diff"></div></div>
-      <div class="fg"><label>🏗️ Số tầng</label><input type="number" id="i_floors" placeholder="3" min="1" max="10"></div>
-      <div class="fg"><label>↔️ Ngang (m)</label><input type="number" id="i_w" placeholder="4.7" step="0.1"></div>
-      <div class="fg"><label>↕️ Dài (m)</label><input type="number" id="i_d" placeholder="17.5" step="0.1"></div>
-      <div class="fg"><label>🔍 Lý do bán</label><input type="text" id="i_reason" placeholder="Nợ nần, chia tài sản..."></div>
-      <div class="fg"><label>📋 Pháp lý</label><input type="text" id="i_legal" placeholder="Sổ hồng riêng, ODT..."></div>
-      <div class="fg full"><label style="color:var(--rd)">❌ Nhược điểm <span style="color:var(--t3);font-size:.63rem;font-weight:400">— Từ khảo sát/định giá</span></label><textarea id="i_cons" style="min-height:60px" placeholder="Tự động điền từ Khảo Sát hoặc Định Giá..."></textarea></div>
     </div>
     <div id="genTip" style="display:none;margin-top:9px;background:rgba(62,207,142,.08);border:1px solid rgba(62,207,142,.25);border-radius:8px;padding:8px 11px;font-size:.72rem;color:var(--gr)"></div>
   </div>
@@ -577,34 +571,8 @@ select option{background:var(--bg3)}
 ✅ "Có gì cần lưu ý khi khảo sát không ạ?"
 ❌ Nếu đã bán: "Anh/chị có căn nào khu vực gần đây gửi em khảo sát luôn không ạ?"</div>
     <div class="fg2">
-      <div class="fg"><label>🏠 Địa chỉ BĐS</label><input type="text" id="sv_loc" placeholder="Số nhà, hẻm, đường, phường, quận..."></div>
+      <div class="fg"><label>🏠 Địa chỉ BĐS</label><input type="text" id="sv_addr" placeholder="Số nhà, hẻm, đường, phường, quận..."></div>
       <div class="fg"><label>💰 Giá rao bán</label><input type="text" id="sv_price" placeholder="VD: 7.9 tỷ"></div>
-      <div class="fg"><label>🏠 Loại nhà</label>
-        <select id="sv_type">
-          <option value="Nhà phố">🏠 Nhà phố</option>
-          <option value="Căn hộ chung cư">🏢 Căn hộ chung cư</option>
-          <option value="Biệt thự">🏡 Biệt thự</option>
-          <option value="Nhà mặt tiền">🏬 Nhà mặt tiền</option>
-          <option value="Shophouse">🛍️ Shophouse</option>
-          <option value="Liền kề">🏘️ Liền kề</option>
-          <option value="Đất nền">🌍 Đất nền</option>
-          <option value="Penthouse">🌆 Penthouse</option>
-        </select>
-      </div>
-      <div class="fg"><label>📋 Loại giao dịch</label>
-        <div class="pgr" style="margin-top:4px" id="svTxnPills">
-          <div class="pill on" data-v="Bán" onclick="spill(this,'svTxn','Bán')">🏷️ Bán</div>
-          <div class="pill" data-v="Cho thuê" onclick="spill(this,'svTxn','Cho thuê')">🔑 Cho thuê</div>
-          <div class="pill" data-v="Sang nhượng" onclick="spill(this,'svTxn','Sang nhượng')">🤝 Sang nhượng</div>
-        </div>
-      </div>
-      <div class="fg"><label>🎯 Khách hàng mục tiêu</label>
-        <div class="pgr" style="margin-top:4px" id="svBuyerPills">
-          <div class="pill on" data-v="Mua ở" onclick="spill(this,'svBuyer','Mua ở')">🏠 Mua ở</div>
-          <div class="pill" data-v="Đầu tư" onclick="spill(this,'svBuyer','Đầu tư')">📈 Đầu tư</div>
-          <div class="pill" data-v="Cho thuê lại" onclick="spill(this,'svBuyer','Cho thuê lại')">💰 Cho thuê lại</div>
-        </div>
-      </div>
       <div class="fg"><label>📐 Diện tích (m²)</label><input type="number" id="sv_area" placeholder="82"></div>
       <div class="fg"><label>🏗️ Số tầng</label><input type="number" id="sv_floors" placeholder="3"></div>
       <div class="fg"><label>↔️ Ngang (m)</label><input type="number" id="sv_w" placeholder="4.7" step="0.1"></div>
@@ -618,11 +586,12 @@ select option{background:var(--bg3)}
     <div style="font-size:.75rem;color:var(--t2);margin-bottom:11px;background:rgba(245,166,35,.07);border-radius:8px;padding:9px">💡 Đây là nguyên liệu để: Viết bài đăng bán, Lên kịch bản video, Xử lý từ chối KH</div>
     <div class="fg2">
       <div class="fg"><label style="color:var(--gr)">✅ 5 Ưu điểm (Vàng)</label><textarea id="sv_pros" style="min-height:110px" placeholder="1. Hẻm ô tô vào tận cửa&#10;2. Khu dân trí cao&#10;3. Gần chợ&#10;4. &#10;5. "></textarea></div>
+      <div class="fg"><label style="color:var(--rd)">❌ 5 Nhược điểm (Đá)</label><textarea id="sv_cons" style="min-height:110px" placeholder="1. Hẻm hơi nhỏ&#10;2. Gần chùa&#10;3. Thiếu chỗ đậu xe&#10;4. &#10;5. "></textarea></div>
+    </div>
+    <div class="fg2" style="margin-top:11px">
       <div class="fg"><label>🔍 Lý do bán (đọc vị)</label><input type="text" id="sv_reason" placeholder="Nợ nần, chia tài sản..."></div>
       <div class="fg"><label>📋 Pháp lý</label><input type="text" id="sv_legal" placeholder="Sổ hồng riêng, ODT..."></div>
-      <div class="fg full"><label style="color:var(--rd)">❌ 5 Nhược điểm (Đá)</label><textarea id="sv_cons" style="min-height:110px" placeholder="1. Hẻm hơi nhỏ&#10;2. Gần chùa&#10;3. Thiếu chỗ đậu xe&#10;4. &#10;5. "></textarea></div>
     </div>
-
     <div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap">
       <button class="btn btn-p" onclick="doSurveyReport()">📊 Tổng Hợp Báo Cáo</button>
       <button class="btn btn-g" onclick="svToContent()">✍️ → Tạo Content</button>
@@ -640,34 +609,8 @@ select option{background:var(--bg3)}
   <div class="card">
     <div class="ctit"><span class="dot"></span>Thông tin BĐS</div>
     <div class="fg2">
-      <div class="fg"><label>📍 Địa chỉ</label><input type="text" id="val_loc" placeholder="VD: 124/7A Cộng Hòa, Tân Bình"><button class="btn btn-s btn-xs" style="margin-top:5px" onclick="autoFillVal()">⚡ Lấy từ Khảo Sát</button></div>
-      <div class="fg"><label>💰 Giá rao (tỷ đồng)</label><input type="number" id="val_price" placeholder="7.9" step="0.1"></div>
-      <div class="fg"><label>🏠 Loại nhà</label>
-        <select id="val_type">
-          <option value="Nhà phố">🏠 Nhà phố</option>
-          <option value="Căn hộ chung cư">🏢 Căn hộ chung cư</option>
-          <option value="Biệt thự">🏡 Biệt thự</option>
-          <option value="Nhà mặt tiền">🏬 Nhà mặt tiền</option>
-          <option value="Shophouse">🛍️ Shophouse</option>
-          <option value="Liền kề">🏘️ Liền kề</option>
-          <option value="Đất nền">🌍 Đất nền</option>
-          <option value="Penthouse">🌆 Penthouse</option>
-        </select>
-      </div>
-      <div class="fg"><label>📋 Loại giao dịch</label>
-        <div class="pgr" style="margin-top:4px" id="valTxnPills">
-          <div class="pill on" data-v="Bán" onclick="spill(this,'valTxn','Bán')">🏷️ Bán</div>
-          <div class="pill" data-v="Cho thuê" onclick="spill(this,'valTxn','Cho thuê')">🔑 Cho thuê</div>
-          <div class="pill" data-v="Sang nhượng" onclick="spill(this,'valTxn','Sang nhượng')">🤝 Sang nhượng</div>
-        </div>
-      </div>
-      <div class="fg"><label>🎯 Khách hàng mục tiêu</label>
-        <div class="pgr" style="margin-top:4px" id="valBuyerPills">
-          <div class="pill on" data-v="Mua ở" onclick="spill(this,'valBuyer','Mua ở')">🏠 Mua ở</div>
-          <div class="pill" data-v="Đầu tư" onclick="spill(this,'valBuyer','Đầu tư')">📈 Đầu tư</div>
-          <div class="pill" data-v="Cho thuê lại" onclick="spill(this,'valBuyer','Cho thuê lại')">💰 Cho thuê lại</div>
-        </div>
-      </div>
+      <div class="fg"><label>📍 Địa chỉ</label><input type="text" id="val_addr" placeholder="VD: 124/7A Cộng Hòa, Tân Bình"><button class="btn btn-s btn-xs" style="margin-top:5px" onclick="autoFillVal()">⚡ Lấy từ Khảo Sát</button></div>
+      <div class="fg"><label>💰 Giá rao (tỷ đồng)</label><input type="number" id="val_total" placeholder="7.9" step="0.1"></div>
       <div class="fg"><label>📐 Diện tích (m²)</label><input type="number" id="val_area" placeholder="82"></div>
       <div class="fg"><label>🏗️ Số tầng</label><input type="number" id="val_floors" placeholder="3" min="1" max="10"></div>
       <div class="fg"><label>↔️ Ngang (m)</label><input type="number" id="val_w" placeholder="4.7" step="0.1"></div>
@@ -680,7 +623,6 @@ select option{background:var(--bg3)}
       <div class="fg"><label>📋 Pháp lý</label><input type="text" id="val_legal" placeholder="Sổ hồng riêng, ODT..."></div>
       <div class="fg full"><label>✅ 5 Ưu điểm</label><textarea id="val_pros" style="min-height:80px" placeholder="1. &#10;2. &#10;3. &#10;4. &#10;5. "></textarea></div>
       <div class="fg full"><label>❌ 5 Nhược điểm</label><textarea id="val_cons" style="min-height:80px" placeholder="1. &#10;2. &#10;3. &#10;4. &#10;5. "></textarea></div>
-      <div class="fg full"><label>💎 Điểm khác biệt <span style="color:var(--t3);font-size:.63rem;font-weight:400">— Lý do KH chọn căn này thay vì căn khác</span></label><input type="text" id="val_diff" placeholder="VD: Giá thấp hơn TT 10%, tặng full nội thất, view sông..."></div>
     </div>
     <div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap">
       <button class="btn btn-p" style="flex:1;justify-content:center" onclick="doValuation()">🏷️ Định Giá Ngay</button>
