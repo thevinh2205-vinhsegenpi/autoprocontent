@@ -247,6 +247,10 @@ select option{background:var(--bg3)}
 #toast.on{transform:translateY(0);opacity:1}
 @media(max-width:768px){.sb{width:170px}.fg2{grid-template-columns:1fr}.main{padding:13px}.strow{grid-template-columns:1fr 1fr}.fgr{grid-template-columns:1fr 1fr}.elgr{grid-template-columns:repeat(3,1fr)}.abg{grid-template-columns:1fr}.psy-grid{grid-template-columns:1fr}.cmp-cols{grid-template-columns:1fr}}
 @media(max-width:560px){.sb{position:fixed;left:-222px;top:56px;height:calc(100vh - 56px);z-index:150;transition:left .3s;width:218px!important}.sb.mob{left:0;box-shadow:4px 0 20px rgba(0,0,0,.5)}.main{padding:11px}.strow{grid-template-columns:1fr 1fr}.fgr{grid-template-columns:1fr}.psy-grid{grid-template-columns:1fr}}
+
+/* SAVE BUTTON STYLES */
+.btn-b{background:linear-gradient(135deg,#4c9cf5,#2979e0);color:#fff}
+.btn-b:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(76,156,245,.3)}
 </style>
 </head>
 <body>
@@ -792,7 +796,9 @@ select option{background:var(--bg3)}
 
 <!-- PROFILE -->
 <div class="pg" id="pg-prof">
-  <div class="ptit"><div><h2>👤 Hồ Sơ</h2><p>Thông tin tự động gắn vào mọi content</p></div></div>
+  <div class="ptit"><div><h2>👤 Hồ Sơ Của Tôi</h2><p>Thông tin cá nhân tự động gắn vào mọi content bạn tạo</p></div></div>
+
+  <!-- FORM: Hồ Sơ Của Tôi -->
   <div class="card">
     <div class="ctit"><span class="dot"></span>Thông tin cá nhân</div>
     <div style="display:flex;gap:15px;align-items:flex-start;flex-wrap:wrap">
@@ -804,20 +810,43 @@ select option{background:var(--bg3)}
       </div>
       <div style="flex:1;min-width:190px">
         <div class="fg2">
-          <div class="fg"><label>👤 Họ tên</label><input type="text" id="p_name" placeholder="Trần Thế Vinh"></div>
-          <div class="fg"><label>🏢 Chức danh</label><input type="text" id="p_title" placeholder="Chuyên gia tư vấn BĐS"></div>
-          <div class="fg"><label>📞 Điện thoại</label><input type="text" id="p_phone" placeholder="0938.121.937"></div>
-          <div class="fg"><label>💬 Zalo</label><input type="text" id="p_zalo" placeholder="0792.227.522"></div>
-          <div class="fg full"><label>💭 Slogan</label><textarea id="p_quote" style="min-height:58px" placeholder="Lời nói có thể truyền cảm hứng..."></textarea></div>
+          <div class="fg"><label>👤 Họ tên *</label><input type="text" id="p_name" placeholder="Nhập họ tên của bạn..."></div>
+          <div class="fg"><label>🏢 Chức danh</label><input type="text" id="p_title" placeholder="VD: Chuyên gia tư vấn BĐS"></div>
+          <div class="fg"><label>📞 Điện thoại *</label><input type="text" id="p_phone" placeholder="VD: 0938.xxx.xxx"></div>
+          <div class="fg"><label>💬 Zalo</label><input type="text" id="p_zalo" placeholder="VD: 0792.xxx.xxx"></div>
+          <div class="fg full"><label>💭 Slogan / Quote</label><textarea id="p_quote" style="min-height:58px" placeholder="Câu nói truyền cảm hứng của bạn..."></textarea></div>
         </div>
       </div>
     </div>
     <div style="display:flex;gap:7px;margin-top:11px">
       <button class="btn btn-p" onclick="saveProf()">💾 Lưu hồ sơ</button>
-      <button class="btn btn-r" onclick="resetProf()">🗑️ Reset</button>
+      <button class="btn btn-r" onclick="resetProf()">🗑️ Xóa hồ sơ</button>
     </div>
   </div>
-  <div class="card"><div class="ctit"><span class="dot"></span>Preview</div><div class="acrd" id="profPrev"></div></div>
+
+  <!-- PREVIEW: Hồ Sơ Của Tôi + Tác Giả -->
+  <div class="card"><div class="ctit"><span class="dot"></span>Preview — Hồ Sơ Của Tôi</div><div class="acrd" id="profPrev"></div></div>
+
+  <!-- TÁC GIẢ: Không thay đổi được -->
+  <div class="card" style="border-color:rgba(245,166,35,.4);background:linear-gradient(135deg,rgba(245,166,35,.08),rgba(76,156,245,.05))">
+    <div class="ctit"><span class="dot" style="background:var(--ac)"></span>🏆 Tác Giả Công Cụ</div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div class="aav" style="width:56px;height:56px;font-size:1.2rem;margin:0;flex-shrink:0">👑</div>
+      <div style="flex:1;min-width:180px">
+        <div style="font-weight:800;font-size:.95rem;color:var(--tx)">Trần Thế Vinh</div>
+        <div style="font-size:.75rem;color:var(--t2);margin-top:2px">Chuyên gia tư vấn BĐS TP.HCM</div>
+        <div style="font-size:.7rem;color:var(--ac);margin-top:4px">@tranthevinh.bds · #aihockiemtien</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">
+        <a href="https://zalo.me/0792227522" target="_blank" class="btn btn-s btn-xs" style="text-decoration:none">💬 Zalo tác giả</a>
+        <a href="mailto:aihockiemtien@gmail.com" class="btn btn-s btn-xs" style="text-decoration:none">📧 Email tác giả</a>
+      </div>
+    </div>
+    <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:.75rem;color:var(--t2);line-height:1.7">
+      <strong style="color:var(--ac)">"Lời nói có thể truyền cảm hứng, nhưng chỉ có hành động mới mang bạn đến gần ước mơ."</strong><br>
+      Công cụ này được phát triển bởi Trần Thế Vinh để hỗ trợ cộng đồng môi giới BĐS Việt Nam. Nếu bạn thấy hữu ích, hãy giới thiệu đến đồng nghiệp!
+    </div>
+  </div>
 </div>
 
 </div><!-- end main -->
