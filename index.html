@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AUTO PRO CONTENT BĐS — AI Tạo Nội Dung Đa Nền Tảng</title>
+<title>AUTO PRO CONTENT BĐS v6 — AI Tạo Nội Dung Đa Nền Tảng</title>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0d0f14;--bg2:#13161e;--bg3:#1a1e28;--card:#1e2230;--card2:#242838;--border:#2e3347;--ac:#f5a623;--a2:#e8891a;--bl:#4c9cf5;--gr:#3ecf8e;--pk:#f06292;--pu:#9c6ef5;--rd:#ef5350;--tx:#e8eaf0;--t2:#9ca3b8;--t3:#6b7490;--r:12px;--sh:0 8px 32px rgba(0,0,0,.4)}
@@ -12,11 +12,13 @@
 body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;transition:background .3s,color .3s}
 ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
 a{color:inherit;text-decoration:none}
+
+/* HEADER */
 .hdr{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 18px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;backdrop-filter:blur(12px)}
 .logo{display:flex;align-items:center;gap:9px;font-weight:900;font-size:.98rem;color:var(--ac);cursor:pointer;user-select:none}
 .logo .bdg{background:linear-gradient(135deg,var(--ac),var(--a2));color:#000;font-size:.56rem;padding:2px 7px;border-radius:20px;font-weight:800}
 .hdr-r{display:flex;align-items:center;gap:6px}
-.ib{background:var(--card);border:1px solid var(--border);color:var(--t2);width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.88rem;transition:.2s;outline:none;flex-shrink:0}
+.ib{background:var(--card);border:1px solid var(--border);color:var(--t2);width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.88rem;transition:.2s;outline:none;flex-shrink:0;position:relative}
 .ib:hover{background:var(--card2);color:var(--tx)}
 .tsw{display:flex;align-items:center;gap:4px;font-size:.72rem;color:var(--t3)}
 .tgl{position:relative;width:32px;height:17px;flex-shrink:0}
@@ -24,6 +26,8 @@ a{color:inherit;text-decoration:none}
 .sldr{position:absolute;inset:0;background:var(--border);border-radius:17px;cursor:pointer;transition:.3s}
 .sldr:before{content:'';position:absolute;width:13px;height:13px;left:2px;top:2px;background:#fff;border-radius:50%;transition:.3s}
 .tgl input:checked+.sldr{background:var(--ac)}.tgl input:checked+.sldr:before{transform:translateX(15px)}
+
+/* LAYOUT */
 .layout{display:flex;height:calc(100vh - 56px)}
 .sb{width:218px;background:var(--bg2);border-right:1px solid var(--border);padding:12px 7px;overflow-y:auto;flex-shrink:0;transition:width .3s}
 .sb.col{width:48px}.sb.col .nlbl,.sb.col .ntxt,.sb.col .nbdg{display:none}.sb.col .ni{justify-content:center;padding:9px}
@@ -36,9 +40,13 @@ a{color:inherit;text-decoration:none}
 .ni.on{background:linear-gradient(135deg,rgba(245,166,35,.2),rgba(232,137,26,.1));color:var(--ac);font-weight:700}
 .ni .ic{font-size:.88rem;width:17px;text-align:center;flex-shrink:0}
 .nbdg{background:var(--ac);color:#000;font-size:.53rem;font-weight:800;padding:1px 5px;border-radius:7px;margin-left:auto;min-width:16px;text-align:center}
+
+/* CARDS */
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
 .ctit{font-size:.81rem;font-weight:700;color:var(--tx);margin-bottom:12px;display:flex;align-items:center;gap:7px}
 .ctit .dot{width:6px;height:6px;border-radius:50%;background:var(--ac);flex-shrink:0}
+
+/* FORM */
 .fg2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
 .fg{display:flex;flex-direction:column;gap:4px}.fg.full{grid-column:1/-1}
 label{font-size:.71rem;font-weight:600;color:var(--t2)}
@@ -49,6 +57,8 @@ select option{background:var(--bg3)}
 .sgr{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
 .sgc{background:var(--bg3);border:1px solid var(--border);color:var(--t3);font-size:.64rem;padding:2px 7px;border-radius:12px;cursor:pointer;transition:.15s;white-space:nowrap}
 .sgc:hover{border-color:var(--ac);color:var(--ac)}
+
+/* PILLS */
 .pgr{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
 .pill{background:var(--bg3);border:1px solid var(--border);color:var(--t2);font-size:.71rem;padding:4px 11px;border-radius:17px;cursor:pointer;transition:.15s;user-select:none}
 .pill:hover{border-color:var(--ac);color:var(--ac)}
@@ -56,15 +66,21 @@ select option{background:var(--bg3)}
 .gpill.on[data-v="Chốt nhanh"]{background:rgba(239,83,80,.15);border-color:var(--rd);color:var(--rd)}
 .gpill.on[data-v="Thu lead"]{background:rgba(62,207,142,.15);border-color:var(--gr);color:var(--gr)}
 .gpill.on[data-v="Tăng tương tác"]{background:rgba(156,110,245,.15);border-color:var(--pu);color:var(--pu)}
+
+/* BUTTONS */
 .btn{padding:8px 16px;border-radius:9px;font-size:.79rem;font-weight:600;cursor:pointer;border:none;transition:.2s;font-family:inherit;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .btn-p{background:linear-gradient(135deg,var(--ac),var(--a2));color:#fff;box-shadow:0 4px 14px rgba(245,166,35,.3)}
 .btn-p:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(245,166,35,.4)}
 .btn-s{background:var(--card2);color:var(--t2);border:1px solid var(--border)}.btn-s:hover{background:var(--card);color:var(--tx)}
 .btn-g{background:linear-gradient(135deg,#3ecf8e,#2da870);color:#fff}
+.btn-g:hover{transform:translateY(-1px)}
 .btn-b{background:linear-gradient(135deg,#4c9cf5,#2979e0);color:#fff}
+.btn-b:hover{transform:translateY(-1px)}
 .btn-r{background:rgba(239,83,80,.12);color:var(--rd);border:1px solid rgba(239,83,80,.3)}.btn-r:hover{background:rgba(239,83,80,.2)}
 .btn-full{width:100%;justify-content:center;padding:11px}
 .btn-sm{padding:5px 11px;font-size:.71rem}.btn-xs{padding:3px 7px;font-size:.65rem}
+
+/* OUTPUT */
 .out{display:none}.out.on{display:block}
 .ptabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
 .ptab{padding:6px 13px;border-radius:8px;font-size:.74rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--t2);transition:.15s;display:flex;align-items:center;gap:4px}
@@ -73,6 +89,8 @@ select option{background:var(--bg3)}
 .cbox pre{white-space:pre-wrap;font-family:'Be Vietnam Pro',sans-serif;font-size:.78rem;line-height:1.78;color:var(--tx);padding-right:52px}
 .cpbtn{position:absolute;top:8px;right:8px;background:var(--card);border:1px solid var(--border);color:var(--t3);padding:3px 9px;border-radius:6px;font-size:.67rem;cursor:pointer;transition:.15s}
 .cpbtn:hover{color:var(--ac);border-color:var(--ac)}
+
+/* VERSION TABS */
 .vtabs{display:flex;gap:5px;margin-bottom:12px;overflow-x:auto;padding-bottom:3px}
 .vtab{padding:5px 11px;border-radius:7px;font-size:.69rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--t3);transition:.15s;white-space:nowrap;flex-shrink:0}
 .vtab.on{font-weight:700}
@@ -83,10 +101,14 @@ select option{background:var(--bg3)}
 .vtab[data-v="4"].on{background:rgba(62,207,142,.15);border-color:var(--gr);color:var(--gr)}
 .ibdg{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 11px;margin-bottom:11px;font-size:.72rem;color:var(--t3);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .ibdg strong{color:var(--ac)}
+
+/* SCORE */
 .sbar{height:6px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-top:5px}
 .sfill{height:100%;border-radius:4px;transition:width .8s ease}
 .sec{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.3px;color:var(--t3);margin-bottom:7px;margin-top:14px;padding-bottom:5px;border-bottom:1px solid var(--border)}
 .hidden{display:none!important}
+
+/* LOADING */
 .ld{display:none;flex-direction:column;align-items:center;gap:11px;padding:28px;text-align:center}
 .ld.on{display:flex}
 .spin{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--ac);border-radius:50%;animation:spin .8s linear infinite}
@@ -94,16 +116,21 @@ select option{background:var(--bg3)}
 .ldst{display:flex;flex-direction:column;gap:4px;text-align:left}
 .lst{font-size:.71rem;color:var(--t3);display:flex;align-items:center;gap:5px;opacity:.4;transition:.3s}
 .lst.done{opacity:1;color:var(--gr)}.lst.cur{opacity:1;color:var(--ac)}
+
+/* CRM */
 .crmt{width:100%;border-collapse:collapse;font-size:.74rem}
 .crmt th{background:var(--card2);color:var(--t3);font-weight:600;padding:7px 11px;text-align:left;border-bottom:1px solid var(--border)}
 .crmt td{padding:7px 11px;border-bottom:1px solid var(--border);color:var(--t2);vertical-align:middle}
 .crmt tr:hover td{background:var(--card2)}
+
+/* AB TEST */
 .abg{display:grid;grid-template-columns:1fr 1fr;gap:11px}
 .abc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px;position:relative}
 .abl{position:absolute;top:8px;right:8px;font-size:.65rem;font-weight:700;padding:2px 6px;border-radius:8px}
 .abc.a .abl{background:rgba(76,156,245,.2);color:var(--bl)}.abc.b .abl{background:rgba(240,98,146,.2);color:var(--pk)}
 .absc{font-size:2.2rem;font-weight:900;margin:5px 0 2px;font-family:'Space Mono',monospace}
 .abc.a .absc{color:var(--bl)}.abc.b .absc{color:var(--pk)}
+
 /* SCHEDULE */
 .sch-week{display:flex;flex-direction:column;gap:8px}
 .sch-day{background:var(--card);border:1px solid var(--border);border-radius:11px;overflow:hidden;transition:.15s}
@@ -124,6 +151,7 @@ select option{background:var(--bg3)}
 .sch-tab.on{background:var(--ac);color:#000;border-color:var(--ac)}
 .sch-ca{background:var(--bg3);border-radius:8px;padding:10px;font-size:.76rem;color:var(--t2);line-height:1.7;position:relative;min-height:50px}
 .sch-ca pre{white-space:pre-wrap;font-family:'Be Vietnam Pro',sans-serif;font-size:.75rem;line-height:1.75;padding-right:50px}
+
 /* PSYCH */
 .psy-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
 .psy-card{border-radius:10px;padding:11px;border:1.5px solid transparent;cursor:pointer;transition:.2s}
@@ -135,6 +163,7 @@ select option{background:var(--bg3)}
 .psy-card[data-p="Nghi ngờ"]{background:rgba(62,207,142,.06);border-color:rgba(62,207,142,.22)}.psy-card[data-p="Nghi ngờ"].sel{border-color:var(--gr);background:rgba(62,207,142,.14)}
 .psy-emo{font-size:1.4rem}.psy-name{font-weight:800;font-size:.82rem;color:var(--tx)}
 .pky{font-size:.6rem;padding:2px 6px;border-radius:9px;background:var(--bg3);color:var(--t3);border:1px solid var(--border)}
+
 /* FORMULA */
 .frm-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;cursor:pointer;transition:.2s;display:flex;gap:10px;align-items:flex-start;margin-bottom:6px}
 .frm-card:hover{border-color:rgba(245,166,35,.4)}.frm-card.sel{border-color:var(--ac);background:rgba(245,166,35,.06)}
@@ -143,6 +172,7 @@ select option{background:var(--bg3)}
 .frm-steps{font-size:.66rem;color:var(--ac);margin-bottom:2px;font-weight:600}
 .frm-desc{font-size:.68rem;color:var(--t2);line-height:1.5;margin-bottom:3px}
 .frm-ex{font-size:.66rem;color:var(--t3);font-style:italic;background:var(--bg3);border-radius:5px;padding:3px 7px}
+
 /* CMP */
 .cmp-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .cmp-col{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px}
@@ -153,6 +183,7 @@ select option{background:var(--bg3)}
 .cmp-sbar{flex:1;height:6px;background:var(--bg3);border-radius:4px;overflow:hidden}
 .cmp-sfill{height:100%;border-radius:4px}
 .cmp-snum{font-size:.68rem;font-weight:700;width:22px;text-align:right;flex-shrink:0}
+
 /* SURVEY */
 .sv-step{background:var(--card);border:1px solid var(--border);border-radius:11px;overflow:hidden;margin-bottom:8px;transition:.15s}
 .sv-step:hover{border-color:rgba(245,166,35,.3)}
@@ -167,6 +198,7 @@ select option{background:var(--bg3)}
 .sv-cb{width:17px;height:17px;border:2px solid var(--border);border-radius:4px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:.15s;background:var(--bg3);font-size:.7rem;line-height:1}
 .sv-cb.checked{background:var(--gr);border-color:var(--gr);color:#fff}
 .sv-ct{font-size:.76rem;color:var(--t2);line-height:1.5}
+
 /* SALE SCRIPTS */
 .sale-cats{display:flex;gap:6px;margin-bottom:11px;flex-wrap:wrap}
 .scat{padding:5px 12px;border-radius:8px;font-size:.72rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--t2);transition:.15s}
@@ -175,11 +207,13 @@ select option{background:var(--bg3)}
 .sale-item:hover{border-color:rgba(245,166,35,.35)}
 .sale-sit{font-size:.67rem;font-weight:700;color:var(--ac);margin-bottom:4px}
 .sale-txt{font-size:.78rem;color:var(--t2);line-height:1.7;font-style:italic}
+
 /* TOOL TABS */
 .tool-tabs{display:flex;gap:6px;margin-bottom:13px;flex-wrap:wrap}
 .tool-tab{padding:6px 13px;border-radius:8px;font-size:.73rem;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--t2);transition:.15s}
 .tool-tab.on{background:var(--ac);color:#000;border-color:var(--ac)}
 .tool-pg{display:none}.tool-pg.on{display:block}
+
 /* FENGSHUI */
 .elgr{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:8px}
 .elc{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;cursor:pointer;transition:.2s}
@@ -190,21 +224,23 @@ select option{background:var(--bg3)}
 .elc[data-e="Hoả"].on{border-color:var(--rd);background:rgba(239,83,80,.1)}
 .elc[data-e="Thổ"].on{border-color:var(--ac);background:rgba(245,166,35,.1)}
 .eemi{font-size:1.5rem;margin-bottom:3px}.enm{font-weight:700;font-size:.76rem;color:var(--tx)}
+
 /* HOME */
 .hero{text-align:center;padding:26px 14px 18px;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(245,166,35,.12) 0%,transparent 68%);pointer-events:none}
-.hero h1{font-size:1.75rem;font-weight:900;line-height:1.2;margin-bottom:7px;background:linear-gradient(135deg,var(--ac) 0%,#fff 50%,var(--bl) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero .sub{font-size:.82rem;color:var(--t2);max-width:440px;margin:0 auto 14px;line-height:1.7}
-.strow{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:13px}
-.stc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:11px;text-align:center}
-.stnum{font-size:1.55rem;font-weight:900;font-family:'Space Mono',monospace;color:var(--ac)}
-.stlbl{font-size:.64rem;color:var(--t3);margin-top:2px}
-.fgr{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:9px;margin-bottom:13px}
-.fc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
-.fc:hover{transform:translateY(-2px);box-shadow:var(--sh);border-color:rgba(245,166,35,.35)}
-.fci{font-size:1.4rem;margin-bottom:5px}.fct{font-weight:700;font-size:.79rem;color:var(--tx);margin-bottom:2px}.fcd{font-size:.67rem;color:var(--t3);line-height:1.5}
-.fcb{position:absolute;top:7px;right:7px;font-size:.54rem;font-weight:800;padding:2px 5px;border-radius:6px}
+.hero h1{font-size:1.5rem;font-weight:900;color:var(--tx);margin-bottom:6px}
+.hero .sub{font-size:.79rem;color:var(--t2);margin-bottom:16px;line-height:1.6}
+.strow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.stc{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:14px;text-align:center}
+.stnum{font-size:1.8rem;font-weight:900;color:var(--ac);font-family:'Space Mono',monospace}
+.stlbl{font-size:.66rem;color:var(--t3);margin-top:3px}
+.fgr{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:16px}
+.fc{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:12px;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.fc:hover{border-color:rgba(245,166,35,.4);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.fcb{font-size:.55rem;font-weight:800;padding:2px 6px;border-radius:6px;position:absolute;top:9px;right:9px}
 .fcb.or{background:rgba(245,166,35,.2);color:var(--ac)}.fcb.gr{background:rgba(62,207,142,.2);color:var(--gr)}.fcb.bl{background:rgba(76,156,245,.2);color:var(--bl)}.fcb.rd{background:rgba(240,98,146,.2);color:var(--pk)}
+.fci{font-size:1.4rem;margin-bottom:5px}
+.fct{font-weight:700;font-size:.77rem;color:var(--tx);margin-bottom:3px}
+.fcd{font-size:.66rem;color:var(--t3);line-height:1.45}
 .cbar{display:flex;align-items:center;gap:5px;margin-bottom:11px;flex-wrap:wrap}
 .cbi{background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.3);border-radius:7px;padding:3px 10px;font-size:.68rem;font-weight:700;color:var(--ac);cursor:pointer;transition:.2s}
 .cbi:hover{background:rgba(245,166,35,.2)}.cbi.dim{opacity:.5}
@@ -213,6 +249,7 @@ select option{background:var(--bg3)}
 .ptit{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:13px;gap:10px}
 .ptit h2{font-size:1.05rem;font-weight:800;color:var(--tx)}
 .ptit p{font-size:.72rem;color:var(--t3);margin-top:2px}
+
 /* AVATAR */
 .aav{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--a2));display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 9px;box-shadow:0 4px 14px rgba(245,166,35,.35);overflow:hidden;cursor:pointer;position:relative}
 .aav img{width:100%;height:100%;object-fit:cover}
@@ -224,6 +261,7 @@ select option{background:var(--bg3)}
 .aqt{font-size:.72rem;color:var(--t2);font-style:italic;line-height:1.6;margin-bottom:10px;padding:8px;background:var(--bg3);border-radius:7px;border-left:3px solid var(--ac)}
 .ccrow{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
 .cchip{background:var(--card);border:1px solid var(--border);color:var(--t2);font-size:.7rem;padding:4px 10px;border-radius:17px;display:flex;align-items:center;gap:4px}
+
 /* AGENTS */
 .agr{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
 .agc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px;transition:.2s}
@@ -231,10 +269,12 @@ select option{background:var(--bg3)}
 .agi{font-size:1.6rem;margin-bottom:6px}.agn{font-weight:700;font-size:.82rem;color:var(--tx);margin-bottom:3px}
 .agd{font-size:.7rem;color:var(--t3);line-height:1.5;margin-bottom:8px}
 .agl{color:var(--bl);font-size:.69rem;display:flex;align-items:center;gap:3px}.agl:hover{color:var(--ac)}
+
 /* READ KH */
 .rk-opt{background:var(--bg3);border:1.5px solid var(--border);border-radius:8px;padding:8px 11px;cursor:pointer;font-size:.77rem;color:var(--t2);transition:.15s}
 .rk-opt:hover{border-color:rgba(245,166,35,.4);color:var(--tx)}
 .rk-opt.sel{background:rgba(245,166,35,.12);border-color:var(--ac);color:var(--ac)}
+
 /* MODAL */
 .modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:none;align-items:center;justify-content:center;padding:16px}
 .modal-ov.on{display:flex}
@@ -243,23 +283,32 @@ select option{background:var(--bg3)}
 .modal-hd h3{font-size:.9rem;font-weight:800;color:var(--tx)}
 .modal-close{background:none;border:none;color:var(--t3);font-size:1.1rem;cursor:pointer;padding:4px}
 .modal-close:hover{color:var(--tx)}
+
+/* TOAST */
 #toast{position:fixed;bottom:16px;right:16px;background:var(--gr);color:#fff;padding:7px 13px;border-radius:9px;font-size:.76rem;font-weight:600;z-index:9999;transform:translateY(60px);opacity:0;transition:.3s;pointer-events:none;max-width:250px}
 #toast.on{transform:translateY(0);opacity:1}
+
+/* REMINDER BADGE */
+.rm-badge{position:absolute;top:-4px;right:-4px;background:var(--rd);color:#fff;font-size:.5rem;font-weight:800;width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center;display:none}
+
+/* REMINDER ITEMS */
+.rm-item-due{animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(239,83,80,.4)}50%{box-shadow:0 0 0 6px rgba(239,83,80,0)}}
+
+/* RESPONSIVE */
 @media(max-width:768px){.sb{width:170px}.fg2{grid-template-columns:1fr}.main{padding:13px}.strow{grid-template-columns:1fr 1fr}.fgr{grid-template-columns:1fr 1fr}.elgr{grid-template-columns:repeat(3,1fr)}.abg{grid-template-columns:1fr}.psy-grid{grid-template-columns:1fr}.cmp-cols{grid-template-columns:1fr}}
 @media(max-width:560px){.sb{position:fixed;left:-222px;top:56px;height:calc(100vh - 56px);z-index:150;transition:left .3s;width:218px!important}.sb.mob{left:0;box-shadow:4px 0 20px rgba(0,0,0,.5)}.main{padding:11px}.strow{grid-template-columns:1fr 1fr}.fgr{grid-template-columns:1fr}.psy-grid{grid-template-columns:1fr}}
-
-/* SAVE BUTTON STYLES */
-.btn-b{background:linear-gradient(135deg,#4c9cf5,#2979e0);color:#fff}
-.btn-b:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(76,156,245,.3)}
 </style>
 </head>
 <body>
 
 <!-- HEADER -->
 <div class="hdr">
-  <div class="logo" onclick="nav('home')">🏠 AUTO PRO CONTENT <span class="bdg">BĐS AI</span></div>
+  <div class="logo" onclick="nav('home')">🏠 AUTO PRO CONTENT <span class="bdg">BĐS v6</span></div>
   <div class="hdr-r">
     <div class="tsw">☀️<label class="tgl"><input type="checkbox" id="thm" onchange="document.body.classList.toggle('lm')"><span class="sldr"></span></label>🌙</div>
+    <button class="ib" onclick="nav('reminder')" title="Nhắc lịch KH" style="position:relative">⏰<span class="rm-badge" id="rmBadge">0</span></button>
+    <button class="ib" onclick="nav('dashboard')" title="Dashboard">📊</button>
     <button class="ib" onclick="doExportAll()" title="Xuất .txt">📤</button>
     <button class="ib" onclick="doBackup()" title="Backup JSON">💾</button>
     <button class="ib" onclick="doRestore()" title="Restore JSON">🔄</button>
@@ -289,6 +338,12 @@ select option{background:var(--bg3)}
     <div class="ni" onclick="nav('readkh')"><span class="ic">🎭</span><span class="ntxt">Đọc Vị KH</span></div>
     <div class="ni" onclick="nav('guidetour')"><span class="ic">🏡</span><span class="ntxt">Dẫn Xem Nhà</span></div>
     <div class="ni" onclick="nav('salescripts')"><span class="ic">💬</span><span class="ntxt">Câu Chốt Sale</span></div>
+  </div>
+  <div class="nsec">
+    <span class="nlbl">🆕 Tính Năng Mới</span>
+    <div class="ni" onclick="nav('reminder')"><span class="ic">⏰</span><span class="ntxt">Nhắc Lịch KH</span><span class="nbdg" id="rmSideCount" style="background:var(--rd);color:#fff;display:none">0</span></div>
+    <div class="ni" onclick="nav('dashboard')"><span class="ic">📊</span><span class="ntxt">Dashboard</span><span class="nbdg" style="background:var(--bl);color:#fff">NEW</span></div>
+    <div class="ni" onclick="nav('guide')"><span class="ic">❓</span><span class="ntxt">Hướng Dẫn</span><span class="nbdg" style="background:var(--pu);color:#fff">NEW</span></div>
   </div>
   <div class="nsec">
     <span class="nlbl">🛠️ Công Cụ</span>
@@ -323,18 +378,18 @@ select option{background:var(--bg3)}
       <span style="background:var(--card);border:1px solid var(--border);color:var(--t3);font-size:.68rem;padding:2px 9px;border-radius:17px;font-weight:600">🌐 Website</span>
     </div>
     <h1>AUTO PRO CONTENT BĐS</h1>
-    <p class="sub">Trợ lý AI tạo nội dung tin đăng đa nền tảng — tối ưu chuyển đổi theo tâm lý khách hàng.</p>
+    <p class="sub">Trợ lý AI tạo nội dung tin đăng đa nền tảng — tối ưu chuyển đổi theo tâm lý khách hàng.<br><span style="color:var(--ac);font-weight:700">v6.0 — Thêm: Nhắc Lịch KH · Dashboard · Hướng Dẫn · Survey↔Content Sync</span></p>
     <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
       <button class="btn btn-p" onclick="nav('gen')">🚀 Bắt Đầu Tạo Content</button>
       <button class="btn btn-s" onclick="nav('survey')">🔍 Khảo Sát Nhà</button>
-      <button class="btn btn-s" onclick="nav('handbook')">📖 Cẩm Nang</button>
+      <button class="btn btn-s" onclick="nav('guide')">❓ Hướng Dẫn</button>
     </div>
   </div>
   <div class="strow">
-    <div class="stc"><div class="stnum" id="stTotal">0</div><div class="stlbl">Tin đã tạo</div></div>
+    <div class="stc"><div class="stnum" id="stTotal">0</div><div class="stlbl">Content đã tạo</div></div>
     <div class="stc"><div class="stnum" id="stTpl">0</div><div class="stlbl">Templates</div></div>
     <div class="stc"><div class="stnum">4</div><div class="stlbl">Nền tảng</div></div>
-    <div class="stc"><div class="stnum">5</div><div class="stlbl">Tâm lý KH</div></div>
+    <div class="stc"><div class="stnum" id="stReminders">0</div><div class="stlbl">Nhắc lịch</div></div>
   </div>
   <div class="sec" style="margin-top:0">🔗 QUY TRÌNH LIÊN KẾT</div>
   <div style="display:flex;align-items:center;gap:0;margin-bottom:13px;overflow-x:auto;padding-bottom:3px" id="wfRow"></div>
@@ -373,8 +428,8 @@ select option{background:var(--bg3)}
           <div class="pill" data-v="Cho thuê lại" onclick="spill(this,'buyer','Cho thuê lại')">💰 Cho thuê lại</div>
         </div>
       </div>
-      <div class="fg full"><label>⭐ Điểm mạnh nổi bật <span style="color:var(--t3);font-size:.63rem;font-weight:400">— Pháp lý, vị trí, kết cấu, tiện ích...</span></label><input type="text" id="i_pros" placeholder="VD: Sổ hồng riêng, hẻm xe hơi, gần trường, không ngập..."><div class="sgr" id="sg_pros"></div></div>
-      <div class="fg full"><label>💎 Điểm khác biệt <span style="color:var(--t3);font-size:.63rem;font-weight:400">— Lý do KH chọn căn này thay vì căn khác</span></label><input type="text" id="i_diff" placeholder="VD: Giá thấp hơn TT 10%, tặng full nội thất, view sông..."><div class="sgr" id="sg_diff"></div></div>
+      <div class="fg full"><label>⭐ Điểm mạnh nổi bật</label><input type="text" id="i_pros" placeholder="VD: Sổ hồng riêng, hẻm xe hơi, gần trường, không ngập..."><div class="sgr" id="sg_pros"></div></div>
+      <div class="fg full"><label>💎 Điểm khác biệt</label><input type="text" id="i_diff" placeholder="VD: Giá thấp hơn TT 10%, tặng full nội thất, view sông..."><div class="sgr" id="sg_diff"></div></div>
     </div>
     <div id="genTip" style="display:none;margin-top:9px;background:rgba(62,207,142,.08);border:1px solid rgba(62,207,142,.25);border-radius:8px;padding:8px 11px;font-size:.72rem;color:var(--gr)"></div>
   </div>
@@ -386,7 +441,7 @@ select option{background:var(--bg3)}
     </div>
     <div id="manOpts" class="hidden" style="padding-top:13px">
       <div style="margin-bottom:12px">
-        <label style="display:block;margin-bottom:3px;font-size:.74rem;font-weight:700;color:var(--tx)">🧠 Tâm lý KH <span style="color:var(--t3);font-weight:400">(click chọn)</span></label>
+        <label style="display:block;margin-bottom:3px;font-size:.74rem;font-weight:700;color:var(--tx)">🧠 Tâm lý KH</label>
         <div class="psy-grid" id="psyGrid"></div>
       </div>
       <div>
@@ -395,7 +450,7 @@ select option{background:var(--bg3)}
       </div>
     </div>
     <div style="padding-top:12px;border-top:1px solid var(--border);margin-top:4px">
-      <label style="display:block;margin-bottom:3px">🎯 Mục tiêu <span style="color:var(--t3);font-size:.66rem;font-weight:400">(chọn nhiều)</span></label>
+      <label style="display:block;margin-bottom:3px">🎯 Mục tiêu</label>
       <div class="pgr" id="goalPills_gen">
         <div class="pill gpill on" data-v="Chốt nhanh" onclick="tgGoal(this)">⚡ Chốt nhanh</div>
         <div class="pill gpill" data-v="Thu lead" onclick="tgGoal(this)">📩 Thu lead</div>
@@ -406,18 +461,20 @@ select option{background:var(--bg3)}
     <div style="padding-top:12px;border-top:1px solid var(--border);margin-top:12px">
       <label style="display:block;margin-bottom:6px">📋 Số phiên bản</label>
       <div class="pgr" id="verPills">
-        <div class="pill on" data-v="1" onclick="spill(this,'ver','1')">1 Phiên bản</div>
-        <div class="pill" data-v="5" onclick="spill(this,'ver','5')">5 Phiên bản (5 tâm lý)</div>
+        <div class="pill on" data-v="1" onclick="spill(this,'ver','1');pst.ver='1'">1 phiên bản</div>
+        <div class="pill" data-v="5" onclick="spill(this,'ver','5');pst.ver='5'">⚡ 5 tâm lý KH</div>
       </div>
     </div>
-  </div>
-  <div style="display:flex;gap:8px;margin-bottom:12px">
-    <button class="btn btn-p btn-full" onclick="doGenerate()" style="flex:1">🚀 TẠO CONTENT NGAY</button>
-    <button class="btn btn-r" onclick="clearGen()" title="Xóa form">🗑️</button>
+    <div style="display:flex;gap:7px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn btn-p" style="flex:1;justify-content:center" onclick="doGenerate()">🚀 Tạo Content</button>
+      <button class="btn btn-s" onclick="saveCRM()">💾 Lưu CRM</button>
+      <button class="btn btn-s" onclick="saveTpl()">📌 Lưu Template</button>
+      <button class="btn btn-r" onclick="clearGen()">🗑️</button>
+    </div>
   </div>
   <div class="ld" id="ldArea"><div class="spin"></div><div class="ldst" id="ldSteps"></div></div>
   <div class="out" id="outArea">
-    <div class="ibdg" id="outMeta"><span>📊</span><span id="metaTxt"></span></div>
+    <div class="ibdg" id="metaTxt"></div>
     <div id="vTabsRow" class="hidden"><div class="vtabs" id="vTabs"></div></div>
     <div class="ptabs">
       <div class="ptab on" onclick="showPlt(this,'fb')">📘 Facebook</div>
@@ -427,18 +484,17 @@ select option{background:var(--bg3)}
     </div>
     <div id="pltContent"></div>
     <div class="exrow">
-      <button class="btn btn-g btn-sm" onclick="saveCRM()">💾 Lưu CRM</button>
-      <button class="btn btn-b btn-sm" onclick="expTxt()">📄 Xuất .txt</button>
-      <button class="btn btn-s btn-sm" onclick="saveTpl()">📌 Template</button>
-      <button class="btn btn-s btn-sm" onclick="goSch()">📅 → Lịch 7 Ngày</button>
-      <button class="btn btn-s btn-sm" onclick="goScr()">🎯 → Chấm Điểm</button>
+      <button class="btn btn-g btn-sm" onclick="expTxt()">📄 Xuất .txt</button>
+      <button class="btn btn-b btn-sm" onclick="goSch()">📅 → Lịch</button>
+      <button class="btn btn-b btn-sm" onclick="goScr()">🎯 → Chấm điểm</button>
+      <button class="btn btn-s btn-sm" onclick="nav('reminder')">⏰ Đặt nhắc KH</button>
     </div>
   </div>
 </div>
 
 <!-- SCHEDULE -->
 <div class="pg" id="pg-sch">
-  <div class="ptit"><div><h2>📅 Lịch 7 Ngày Thông Minh</h2><p>Tự động từ content đã tạo · Giờ vàng · Click xem full content</p></div></div>
+  <div class="ptit"><div><h2>📅 Lịch Đăng 7 Ngày</h2><p>Tự động từ content đã tạo · Phân bổ theo giờ vàng</p></div></div>
   <div class="cbar">
     <div class="cbi dim" onclick="nav('gen')">✍️ Tạo Content</div><span class="cbar-arr">→</span>
     <div class="cbi">📅 Lịch 7 Ngày</div><span class="cbar-arr">→</span>
@@ -543,7 +599,7 @@ select option{background:var(--bg3)}
 <div class="pg" id="pg-remix">
   <div class="ptit"><div><h2>🔁 Biến Tấu Content</h2><p>Chẩn đoán tại sao chưa viral → Viết lại 3 phiên bản hay hơn</p></div></div>
   <div class="card">
-    <div style="background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.3);border-radius:9px;padding:10px;margin-bottom:11px;font-size:.75rem;color:var(--t2)">💡 AI sẽ: <strong style="color:var(--ac)">① Chẩn đoán tại sao bài cũ chưa viral</strong> → <strong style="color:var(--gr)">② Viết lại 3 phiên bản hay hơn, cảm xúc hơn</strong></div>
+    <div style="background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.3);border-radius:9px;padding:10px;margin-bottom:11px;font-size:.75rem;color:var(--t2)">💡 AI sẽ: <strong style="color:var(--ac)">① Chẩn đoán tại sao bài cũ chưa viral</strong> → <strong style="color:var(--gr)">② Viết lại 3 phiên bản hay hơn</strong></div>
     <div class="fg" style="margin-bottom:10px"><label>📋 Dán bài viết cũ</label><textarea id="remix_old" style="min-height:120px" placeholder="Dán bài viết BĐS cũ của bạn vào đây..."></textarea></div>
     <div class="fg"><label>🎯 Mục tiêu phiên bản mới</label>
       <div class="pgr" id="goalPills_remix">
@@ -557,12 +613,17 @@ select option{background:var(--bg3)}
       <button class="btn btn-r" onclick="clearRemix()">🗑️</button>
     </div>
   </div>
-  <div id="remixOut" class="hidden"></div>
+  <div id="remixOut"></div>
 </div>
 
-<!-- SURVEY -->
+<!-- SURVEY (ENHANCED v6 — with full sync badge) -->
 <div class="pg" id="pg-survey">
   <div class="ptit"><div><h2>🔍 Khảo Sát Nhà Thông Minh</h2><p>9 bước chuẩn · Checklist tích hợp · Tự động sinh báo cáo 5x5 → Content</p></div></div>
+  <div style="background:linear-gradient(135deg,rgba(62,207,142,.12),rgba(245,166,35,.08));border:1px solid rgba(62,207,142,.35);border-radius:11px;padding:11px 14px;margin-bottom:13px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <div style="font-size:1.4rem">🔄</div>
+    <div style="flex:1;min-width:200px"><div style="font-weight:700;font-size:.83rem;color:var(--gr)">Đồng bộ thông minh → Tạo Content</div><div style="font-size:.72rem;color:var(--t2);margin-top:2px">Khảo sát xong → bấm "✍️ → Tạo Content" → toàn bộ trường tự động điền đầy đủ &amp; thông minh</div></div>
+    <button class="btn btn-g btn-sm" onclick="svToContent()">✍️ → Tạo Content Ngay</button>
+  </div>
   <div class="card" style="border-color:rgba(245,166,35,.35)">
     <div class="ctit"><span class="dot"></span>📞 Trước khi đi — Gọi xác nhận đầu chủ</div>
     <div style="background:rgba(245,166,35,.07);border-radius:9px;padding:12px;margin-bottom:12px;font-size:.77rem;color:var(--t2);line-height:1.85;white-space:pre-line">✅ "Nhà còn bán không ạ? Cho em xin địa chỉ, link map ạ"
@@ -596,6 +657,7 @@ select option{background:var(--bg3)}
       <button class="btn btn-p" onclick="doSurveyReport()">📊 Tổng Hợp Báo Cáo</button>
       <button class="btn btn-g" onclick="svToContent()">✍️ → Tạo Content</button>
       <button class="btn btn-b" onclick="svToValuation()">🏷️ → Định Giá</button>
+      <button class="btn btn-s btn-sm" onclick="nav('reminder')">⏰ Đặt Nhắc KH</button>
       <button class="btn btn-r" onclick="clearSurvey()">🗑️ Xóa</button>
     </div>
   </div>
@@ -700,16 +762,23 @@ select option{background:var(--bg3)}
   <div class="tool-pg" id="tool-hashtag"><div class="card"><div class="ctit"><span class="dot"></span>🏷️ Hashtag Generator BĐS</div><div class="fg2"><div class="fg"><label>🏠 Loại nhà</label><input type="text" id="ht_type" placeholder="Nhà phố, căn hộ..."></div><div class="fg"><label>📍 Khu vực</label><input type="text" id="ht_loc" placeholder="Quận 7, Bình Thạnh..."></div><div class="fg"><label>💰 Phân khúc</label><select id="ht_seg"><option value="mid">Trung cấp (3-7 tỷ)</option><option value="budget">Bình dân (dưới 3 tỷ)</option><option value="high">Cao cấp (7-15 tỷ)</option><option value="luxury">Luxury (trên 15 tỷ)</option></select></div><div class="fg"><label>🎯 Mục đích</label><select id="ht_goal"><option value="sell">Bán nhà</option><option value="rent">Cho thuê</option><option value="invest">Đầu tư</option></select></div><div class="fg full"><label>📱 Nền tảng</label><div class="pgr" style="margin-top:4px"><div class="pill on" onclick="spill(this,'ht_plt','FB')" data-v="FB">📘 Facebook</div><div class="pill" onclick="spill(this,'ht_plt','Zalo')" data-v="Zalo">💬 Zalo</div><div class="pill" onclick="spill(this,'ht_plt','TikTok')" data-v="TikTok">🎵 TikTok</div><div class="pill" onclick="spill(this,'ht_plt','Website')" data-v="Website">🌐 Website</div></div></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doHashtag()">🏷️ Tạo Hashtag</button></div><div id="hashtagOut" class="hidden"></div></div>
   <div class="tool-pg" id="tool-coldcall"><div class="card"><div class="ctit"><span class="dot"></span>📞 Script Cold Call</div><div class="fg2"><div class="fg"><label>🏠 BĐS</label><input type="text" id="cc_prop" placeholder="Nhà phố Q7, 6.5 tỷ"></div><div class="fg"><label>🧠 Tâm lý KH</label><select id="cc_psy"><option value="Tham">💰 Tham</option><option value="Si">🤔 Si</option><option value="Sân">🔥 Sân</option><option value="Nghi ngờ">🔍 Nghi ngờ</option></select></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doColdCall()">📞 Tạo Script</button></div><div id="ccOut" class="hidden"></div></div>
   <div class="tool-pg" id="tool-checklist"><div class="card"><div class="ctit"><span class="dot"></span>📋 Checklist Pháp Lý BĐS</div><div style="font-size:.76rem;color:var(--t2);margin-bottom:11px">Tặng KH → Tăng uy tín chuyên gia → KH tin tưởng hơn khi mua qua bạn.</div><div class="fg"><label>🏠 Loại BĐS</label><div class="pgr" style="margin-top:4px"><div class="pill on" onclick="spill(this,'cl_type','Nhà phố')" data-v="Nhà phố">Nhà phố</div><div class="pill" onclick="spill(this,'cl_type','Căn hộ')" data-v="Căn hộ">Căn hộ</div><div class="pill" onclick="spill(this,'cl_type','Đất nền')" data-v="Đất nền">Đất nền</div></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doChecklist()">📋 Tạo Checklist</button></div><div id="clOut" class="hidden"></div></div>
-  <div class="tool-pg" id="tool-persona"><div class="card"><div class="ctit"><span class="dot"></span>🎭 Tạo Persona KH</div><div class="fg2"><div class="fg"><label>🏠 BĐS cần bán</label><input type="text" id="ps_prop" placeholder="Căn hộ 2PN, 2.5 tỷ, Quận 7"></div><div class="fg"><label>💰 Phân khúc giá</label><select id="ps_seg"><option value="budget">Bình dân (dưới 3 tỷ)</option><option value="mid">Trung cấp (3–7 tỷ)</option><option value="high">Cao cấp (7–15 tỷ)</option><option value="luxury">Luxury (trên 15 tỷ)</option></select></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doPersona()">🎭 Tạo Persona</button></div><div id="personaOut" class="hidden"></div></div>
-  <div class="tool-pg" id="tool-email"><div class="card"><div class="ctit"><span class="dot"></span>📧 Chuỗi Email Nurture Lead</div><div style="font-size:.76rem;color:var(--t2);margin-bottom:11px">5 email từ Cold → Warm → Hot. Gửi đúng lúc tăng tỷ lệ chốt 2x.</div><div class="fg2"><div class="fg"><label>🏠 BĐS</label><input type="text" id="em_prop" placeholder="Nhà phố Q7, 6.5 tỷ, sổ hồng"></div><div class="fg"><label>🎯 Mục tiêu</label><select id="em_goal"><option value="buy">Mua ở</option><option value="invest">Đầu tư</option><option value="rent">Thuê</option></select></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doEmail()">📧 Tạo Chuỗi Email</button></div><div id="emailOut" class="hidden"></div></div>
+  <div class="tool-pg" id="tool-persona"><div class="card"><div class="ctit"><span class="dot"></span>🎭 Persona Khách Hàng BĐS</div><div style="font-size:.76rem;color:var(--t2);margin-bottom:11px">3 persona phổ biến nhất — hiểu KH → tư vấn đúng ngay từ đầu</div><div class="tool-tabs" id="personaTabs" style="gap:5px"><div class="tool-tab on" onclick="showPersonaTab(this,0)">👨‍💼 Kỹ sư IT</div><div class="tool-tab" onclick="showPersonaTab(this,1)">👩‍💼 Kinh doanh</div><div class="tool-tab" onclick="showPersonaTab(this,2)">👨‍🏫 Lần đầu</div></div><button class="btn btn-p btn-full" onclick="doPersona()">🎭 Xem Persona</button></div><div id="personaOut" class="hidden"></div></div>
+  <div class="tool-pg" id="tool-email"><div class="card"><div class="ctit"><span class="dot"></span>📧 Chuỗi Email Follow-up</div><div style="font-size:.76rem;color:var(--t2);margin-bottom:11px">3 email theo thứ tự: Giới thiệu → Follow-up → Cung cấp giá trị</div><button class="btn btn-p btn-full" onclick="doEmail()">📧 Tạo Chuỗi Email</button></div><div id="emailOut" class="hidden"></div></div>
 </div>
 
-<!-- COMPETITOR -->
+<!-- CMP -->
 <div class="pg" id="pg-cmp">
-  <div class="ptit"><div><h2>📊 So Sánh Đối Thủ</h2><p>2 cột song song · Chấm điểm từng tiêu chí · Gợi ý vượt trội</p></div></div>
-  <div class="card"><div class="ctit"><span class="dot"></span>Nhập thông tin so sánh</div>
-    <div class="cmp-cols"><div class="fg"><label style="color:var(--rd)">❌ Content đối thủ</label><textarea id="cmp_txt" style="min-height:130px" placeholder="Dán content của đối thủ..."></textarea></div><div class="fg"><label style="color:var(--gr)">✅ BĐS / Content của bạn</label><textarea id="cmp_mine" style="min-height:130px" placeholder="Mô tả BĐS hoặc content của bạn..."></textarea></div></div>
-    <div style="display:flex;gap:7px;margin-top:11px"><button class="btn btn-p" style="flex:1;justify-content:center" onclick="doCmp()">📊 Phân Tích</button><button class="btn btn-r" onclick="clearCmp()">🗑️</button></div>
+  <div class="ptit"><div><h2>📊 So Sánh Với Đối Thủ</h2><p>Nhập 2 bài viết → AI chấm điểm song song → Tìm điểm cần cải thiện</p></div></div>
+  <div class="card">
+    <div class="ctit"><span class="dot"></span>Nhập 2 bài viết để so sánh</div>
+    <div class="fg2">
+      <div class="fg"><label>📄 Bài đối thủ</label><textarea id="cmp_txt" style="min-height:120px" placeholder="Dán bài viết của đối thủ vào đây..."></textarea></div>
+      <div class="fg"><label>✍️ Bài của bạn</label><textarea id="cmp_mine" style="min-height:120px" placeholder="Dán bài viết của bạn hoặc bấm Auto..."></textarea><button class="btn btn-s btn-xs" style="margin-top:5px" onclick="if(VS.length)document.getElementById('cmp_mine').value=VS[0].fb||''">⚡ Lấy từ Content vừa tạo</button></div>
+    </div>
+    <div style="display:flex;gap:7px;margin-top:11px">
+      <button class="btn btn-p" style="flex:1;justify-content:center" onclick="doCmp()">📊 So Sánh Ngay</button>
+      <button class="btn btn-r" onclick="clearCmp()">🗑️</button>
+    </div>
   </div>
   <div id="cmpOut" class="hidden"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px"><div class="sec" style="margin:0">So sánh song song</div><button class="btn btn-r btn-sm" onclick="document.getElementById('cmpOut').classList.add('hidden')">🗑️</button></div><div id="cmpRes"></div></div>
 </div>
@@ -737,7 +806,6 @@ select option{background:var(--bg3)}
     </div>
     <iframe src="https://heyzine.com/flip-book/e755ec9c04.html#page/1" style="width:100%;height:80vh;border:none;display:block" allowfullscreen loading="lazy" title="Cẩm Nang Bách Thắng"></iframe>
   </div>
-  <div style="margin-top:8px;text-align:center;font-size:.71rem;color:var(--t3)">💡 Lật trang bằng click/kéo · Bấm ⛶ xem toàn màn hình</div>
 </div>
 
 <!-- TEMPLATES -->
@@ -797,8 +865,6 @@ select option{background:var(--bg3)}
 <!-- PROFILE -->
 <div class="pg" id="pg-prof">
   <div class="ptit"><div><h2>👤 Hồ Sơ Của Tôi</h2><p>Thông tin cá nhân tự động gắn vào mọi content bạn tạo</p></div></div>
-
-  <!-- FORM: Hồ Sơ Của Tôi -->
   <div class="card">
     <div class="ctit"><span class="dot"></span>Thông tin cá nhân</div>
     <div style="display:flex;gap:15px;align-items:flex-start;flex-wrap:wrap">
@@ -823,11 +889,7 @@ select option{background:var(--bg3)}
       <button class="btn btn-r" onclick="resetProf()">🗑️ Xóa hồ sơ</button>
     </div>
   </div>
-
-  <!-- PREVIEW: Hồ Sơ Của Tôi + Tác Giả -->
   <div class="card"><div class="ctit"><span class="dot"></span>Preview — Hồ Sơ Của Tôi</div><div class="acrd" id="profPrev"></div></div>
-
-  <!-- TÁC GIẢ: Không thay đổi được -->
   <div class="card" style="border-color:rgba(245,166,35,.4);background:linear-gradient(135deg,rgba(245,166,35,.08),rgba(76,156,245,.05))">
     <div class="ctit"><span class="dot" style="background:var(--ac)"></span>🏆 Tác Giả Công Cụ</div>
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
@@ -844,7 +906,133 @@ select option{background:var(--bg3)}
     </div>
     <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:.75rem;color:var(--t2);line-height:1.7">
       <strong style="color:var(--ac)">"Lời nói có thể truyền cảm hứng, nhưng chỉ có hành động mới mang bạn đến gần ước mơ."</strong><br>
-      Công cụ này được phát triển bởi Trần Thế Vinh để hỗ trợ cộng đồng môi giới BĐS Việt Nam. Nếu bạn thấy hữu ích, hãy giới thiệu đến đồng nghiệp!
+      Công cụ này được phát triển bởi Trần Thế Vinh để hỗ trợ cộng đồng môi giới BĐS Việt Nam. v6.0 — Cập nhật 16/05/2026.
+    </div>
+  </div>
+</div>
+
+<!-- ======== 4 TÍNH NĂNG MỚI ======== -->
+
+<!-- REMINDER PAGE (NEW) -->
+<div class="pg" id="pg-reminder">
+  <div class="ptit"><div><h2>⏰ Nhắc Lịch Follow-up KH</h2><p>Đặt nhắc cho từng khách · Script follow-up sẵn · Cảnh báo khi đến hạn</p></div></div>
+
+  <!-- Quick tips -->
+  <div style="background:linear-gradient(135deg,rgba(239,83,80,.1),rgba(245,166,35,.07));border:1px solid rgba(239,83,80,.3);border-radius:11px;padding:11px 14px;margin-bottom:13px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <div style="font-size:1.4rem">💡</div>
+    <div style="flex:1;font-size:.75rem;color:var(--t2)"><strong style="color:var(--rd)">80% giao dịch BĐS được chốt sau lần follow-up thứ 3–7.</strong> Đặt nhắc lịch ngay sau mỗi buổi xem nhà — đừng để KH nguội lạnh!</div>
+  </div>
+
+  <!-- Add reminder form -->
+  <div class="card">
+    <div class="ctit"><span class="dot"></span>➕ Thêm Nhắc Lịch Mới</div>
+    <div class="fg2">
+      <div class="fg"><label>👤 Tên KH *</label><input type="text" id="rm_name" placeholder="VD: Anh Minh, Chị Lan..."></div>
+      <div class="fg"><label>📞 SĐT KH</label><input type="text" id="rm_phone" placeholder="VD: 0938.xxx.xxx"></div>
+      <div class="fg"><label>🏠 BĐS quan tâm</label><input type="text" id="rm_property" placeholder="VD: Nhà phố Q7, 6.5 tỷ"></div>
+      <div class="fg"><label>📌 Loại nhắc</label>
+        <select id="rm_type">
+          <option value="Follow-up">📞 Follow-up sau xem nhà</option>
+          <option value="Nhắc xem nhà">🏠 Nhắc lịch xem nhà</option>
+          <option value="Nhắc cọc">💰 Nhắc đặt cọc</option>
+          <option value="Nhắc thanh toán">🏦 Nhắc thanh toán</option>
+          <option value="Hỏi thăm">💬 Hỏi thăm định kỳ</option>
+        </select>
+      </div>
+      <div class="fg"><label>🕐 Ngày & Giờ nhắc *</label><input type="datetime-local" id="rm_datetime"></div>
+      <div class="fg"><label>📝 Ghi chú</label><input type="text" id="rm_note" placeholder="VD: KH thích nhà gần trường, ngân sách 7 tỷ..."></div>
+    </div>
+    <button class="btn btn-p btn-full" style="margin-top:12px" onclick="addReminder()">⏰ Đặt Nhắc Lịch</button>
+  </div>
+
+  <!-- Filter / action bar -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+    <div class="sec" style="margin:0">📋 Danh Sách Nhắc Lịch</div>
+    <div style="display:flex;gap:6px">
+      <button class="btn btn-s btn-sm" onclick="buildReminders()">🔄 Refresh</button>
+      <button class="btn btn-r btn-sm" onclick="clearDoneReminders()">🗑️ Xóa đã xong</button>
+    </div>
+  </div>
+  <div id="reminderList"></div>
+
+  <!-- Follow-up tips -->
+  <div class="card" style="margin-top:4px;border-color:rgba(62,207,142,.3)">
+    <div class="ctit"><span class="dot" style="background:var(--gr)"></span>💡 Quy Trình Follow-up Chuẩn</div>
+    <div style="display:grid;gap:7px">
+      <div style="background:var(--bg3);border-radius:8px;padding:9px;border-left:3px solid var(--ac);font-size:.75rem;color:var(--t2)"><strong style="color:var(--ac)">Ngay sau xem nhà (1-2 tiếng):</strong> Cảm ơn + hỏi cảm nhận + gửi thêm ảnh/thông tin</div>
+      <div style="background:var(--bg3);border-radius:8px;padding:9px;border-left:3px solid var(--bl);font-size:.75rem;color:var(--t2)"><strong style="color:var(--bl)">Ngày 3:</strong> Follow-up nhẹ — hỏi đang cân nhắc điều gì? Giá, vị trí hay pháp lý?</div>
+      <div style="background:var(--bg3);border-radius:8px;padding:9px;border-left:3px solid var(--pu);font-size:.75rem;color:var(--t2)"><strong style="color:var(--pu)">Ngày 7:</strong> Gửi thông tin thị trường + căn mới tương tự (giữ nóng)</div>
+      <div style="background:var(--bg3);border-radius:8px;padding:9px;border-left:3px solid var(--gr);font-size:.75rem;color:var(--t2)"><strong style="color:var(--gr)">Ngày 14–30:</strong> Hỏi thăm định kỳ — không bán, chỉ giữ kết nối</div>
+      <div style="background:var(--bg3);border-radius:8px;padding:9px;border-left:3px solid var(--rd);font-size:.75rem;color:var(--t2)"><strong style="color:var(--rd)">Khi có tin mới phù hợp:</strong> Liên hệ ngay — "Em nghĩ đến anh/chị ngay khi thấy căn này"</div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD PAGE (NEW) -->
+<div class="pg" id="pg-dashboard">
+  <div class="ptit"><div><h2>📊 Dashboard Thống Kê</h2><p>Biểu đồ content đã tạo theo tuần/tháng · Tổng quan hoạt động</p></div></div>
+  <div id="dashboardContent">
+    <div style="text-align:center;padding:40px;color:var(--t3)"><div class="spin" style="margin:0 auto 12px"></div>Đang tải dashboard...</div>
+  </div>
+</div>
+
+<!-- GUIDE PAGE (NEW) -->
+<div class="pg" id="pg-guide">
+  <div class="ptit"><div><h2>❓ Hướng Dẫn Sử Dụng</h2><p>Hướng dẫn từng tính năng · Quy trình tối ưu · Tips hay</p></div></div>
+
+  <!-- Quick start banner -->
+  <div style="background:linear-gradient(135deg,rgba(245,166,35,.15),rgba(76,156,245,.1));border:1px solid rgba(245,166,35,.4);border-radius:14px;padding:16px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+    <div style="font-size:2.5rem;flex-shrink:0">🚀</div>
+    <div style="flex:1;min-width:200px">
+      <div style="font-weight:900;font-size:1rem;color:var(--ac);margin-bottom:4px">Bắt đầu ngay trong 60 giây!</div>
+      <div style="font-size:.78rem;color:var(--t2);line-height:1.6">Điền <strong>Hồ Sơ cá nhân</strong> → Vào <strong>Khảo Sát Nhà</strong> → Bấm <strong>✍️ Tạo Content</strong> → Done! 🎉</div>
+    </div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;flex-shrink:0">
+      <button class="btn btn-p btn-sm" onclick="nav('prof')">👤 Hồ Sơ</button>
+      <button class="btn btn-g btn-sm" onclick="nav('survey')">🔍 Khảo Sát</button>
+      <button class="btn btn-b btn-sm" onclick="nav('gen')">✍️ Tạo Content</button>
+    </div>
+  </div>
+
+  <!-- Guide content -->
+  <div id="guideContent"></div>
+
+  <!-- Feature suggestions -->
+  <div class="card" style="margin-top:4px;border-color:rgba(245,166,35,.35);background:linear-gradient(135deg,rgba(245,166,35,.06),rgba(76,156,245,.04))">
+    <div class="ctit"><span class="dot"></span>🌟 Gợi Ý Tính Năng Hay — Roadmap v7</div>
+    <div style="font-size:.74rem;color:var(--t2);margin-bottom:11px">Những tính năng đang được lên kế hoạch phát triển:</div>
+    <div style="display:grid;gap:8px">
+      <div style="background:var(--bg3);border-radius:9px;padding:10px 12px;border-left:3px solid var(--ac)">
+        <div style="font-weight:700;font-size:.78rem;color:var(--ac);margin-bottom:2px">📱 Auto-post Scheduler</div>
+        <div style="font-size:.72rem;color:var(--t2)">Lên lịch đăng bài tự động theo giờ vàng — tích hợp Buffer/Meta Business Suite</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:9px;padding:10px 12px;border-left:3px solid var(--gr)">
+        <div style="font-weight:700;font-size:.78rem;color:var(--gr);margin-bottom:2px">🤖 AI Content Writer (GPT-4o)</div>
+        <div style="font-size:.72rem;color:var(--t2)">Tích hợp AI thực sự để viết content sáng tạo hơn, cá nhân hóa theo từng KH</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:9px;padding:10px 12px;border-left:3px solid var(--bl)">
+        <div style="font-weight:700;font-size:.78rem;color:var(--bl);margin-bottom:2px">📊 Analytics Dashboard Pro</div>
+        <div style="font-size:.72rem;color:var(--t2)">Theo dõi tỷ lệ chuyển đổi từng loại content, từng nền tảng, từng tâm lý KH</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:9px;padding:10px 12px;border-left:3px solid var(--pu)">
+        <div style="font-weight:700;font-size:.78rem;color:var(--pu);margin-bottom:2px">🗺️ BĐS Map Integration</div>
+        <div style="font-size:.72rem;color:var(--t2)">Tích hợp bản đồ — xem khu vực, tiện ích xung quanh ngay trong app</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:9px;padding:10px 12px;border-left:3px solid var(--rd)">
+        <div style="font-weight:700;font-size:.78rem;color:var(--rd);margin-bottom:2px">📱 Mobile App (PWA)</div>
+        <div style="font-size:.72rem;color:var(--t2)">Cài app lên điện thoại, dùng offline, nhận thông báo nhắc lịch real-time</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:9px;padding:10px 12px;border-left:3px solid var(--gr)">
+        <div style="font-weight:700;font-size:.78rem;color:var(--gr);margin-bottom:2px">👥 Team Collaboration</div>
+        <div style="font-size:.72rem;color:var(--t2)">Chia sẻ content, lịch và KH trong nhóm môi giới — quản lý team sales</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:9px;padding:10px 12px;border-left:3px solid var(--ac)">
+        <div style="font-weight:700;font-size:.78rem;color:var(--ac);margin-bottom:2px">🎬 Video Script AI</div>
+        <div style="font-size:.72rem;color:var(--t2)">AI tạo script video TikTok/Reels hoàn chỉnh với voice-over, caption, music cue</div>
+      </div>
+    </div>
+    <div style="margin-top:13px;text-align:center;font-size:.73rem;color:var(--t3)">
+      💬 Góp ý tính năng mới: <a href="https://zalo.me/0792227522" target="_blank" style="color:var(--ac);font-weight:700">Zalo tác giả →</a>
     </div>
   </div>
 </div>
@@ -858,6 +1046,17 @@ select option{background:var(--bg3)}
 </div>
 
 <div id="toast"></div>
+
+<script>
+// Helper function for persona tab switching (inline since simple)
+function showPersonaTab(el,idx){
+  document.getElementById('personaTabs').querySelectorAll('.tool-tab').forEach((t,i)=>{
+    t.classList.toggle('on',i===idx);
+  });
+  const el2=document.getElementById('personaOut');
+  if(el2)el2.querySelectorAll('[id^=persona]').forEach((p,i)=>{p.style.display=i===idx?'block':'none';});
+}
+</script>
 
 <!-- LOAD JAVASCRIPT FILE -->
 <script src="app-logic.js"></script>

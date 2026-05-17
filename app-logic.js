@@ -1,4 +1,5 @@
-// AUTO PRO CONTENT BĐS — app-logic.js
+// AUTO PRO CONTENT BĐS — app-logic.js v6.0 (16/05/2026)
+// 4 tính năng mới: Survey↔Content Sync | Follow-up Reminders | Dashboard | Hướng dẫn
 
 // ===================== DATA =====================
 const SG={
@@ -85,7 +86,6 @@ const SCH_PLAN=[
 ];
 
 const DEFAULT_SCRIPTS=[
-  // ── CHỐT DEAL ──────────────────────────────────────────
   {cat:'Chốt deal',sit:'KH phân vân chưa quyết',txt:'"Anh/chị ơi, em hiểu quyết định mua nhà rất quan trọng. Nhưng hôm nay chủ đang giữ giá — ngày mai không chắc ạ. Mình đặt cọc 10 triệu, cam kết hoàn 100% nếu 3 ngày anh/chị đổi ý nhé!"'},
   {cat:'Chốt deal',sit:'KH nói "Về bàn với gia đình"',txt:'"Anh/chị mời họ qua xem luôn hôm nay được không ạ? Em sẵn sàng chờ. Nếu không, mình đặt lịch sáng mai trước 10h để em giữ được giá hiện tại ạ."'},
   {cat:'Chốt deal',sit:'KH hỏi "Có bớt thêm không?"',txt:'"Nếu anh/chị quyết định trong hôm nay, em thương lượng thêm được [X] triệu nữa ạ. Phải trong hôm nay — vì em đã hứa với chủ giữ giá đến cuối ngày."'},
@@ -96,7 +96,6 @@ const DEFAULT_SCRIPTS=[
   {cat:'Chốt deal',sit:'Chốt cuối buổi xem nhà',txt:'"Trong tất cả những căn đã xem, anh/chị thích căn này ở điểm nào nhất? [Nghe xong] — Vậy thì mình đặt cọc để giữ ngay hôm nay nhé ạ?"'},
   {cat:'Chốt deal',sit:'KH nói "Giá chưa hợp lý"',txt:'"Anh/chị thấy giá hợp lý ở mức nào ạ? Em sẽ trình lên chủ xem có thể đáp ứng được không — nhưng cần có con số cụ thể để thương lượng ạ."'},
   {cat:'Chốt deal',sit:'Assumptive close — giả định chốt',txt:'"Vậy mình đặt lịch công chứng thứ mấy tuần này tiện cho anh/chị nhất ạ — thứ Tư hay thứ Sáu?"'},
-  // ── XỬ LÝ PHẢN ĐỐI ────────────────────────────────────
   {cat:'Xử lý phản đối',sit:'KH nói "Giá đắt quá"',txt:'"Đắt hay rẻ phải so với cái gì đúng không ạ? Căn tương tự 300m gần đây giá [X], còn căn này có thêm [điểm mạnh]. Thực ra giá này đang hợp lý ạ."'},
   {cat:'Xử lý phản đối',sit:'KH nói "Pháp lý có chắc không?"',txt:'"Câu hỏi hay ạ! Em cam kết 100%: sổ hồng chính chủ, gửi scan ngay. Nếu thông tin sai bất kỳ điểm nào, hoàn cọc toàn bộ ạ."'},
   {cat:'Xử lý phản đối',sit:'KH nói "Chỗ khác rẻ hơn"',txt:'"Cho em biết căn đó ở đâu không? Em so sánh thẳng DT, pháp lý, vị trí — anh/chị thấy ngay sự khác biệt ạ."'},
@@ -107,39 +106,32 @@ const DEFAULT_SCRIPTS=[
   {cat:'Xử lý phản đối',sit:'KH nói "Không thích hướng nhà"',txt:'"Hướng [hướng] theo phong thuỷ phù hợp với tuổi [tuổi KH] ạ. Ngoài ra hướng này tránh được nắng chiều, điện sinh hoạt sẽ thấp hơn đáng kể ạ."'},
   {cat:'Xử lý phản đối',sit:'KH nói "Sợ bị lừa"',txt:'"Em hiểu cảm giác đó ạ — thị trường có nhiều trường hợp không tốt. Vì vậy em cam kết: mình ra phòng công chứng kiểm tra toàn bộ hồ sơ trước khi đặt cọc. Anh/chị không mất gì cả ạ."'},
   {cat:'Xử lý phản đối',sit:'KH nói "Chưa có nhu cầu"',txt:'"Dạ em hiểu ạ. Nhưng cho em hỏi — nếu có căn nhà vị trí tốt, giá hợp lý, pháp lý sạch, anh/chị có muốn tham khảo không? Biết đâu lại phù hợp ạ."'},
-  // ── TẠO URGENCY ───────────────────────────────────────
   {cat:'Tạo urgency',sit:'KH chần chừ chưa đặt cọc',txt:'"Tuần này đã có 2 khách xem căn này rồi ạ. Đặt cọc tượng trưng hôm nay — em giữ căn, hoàn lại nếu không phù hợp ạ."'},
   {cat:'Tạo urgency',sit:'Căn nhà sắp có người khác chốt',txt:'"Anh/chị ơi, em vừa nhận được tin nhắn từ khách khác hỏi về căn này. Em muốn ưu tiên cho anh/chị vì anh/chị xem trước — nhưng em cần câu trả lời trong hôm nay ạ."'},
   {cat:'Tạo urgency',sit:'Giá sắp tăng',txt:'"Chủ nhà vừa báo em tuần sau sẽ điều chỉnh giá lên thêm [X] triệu vì có dự án hạ tầng mới. Nếu anh/chị quyết định trước cuối tuần, em giữ được giá hiện tại ạ."'},
   {cat:'Tạo urgency',sit:'Cuối tuần — deadline tự nhiên',txt:'"Hôm nay thứ Sáu rồi ạ — cuối tuần thường là thời điểm nhiều người đi xem nhà nhất. Anh/chị muốn em giữ lịch xem riêng cho anh/chị sáng mai không ạ?"'},
   {cat:'Tạo urgency',sit:'Chủ nhà đang cân nhắc rút',txt:'"Chủ vừa có người thân muốn mua lại ạ. Em đang thuyết phục chủ ưu tiên cho anh/chị vì mình đã nói chuyện trước — nhưng em cần câu trả lời sớm ạ."'},
-  // ── XÂY DỰNG TRUST ───────────────────────────────────
   {cat:'Xây dựng trust',sit:'Lần đầu gặp KH',txt:'"Trước khi giới thiệu nhà, em muốn hỏi nhu cầu thật sự — để gợi ý đúng, không mất thời gian hai bên ạ. Anh/chị mua để ở hay đầu tư ạ?"'},
   {cat:'Xây dựng trust',sit:'KH nghi ngờ môi giới',txt:'"Em hiểu anh/chị thận trọng — nghề này có nhiều người không tốt. Em làm việc theo nguyên tắc: nói thật 100%, kể cả nhược điểm. Nếu căn này không phù hợp em sẽ nói thẳng ạ."'},
   {cat:'Xây dựng trust',sit:'Giới thiệu bản thân lần đầu',txt:'"Em [Tên], đã giao dịch [X] căn tại khu [Khu vực]. Em có thể cho anh/chị số điện thoại của KH đã mua qua em để xác nhận nếu anh/chị muốn ạ."'},
   {cat:'Xây dựng trust',sit:'KH lo ngại về hoa hồng',txt:'"Hoa hồng của em do chủ nhà trả, không phải do anh/chị ạ. Nên em không có lý do gì để tư vấn sai cho anh/chị cả — quyền lợi của em gắn với sự hài lòng của anh/chị ạ."'},
   {cat:'Xây dựng trust',sit:'Sau khi chốt deal',txt:'"Em cảm ơn anh/chị đã tin tưởng ạ! Em sẽ đồng hành cùng anh/chị đến khi bàn giao nhà xong — có bất kỳ vấn đề gì anh/chị cứ liên hệ em trực tiếp nhé."'},
-  // ── FOLLOW-UP ────────────────────────────────────────
   {cat:'Follow-up',sit:'Sau 3 ngày KH chưa trả lời',txt:'"Chào anh/chị! Em muốn hỏi thăm — đang cân nhắc ở điểm nào nhất ạ? Giá, pháp lý hay vị trí? Để em hỗ trợ đúng chỗ ạ."'},
   {cat:'Follow-up',sit:'KH xem nhà không liên hệ lại',txt:'"Chào anh/chị! Em có thêm thông tin mới về căn hôm trước. Anh/chị muốn xem lại không ạ?"'},
   {cat:'Follow-up',sit:'Follow-up sau 1 tuần',txt:'"Chào anh/chị! Tuần rồi chắc anh/chị bận. Em vừa có thêm [X] căn mới trong khu [KV] — giá và vị trí khá tốt. Anh/chị có muốn em gửi thông tin qua Zalo không ạ?"'},
   {cat:'Follow-up',sit:'KH nói "Sẽ liên hệ lại sau"',txt:'"Dạ em tôn trọng ạ! Anh/chị cho em hỏi — khoảng thời gian nào anh/chị muốn em liên hệ lại ạ? Tuần sau hay tháng sau? Để em không làm phiền sai lúc ạ."'},
   {cat:'Follow-up',sit:'Gửi thông tin giá trị (không bán)',txt:'"Chào anh/chị! Em gửi anh/chị bài phân tích thị trường BĐS [Khu vực] tháng này — có thể hữu ích cho quyết định của anh/chị. Không có gì cần trả lời ạ, chỉ muốn chia sẻ 😊"'},
   {cat:'Follow-up',sit:'KH đã mua nhà nơi khác',txt:'"Chúc mừng anh/chị đã có nhà mới ạ! Nếu sau này anh/chị có nhu cầu mua thêm để đầu tư, hoặc có bạn bè cần tư vấn BĐS, em luôn sẵn sàng hỗ trợ ạ 🙏"'},
-  // ── DẪN XEM NHÀ ──────────────────────────────────────
   {cat:'Dẫn xem nhà',sit:'Mở đầu buổi xem nhà',txt:'"Trước khi vào, em muốn hỏi anh/chị đang ưu tiên điều gì nhất: vị trí, không gian, hay pháp lý? Để em giới thiệu đúng trọng tâm ạ."'},
   {cat:'Dẫn xem nhà',sit:'KH nhận xét tiêu cực',txt:'"Anh/chị nhận xét rất tinh tế ạ! Điểm đó đúng là một hạn chế. Nhưng bù lại căn này có [điểm mạnh] mà hầu hết các căn khác trong tầm giá này không có ạ."'},
   {cat:'Dẫn xem nhà',sit:'KH hỏi "Sao chủ bán?"',txt:'"Chủ đang [lý do thật: nợ / chia tài sản / chuyển chỗ]. Đây chính là lý do giá đang tốt — chủ cần bán nhanh nên sẵn sàng thương lượng ạ."'},
   {cat:'Dẫn xem nhà',sit:'Tạo mental ownership',txt:'"Nếu đây là nhà anh/chị, anh/chị sẽ bố trí phòng ngủ master ở tầng mấy ạ? [Nghe và đồng ý] — Vậy thì phù hợp lắm với layout ở đây ạ."'},
   {cat:'Dẫn xem nhà',sit:'Kết thúc buổi xem nhà',txt:'"Anh/chị thấy căn này so với những căn đã xem thế nào ạ? Điểm nào anh/chị thích nhất? [Nghe] — Vậy thì đây là căn phù hợp nhất với tiêu chí của anh/chị rồi ạ."'},
-  // ── ĐẦU TƯ ───────────────────────────────────────────
   {cat:'Đầu tư',sit:'KH hỏi tiềm năng tăng giá',txt:'"Khu [KV] có [dự án hạ tầng] dự kiến hoàn thành năm [năm]. Căn tương tự 2 năm trước giá [X], giờ đã [X+Y]. Tỷ suất khoảng [Z]%/năm ạ."'},
   {cat:'Đầu tư',sit:'KH hỏi cho thuê được không',txt:'"Khu này giá thuê trung bình [X] triệu/tháng ạ. Nếu vay 70% thì trả góp [Y] triệu — tiền thuê gần đủ trả góp, thực ra KH gần như được ở miễn phí ạ."'},
   {cat:'Đầu tư',sit:'KH so sánh với gửi tiết kiệm',txt:'"Gửi tiết kiệm 5-6%/năm ạ. BĐS khu này tăng trung bình [X]%/năm cộng thêm tiền thuê [Y]%/năm — tổng ROI cao hơn gửi tiết kiệm đáng kể ạ."'},
-  // ── CHO THUÊ ─────────────────────────────────────────
   {cat:'Cho thuê',sit:'KH hỏi về nhà cho thuê',txt:'"Căn này phù hợp cho thuê gia đình [X] người ạ. Giá thuê thị trường khu này [X] triệu/tháng — anh/chị có thể bắt đầu cho thuê ngay sau khi nhận bàn giao ạ."'},
   {cat:'Cho thuê',sit:'KH lo căn nhà khó cho thuê',txt:'"Vị trí [gần trường/bệnh viện/KCN] nên nhu cầu thuê rất cao ạ. Em có thể kết nối anh/chị với dịch vụ quản lý cho thuê chuyên nghiệp — anh/chị không cần tự quản lý ạ."'},
-  // ── THƯƠNG LƯỢNG ──────────────────────────────────────
   {cat:'Thương lượng',sit:'KH muốn giảm giá mạnh',txt:'"Mức anh/chị đề nghị thấp hơn thị trường [X]% ạ. Em sẽ trình lên chủ — nhưng để thuyết phục được chủ, anh/chị có thể đặt cọc ngay hôm nay không? Điều đó cho chủ thấy anh/chị nghiêm túc ạ."'},
   {cat:'Thương lượng',sit:'Chủ không giảm, KH muốn thêm',txt:'"Giá chủ giữ vững ạ — nhưng em đã thương lượng được thêm [tặng nội thất / miễn phí sang tên / bàn giao sớm]. Như vậy tổng giá trị anh/chị nhận thêm khoảng [X] triệu ạ."'},
   {cat:'Thương lượng',sit:'Hai bên chênh lệch ít',txt:'"Hai bên chỉ còn chênh [X] triệu ạ — so với giá trị căn nhà thì rất nhỏ. Em đề xuất mỗi bên nhường một nửa — chủ giảm [X/2] triệu, anh/chị tăng [X/2] triệu, mình chốt được ạ?"'}
@@ -148,31 +140,20 @@ const DEFAULT_SCRIPTS=[
 // ===================== STATE =====================
 let VS=[],VI=0,PLT='fb',
 pst={ver:'1',abp:'FB',obj:'price',story_dur:'15s',story_plt:'FB Story',ht_plt:'FB',cl_type:'Nhà phố'},
-crm=[],tpl=[],
+crm=[],tpl=[],reminders=[],contentLog=[],
 authorProf={name:'Trần Thế Vinh',title:'Chuyên gia tư vấn BĐS TP.HCM',phone:'0938.121.937',zalo:'0792.227.522',quote:'Lời nói có thể truyền cảm hứng, nhưng chỉ có hành động mới mang bạn đến gần ước mơ.',avatar:'',link:'https://zalo.me/0792227522',social:'@tranthevinh.bds'},
 prof={name:'',title:'',phone:'',zalo:'',quote:'',avatar:''},
 selEl='Kim',selPsy='Si',selFrm='AIDA',
 schedProp='',svData={},rkAnswers=[],
 saleScripts=[...DEFAULT_SCRIPTS],curSaleCat='Chốt deal';
 
-
 // ===================== SAVE OUTPUT HELPER =====================
-function saveOutputToLibrary(name, content, type){
-  if(!content || content.length<5)return toast('⚠️ Không có nội dung để lưu!');
-  const item={
-    id:Date.now(),
-    name:name,
-    time:new Date().toLocaleString('vi-VN'),
-    type:type,
-    content:content,
-    vs:[{py:type,frm:'',gs:[],fb:content,zalo:content,tiktok:content,web:content}]
-  };
-  tpl.unshift(item);
-  saveSt();
-  buildTpl();
-  updStats();
-  toast('✅ Đã lưu vào Thư viện: '+name);
+function saveOutputToLibrary(name,content,type){
+  if(!content||content.length<5)return toast('⚠️ Không có nội dung để lưu!');
+  const item={id:Date.now(),name,time:new Date().toLocaleString('vi-VN'),type,content,vs:[{py:type,frm:'',gs:[],fb:content,zalo:content,tiktok:content,web:content}]};
+  tpl.unshift(item);saveSt();buildTpl();updStats();toast('✅ Đã lưu vào Thư viện: '+name);
 }
+
 // ===================== INIT =====================
 function init(){
   loadSt();buildSg();buildPsychCards();buildFrmCards();
@@ -180,6 +161,9 @@ function init(){
   updStats();buildHomeRecent();buildHomeWorkflow();buildHomeFeatures();buildHBModules();
   buildSurveySteps();buildReadKH();buildSaleScripts();
   updGoalHint('goalPills_gen');
+  buildReminders();
+  checkDueReminders();
+  buildDashboard();
 }
 
 function loadSt(){
@@ -190,8 +174,9 @@ function loadSt(){
     if(prof.avatar)showAv(prof.avatar);
     const ss=localStorage.getItem('bds_ss');
     if(ss){const cu=JSON.parse(ss);saleScripts=[...cu,...DEFAULT_SCRIPTS.filter(d=>!cu.find(u=>u.sit===d.sit))];}
+    const rm=localStorage.getItem('bds_rm');if(rm)reminders=JSON.parse(rm);
+    const cl=localStorage.getItem('bds_cl');if(cl)contentLog=JSON.parse(cl);
   }catch(e){}
-  // authorProf luôn giữ giá trị gốc, không load từ localStorage
 }
 function saveSt(){
   try{
@@ -200,19 +185,43 @@ function saveSt(){
     localStorage.setItem('bds_p',JSON.stringify(prof));
     const cu=saleScripts.filter(s=>!DEFAULT_SCRIPTS.find(d=>d.sit===s.sit&&d.txt===s.txt));
     if(cu.length)localStorage.setItem('bds_ss',JSON.stringify(cu));
+    localStorage.setItem('bds_rm',JSON.stringify(reminders));
+    localStorage.setItem('bds_cl',JSON.stringify(contentLog));
   }catch(e){}
 }
 
 // ===================== HOME BUILDERS =====================
 function buildHomeWorkflow(){
   const el=document.getElementById('wfRow');if(!el)return;
-  const steps=[{i:'🔍',t:'Khảo Sát',d:'Thu thập dữ liệu',pg:'survey'},{i:'🏷️',t:'Định Giá',d:'Bóc tách giá đất',pg:'valuation'},{i:'✍️',t:'Tạo Content',d:'4 nền tảng',pg:'gen'},{i:'📅',t:'Lịch 7 Ngày',d:'Auto từ content',pg:'sch'},{i:'🎯',t:'Chấm Điểm',d:'Tối ưu',pg:'scr'},{i:'🗄️',t:'Lưu CRM',d:'Quản lý',pg:'crm'}];
+  const steps=[
+    {i:'🔍',t:'Khảo Sát',d:'Thu thập dữ liệu',pg:'survey'},
+    {i:'🏷️',t:'Định Giá',d:'Bóc tách giá đất',pg:'valuation'},
+    {i:'✍️',t:'Tạo Content',d:'4 nền tảng',pg:'gen'},
+    {i:'📅',t:'Lịch 7 Ngày',d:'Auto từ content',pg:'sch'},
+    {i:'🎯',t:'Chấm Điểm',d:'Tối ưu',pg:'scr'},
+    {i:'🗄️',t:'Lưu CRM',d:'Quản lý',pg:'crm'}
+  ];
   el.innerHTML=steps.map((s,i)=>`<div onclick="nav('${s.pg}')" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 11px;text-align:center;flex:1;min-width:85px;cursor:pointer;transition:.2s" onmouseover="this.style.borderColor='rgba(245,166,35,.4)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:1.2rem;margin-bottom:3px">${s.i}</div><div style="font-weight:700;font-size:.68rem;color:var(--tx)">${s.t}</div><div style="font-size:.61rem;color:var(--t3)">${s.d}</div></div>${i<steps.length-1?'<div style="color:var(--t3);padding:0 3px;flex-shrink:0">→</div>':''}`).join('');
 }
 
 function buildHomeFeatures(){
   const el=document.getElementById('featureGrid');if(!el)return;
-  const f=[{i:'✍️',t:'Tạo Content',d:'1 input → FB, Zalo, TikTok, Web. 5 tâm lý. 7 công thức.',pg:'gen',b:'or',bl:'CORE'},{i:'📅',t:'Lịch 7 Ngày',d:'Tự động từ content đã tạo. Phân bổ theo ngày + giờ vàng.',pg:'sch',b:'gr',bl:'SMART'},{i:'🔍',t:'Khảo Sát Nhà',d:'9 bước checklist chuẩn. Tự động sinh báo cáo 5x5.',pg:'survey',b:'gr',bl:'NEW'},{i:'🏷️',t:'Định Giá BĐS',d:'Bóc tách giá đất + xây dựng. Kết nối tạo content.',pg:'valuation',b:'',bl:''},{i:'🎭',t:'Đọc Vị KH',d:'10 câu hỏi xác định tâm lý KH. Gợi ý chiến thuật.',pg:'readkh',b:'bl',bl:'NEW'},{i:'🏡',t:'Dẫn Xem Nhà',d:'Kịch bản từng phòng. Tích hợp dữ liệu khảo sát.',pg:'guidetour',b:'bl',bl:'NEW'},{i:'💬',t:'Câu Chốt Sale',d:'50+ câu chốt theo tình huống. Copy ngay dùng liền.',pg:'salescripts',b:'rd',bl:'HOT'},{i:'🎯',t:'Chấm Điểm',d:'6 tiêu chí 1–10. Gợi ý cải thiện cụ thể.',pg:'scr',b:'',bl:''},{i:'⚡',t:'A/B Testing',d:'So sánh 2 hook, chọn hook tối ưu.',pg:'ab',b:'',bl:''},{i:'🔁',t:'Biến Tấu Content',d:'Chẩn đoán tại sao cũ không viral. Viết lại 3 phiên bản.',pg:'remix',b:'',bl:''},{i:'📊',t:'So Sánh Đối Thủ',d:'2 cột song song. Chấm điểm từng tiêu chí.',pg:'cmp',b:'',bl:''},{i:'📖',t:'Cẩm Nang Bách Thắng',d:'10 Module thực chiến đầy đủ từ Trần Thế Vinh.',pg:'handbook',b:'or',bl:'📖'}];
+  const f=[
+    {i:'✍️',t:'Tạo Content',d:'1 input → FB, Zalo, TikTok, Web. 5 tâm lý. 7 công thức.',pg:'gen',b:'or',bl:'CORE'},
+    {i:'📅',t:'Lịch 7 Ngày',d:'Tự động từ content đã tạo. Phân bổ theo ngày + giờ vàng.',pg:'sch',b:'gr',bl:'SMART'},
+    {i:'🔍',t:'Khảo Sát Nhà',d:'9 bước checklist chuẩn. Tự động sinh báo cáo 5x5.',pg:'survey',b:'gr',bl:'NEW'},
+    {i:'🏷️',t:'Định Giá BĐS',d:'Bóc tách giá đất + xây dựng. Kết nối tạo content.',pg:'valuation',b:'',bl:''},
+    {i:'🎭',t:'Đọc Vị KH',d:'10 câu hỏi xác định tâm lý KH. Gợi ý chiến thuật.',pg:'readkh',b:'bl',bl:'NEW'},
+    {i:'🏡',t:'Dẫn Xem Nhà',d:'Kịch bản từng phòng. Tích hợp dữ liệu khảo sát.',pg:'guidetour',b:'bl',bl:'NEW'},
+    {i:'💬',t:'Câu Chốt Sale',d:'50+ câu chốt theo tình huống. Copy ngay dùng liền.',pg:'salescripts',b:'rd',bl:'HOT'},
+    {i:'🎯',t:'Chấm Điểm',d:'6 tiêu chí 1–10. Gợi ý cải thiện cụ thể.',pg:'scr',b:'',bl:''},
+    {i:'⚡',t:'A/B Testing',d:'So sánh 2 hook, chọn hook tối ưu.',pg:'ab',b:'',bl:''},
+    {i:'🔁',t:'Biến Tấu Content',d:'Chẩn đoán tại sao cũ không viral. Viết lại 3 phiên bản.',pg:'remix',b:'',bl:''},
+    {i:'📊',t:'Dashboard',d:'Biểu đồ content theo tuần/tháng. Thống kê tổng quan.',pg:'dashboard',b:'or',bl:'NEW'},
+    {i:'⏰',t:'Nhắc Lịch KH',d:'Đặt nhắc follow-up cho từng khách. Cảnh báo đúng giờ.',pg:'reminder',b:'gr',bl:'NEW'},
+    {i:'📖',t:'Hướng dẫn',d:'Hướng dẫn sử dụng đầy đủ từng tính năng trong app.',pg:'guide',b:'bl',bl:'NEW'},
+    {i:'📖',t:'Cẩm Nang Bách Thắng',d:'10 Module thực chiến đầy đủ từ Trần Thế Vinh.',pg:'handbook',b:'or',bl:'📖'}
+  ];
   el.innerHTML=f.map(x=>`<div class="fc" onclick="nav('${x.pg}')">${x.bl?`<span class="fcb ${x.b}">${x.bl}</span>`:''}<div class="fci">${x.i}</div><div class="fct">${x.t}</div><div class="fcd">${x.d}</div></div>`).join('');
 }
 
@@ -302,7 +311,35 @@ async function doGenerate(){
   document.getElementById('ldArea').classList.remove('on');
   const plist=v5?['Tham','Sân','Si','Ngạo mạn','Nghi ngờ']:[py];
   VS=plist.map(p=>buildVer(d,p,auto?autoFrm(p):frm,gs));VI=0;schedProp=`${d.type} ${d.loc} ${d.price}`;
+  // Log content for dashboard
+  logContentCreated(d);
   renderOut(auto,gs,v5);
+}
+
+function logContentCreated(d){
+  const now=new Date();
+  contentLog.push({
+    date:now.toISOString().split('T')[0],
+    week:getWeekNumber(now),
+    month:now.getMonth()+1,
+    year:now.getFullYear(),
+    type:d.type,
+    loc:d.loc,
+    price:d.price,
+    ts:now.getTime()
+  });
+  // Keep only last 365 entries
+  if(contentLog.length>365)contentLog=contentLog.slice(-365);
+  saveSt();
+  buildDashboard();
+}
+
+function getWeekNumber(d){
+  const date=new Date(d.getTime());
+  date.setHours(0,0,0,0);
+  date.setDate(date.getDate()+3-(date.getDay()+6)%7);
+  const week1=new Date(date.getFullYear(),0,4);
+  return 1+Math.round(((date.getTime()-week1.getTime())/86400000-3+(week1.getDay()+6)%7)/7);
 }
 
 function renderOut(auto,gs,v5){
@@ -383,103 +420,167 @@ async function doAB(){
 
 // ===================== REMIX =====================
 async function doRemix(){
-  const old=V('remix_old');if(!old||old.length<20)return toast('⚠️ Bài viết phải dài hơn 20 ký tự!');
-  const gs=getGoals('goalPills_remix');document.getElementById('remixOut').classList.add('hidden');await sleep(580);
+  const old=V('remix_old');if(!old)return toast('⚠️ Dán bài viết cũ vào!');
+  const gs=getGoals('goalPills_remix');
+  document.getElementById('remixOut').classList.add('hidden');document.getElementById('remixOut').classList.remove('hidden');await sleep(600);
   const issues=[];
-  if(!old.match(/[🔥💥🚨💰⚡🏡✅👑🔍🤔]/))issues.push('❌ Thiếu emoji — dễ bị scroll qua');
-  if(old.length<80)issues.push('❌ Quá ngắn — không đủ thuyết phục KH');
-  if(!old.match(/liên hệ|inbox|gọi|nhắn|zalo/i))issues.push('❌ Thiếu CTA — KH không biết làm gì tiếp');
-  if(!old.match(/\d/))issues.push('❌ Không có con số — thiếu cụ thể, giảm tin tưởng');
-  if(!old.match(/sổ hồng|pháp lý|chính chủ/i))issues.push('❌ Không đề cập pháp lý — nỗi lo số 1 người mua');
-  if(old.split('\n').length<3)issues.push('❌ Ít ngắt dòng — khó đọc trên điện thoại');
-  if(!issues.length)issues.push('⚠️ Bài khá ổn nhưng vẫn có thể tối ưu hơn');
-  const ph=old.split('\n').filter(l=>l.trim()).slice(0,2).join(' ').substring(0,60);
-  const ct=`📞 ${prof.phone} | Zalo: ${prof.zalo}\n👤 ${prof.name}`;
-  const v1=`💥 DỪNG CUỘN — Đọc trước khi ai chốt mất căn này!\n\n${ph}...\n\n✅ Sổ hồng chính chủ · Pháp lý 100% rõ\n🎯 [Thêm điểm nổi bật của bạn]\n\n⏰ ${gs.includes('Chốt nhanh')?'CHỈ HÔM NAY — Nhắn "XEM NHÀ" ngay!':'Nhắn "XEM NHÀ" nhận thêm thông tin!'}\n${ct}`;
-  const v2=`😔 Năm ngoái bạn tôi vẫn đang thuê nhà 10 triệu/tháng...\nHôm nay — đang ngồi uống cà phê trên ban công nhà riêng 🏡\n\nCÂU CHUYỆN: ${ph}...\n\n🔑 Quyết định đó chỉ mất 1 cuộc gọi và 1 buổi xem nhà.\nAnh/chị cũng làm được — nếu hành động NGAY HÔM NAY.\n\n✅ Sổ hồng chính chủ · Hỗ trợ vay NH 70%\n💬 Nhắn "TÔI MUỐN XEM" — sắp lịch trong 24h!\n${ct}`;
-  const v3=`❓ Bạn có biết người hàng xóm mua nhà này được không?\n32 tuổi, lương 25 triệu — nhưng có QUYẾT ĐỊNH ĐÚNG LÚC 💪\n\n${ph}...\n\n📊 CON SỐ THỰC TẾ:\n• Trả góp: chỉ ~15–18 triệu/tháng\n• Thấp hơn tiền thuê khu vực\n• Sau 20 năm: TÀI SẢN của bạn\n\n→ Comment "CON SỐ" nhận bảng tính chi tiết!\n${ct}`;
-  const id1='rmx1',id2='rmx2',id3='rmx3';
-  document.getElementById('remixOut').innerHTML=`<div class="card" style="border-color:rgba(239,83,80,.3)"><div class="ctit"><span class="dot" style="background:var(--rd)"></span>🔬 Chẩn đoán: Tại sao bài cũ chưa viral?</div>${issues.map(i=>`<div style="display:flex;gap:8px;margin-bottom:6px;font-size:.78rem;color:var(--t2)">${i}</div>`).join('')}</div><div class="sec">✨ 3 Phiên bản mới — hay hơn, cảm xúc hơn</div>${[[id1,v1,'💥 V1: FOMO + Urgency','Đánh vào nỗi sợ bỏ lỡ. Hook mạnh từ dòng đầu.'],[id2,v2,'❤️ V2: Storytelling cảm xúc','Kể chuyện người thật → KH hình dung bản thân.'],[id3,v3,'❓ V3: Câu hỏi + Con số','Mở đầu tò mò + số liệu cụ thể → niềm tin cao.']].map(([id,content,title,desc])=>`<div class="card"><div class="ctit"><span class="dot"></span>${title}</div><div style="font-size:.7rem;color:var(--t3);margin-bottom:8px">${desc}</div><div class="cbox"><pre id="${id}">${esc(content)}</pre><button class="cpbtn" onclick="cpEl('${id}')">📋 Copy</button></div></div>`).join('')}<div style="margin-top:5px;text-align:right"><button class="btn btn-r btn-sm" onclick="clearRemix()">🗑️ Xóa</button></div>`;
-  document.getElementById('remixOut').classList.remove('hidden');
+  if(!old.match(/[!?💥🔥⚡]/))issues.push('Hook yếu — thiếu cảm xúc & ký tự đặc biệt');
+  if(old.length<150)issues.push('Nội dung quá ngắn — thiếu thông tin thuyết phục');
+  if(!old.match(/liên hệ|inbox|gọi|nhắn|zalo/i))issues.push('Thiếu CTA — không có lời kêu gọi hành động rõ ràng');
+  if(!old.match(/\d/))issues.push('Thiếu số liệu — thêm giá, diện tích, % để tăng độ tin cậy');
+  if(!old.match(/sổ hồng|pháp lý|chính chủ/i))issues.push('Chưa đề cập pháp lý — KH Nghi ngờ sẽ bỏ qua');
+  const diag=issues.length?issues.map(x=>`❌ ${x}`).join('\n'):'✅ Bài viết cơ bản ổn — cần nâng cấp cảm xúc và urgency';
+  const v1=old.replace(/^(.{0,50})/,m=>`🚨 ĐỪNG BỎ QUA! ${m}`)+`\n\n⏰ CÒN HÔM NAY — inbox ngay kẻo mất!`;
+  const v2=`😤 Bạn đang tốn tiền thuê nhà mỗi tháng mà vẫn chưa có tài sản?\n\n${old}\n\n✅ Đây là cơ hội để thay đổi. Nhắn tin ngay!`;
+  const v3=`💎 Chỉ dành cho người thực sự muốn an cư:\n\n${old}\n\n👑 Sản phẩm có chọn lọc — không dành cho tất cả.`;
+  document.getElementById('remixOut').innerHTML=`<div class="card" style="border-color:rgba(239,83,80,.3)"><div class="ctit"><span class="dot" style="background:var(--rd)"></span>🔍 Chẩn đoán bài cũ</div><pre style="white-space:pre-wrap;font-size:.75rem;color:var(--t2);line-height:1.7">${diag}</pre></div>${[{t:'⚡ FOMO + Urgency',c:v1},{t:'😤 PAS — Đánh vào nỗi đau',c:v2},{t:'👑 Premium — Đẳng cấp',c:v3}].map((x,i)=>{const rid='rv'+i+'_'+Date.now();return`<div class="card"><div class="ctit"><span class="dot"></span>Phiên bản ${i+1}: ${x.t}</div><div id="${rid}" style="background:var(--bg3);border-radius:8px;padding:10px;font-size:.77rem;color:var(--t2);line-height:1.7;white-space:pre-wrap">${x.c}</div><div style="margin-top:8px;display:flex;gap:6px"><button class="btn btn-s btn-xs" onclick="cpEl('${rid}')">📋 Copy</button><button class="btn btn-b btn-xs" onclick="document.getElementById('scrTxt').value=document.getElementById('${rid}').textContent;nav('scr')">🎯 Chấm điểm</button></div></div>`;}).join('')}<div style="text-align:right;margin-top:5px"><button class="btn btn-r btn-sm" onclick="clearRemix()">🗑️ Xóa</button></div>`;
 }
-function clearRemix(){document.getElementById('remix_old').value='';document.getElementById('remixOut').classList.add('hidden');}
+function clearRemix(){document.getElementById('remix_old').value='';document.getElementById('remixOut').innerHTML='';}
 
-// ===================== SURVEY =====================
+// ==================== SURVEY (NEW: ENHANCED SYNC) ====================
 function buildSurveySteps(){
-  const c=document.getElementById('svSteps');if(!c)return;
-  c.innerHTML=SURVEY_STEPS.map((s,i)=>`<div class="sv-step" id="svs${i}"><div class="sv-head" onclick="toggleSv(${i})"><div class="sv-num">${s.num}</div><div class="sv-title">${s.title}</div><span class="sv-arr">▼</span></div><div class="sv-body"><div style="padding-top:9px">${s.items.map((item,j)=>`<div class="sv-ck"><div class="sv-cb" id="cb_${i}_${j}" onclick="toggleCb(${i},${j})"></div><div class="sv-ct">${item}</div></div>`).join('')}<textarea placeholder="Ghi chú..." style="min-height:50px;margin-top:7px;font-size:.75px" id="svn_${i}"></textarea></div></div></div>`).join('');
+  const el=document.getElementById('svSteps');if(!el)return;
+  el.innerHTML=SURVEY_STEPS.map((s,si)=>`
+    <div class="sv-step" id="svs${si}">
+      <div class="sv-head" onclick="this.parentElement.classList.toggle('open')">
+        <div class="sv-num">${s.num}</div>
+        <div class="sv-title">${s.title}</div>
+        <span class="sv-arr">▼</span>
+      </div>
+      <div class="sv-body">
+        ${s.items.map((it,ii)=>`
+          <div class="sv-ck">
+            <div class="sv-cb" id="cb_${si}_${ii}" onclick="tgCB(this,'${it.replace(/'/g,"\\'")}')"></div>
+            <div class="sv-ct">${it}</div>
+          </div>
+        `).join('')}
+        <div class="fg" style="margin-top:8px">
+          <label style="font-size:.69rem;color:var(--t3)">📝 Ghi chú thêm</label>
+          <input type="text" id="svn_${si}" placeholder="Ghi chú bổ sung..." style="font-size:.72rem;padding:5px 8px">
+        </div>
+      </div>
+    </div>`).join('');
 }
-function toggleSv(i){document.getElementById('svs'+i).classList.toggle('open');}
-function toggleCb(i,j){const cb=document.getElementById(`cb_${i}_${j}`);cb.classList.toggle('checked');cb.textContent=cb.classList.contains('checked')?'✓':'';}
+function tgCB(el,item){el.classList.toggle('checked');if(el.classList.contains('checked')){el.textContent='✓';if(!svData.checkedItems)svData.checkedItems=[];if(!svData.checkedItems.includes(item))svData.checkedItems.push(item);}else{el.textContent='';if(svData.checkedItems)svData.checkedItems=svData.checkedItems.filter(x=>x!==item);}}
 
 function doSurveyReport(){
-  const addr=V('sv_addr')||'BĐS',price=V('sv_price'),area=V('sv_area'),floors=V('sv_floors'),w=V('sv_w'),d=V('sv_d'),pros=V('sv_pros'),cons=V('sv_cons'),reason=V('sv_reason'),legal=V('sv_legal');
-  const pArr=pros.split('\n').filter(x=>x.trim());const cArr=cons.split('\n').filter(x=>x.trim());
-  const checked=[];SURVEY_STEPS.forEach((s,i)=>{s.items.forEach((item,j)=>{if(document.getElementById(`cb_${i}_${j}`)?.classList.contains('checked'))checked.push(`[Bước ${s.num}] ${item}`);});});
-  svData={addr,price,area,floors,w,d,pros,cons,reason,legal};
-  document.getElementById('svReport').innerHTML=`<div class="sec">📊 Báo cáo 5x5 — ${addr}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:12px"><div class="card" style="border-color:rgba(62,207,142,.3)"><div class="ctit" style="margin-bottom:8px"><span style="color:var(--gr)">✅</span>5 Ưu Điểm</div>${pArr.length?pArr.map((p,i)=>`<div style="display:flex;gap:5px;margin-bottom:5px;font-size:.76rem;color:var(--t2)"><span style="color:var(--gr);font-weight:700">${i+1}.</span>${p}</div>`).join(''):'<div style="font-size:.74rem;color:var(--t3)">Chưa nhập</div>'}</div><div class="card" style="border-color:rgba(239,83,80,.3)"><div class="ctit" style="margin-bottom:8px"><span style="color:var(--rd)">❌</span>5 Nhược Điểm</div>${cArr.length?cArr.map((c,i)=>`<div style="display:flex;gap:5px;margin-bottom:5px;font-size:.76rem;color:var(--t2)"><span style="color:var(--rd);font-weight:700">${i+1}.</span>${c}</div>`).join(''):'<div style="font-size:.74rem;color:var(--t3)">Chưa nhập</div>'}</div></div>${reason||legal?`<div class="card" style="margin-bottom:11px"><div class="ctit" style="margin-bottom:8px"><span class="dot"></span>🔍 Đọc vị</div>${reason?`<div style="font-size:.77rem;color:var(--t2);margin-bottom:5px">❓ Lý do bán: <strong>${reason}</strong></div>`:''} ${legal?`<div style="font-size:.77rem;color:var(--t2)">📋 Pháp lý: <strong>${legal}</strong></div>`:''}</div>`:''} ${checked.length?`<div class="card" style="margin-bottom:11px"><div class="ctit" style="margin-bottom:8px"><span class="dot"></span>✅ Đã kiểm tra ${checked.length}/${SURVEY_STEPS.reduce((s,st)=>s+st.items.length,0)} mục</div>${checked.map(item=>`<div style="font-size:.72rem;color:var(--gr);margin-bottom:4px">✓ ${item}</div>`).join('')}</div>`:''}<div style="display:flex;gap:7px;flex-wrap:wrap"><button class="btn btn-g btn-sm" onclick="cpTxt(buildSvTxt())">📋 Copy báo cáo</button><button class="btn btn-b btn-sm" onclick="dlTxt(buildSvTxt(),'bao-cao-khao-sat.txt')">📄 Xuất .txt</button><button class="btn btn-b btn-sm" onclick="saveOutputToLibrary('📋 Khảo sát: '+(svData.addr||'BĐS'),buildSvTxt(),'survey')">💾 Lưu</button><button class="btn btn-r btn-sm" onclick="document.getElementById('svReport').classList.add('hidden')">🗑️</button></div>`;
+  const addr=V('sv_addr'),price=V('sv_price'),area=V('sv_area'),floors=V('sv_floors'),w=V('sv_w'),d=V('sv_d'),pros=V('sv_pros'),cons=V('sv_cons'),reason=V('sv_reason'),legal=V('sv_legal');
+  if(!addr)return toast('⚠️ Nhập địa chỉ BĐS!');
+  svData={addr,price,area,floors,w,d,pros,cons,reason,legal,checkedItems:svData.checkedItems||[]};
+  const pArr=pros.split('\n').filter(x=>x.trim());
+  const cArr=cons.split('\n').filter(x=>x.trim());
+  const checked=svData.checkedItems||[];
+  document.getElementById('svReport').innerHTML=`
+    <div class="sec">📊 Báo cáo 5x5 — ${addr}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:12px">
+      <div class="card" style="border-color:rgba(62,207,142,.3)">
+        <div class="ctit" style="margin-bottom:8px"><span style="color:var(--gr)">✅</span>5 Ưu Điểm</div>
+        ${pArr.length?pArr.map((p,i)=>`<div style="display:flex;gap:5px;margin-bottom:5px;font-size:.76rem;color:var(--t2)"><span style="color:var(--gr);font-weight:700">${i+1}.</span>${p}</div>`).join(''):'<div style="font-size:.74rem;color:var(--t3)">Chưa nhập</div>'}
+      </div>
+      <div class="card" style="border-color:rgba(239,83,80,.3)">
+        <div class="ctit" style="margin-bottom:8px"><span style="color:var(--rd)">❌</span>5 Nhược Điểm</div>
+        ${cArr.length?cArr.map((c,i)=>`<div style="display:flex;gap:5px;margin-bottom:5px;font-size:.76rem;color:var(--t2)"><span style="color:var(--rd);font-weight:700">${i+1}.</span>${c}</div>`).join(''):'<div style="font-size:.74rem;color:var(--t3)">Chưa nhập</div>'}
+      </div>
+    </div>
+    ${reason||legal?`<div class="card" style="margin-bottom:11px"><div class="ctit" style="margin-bottom:8px"><span class="dot"></span>🔍 Đọc vị</div>${reason?`<div style="font-size:.77rem;color:var(--t2);margin-bottom:5px">❓ Lý do bán: <strong>${reason}</strong></div>`:''} ${legal?`<div style="font-size:.77rem;color:var(--t2)">📋 Pháp lý: <strong>${legal}</strong></div>`:''}</div>`:''}
+    ${checked.length?`<div class="card" style="margin-bottom:11px"><div class="ctit" style="margin-bottom:8px"><span class="dot"></span>✅ Đã kiểm tra ${checked.length}/${SURVEY_STEPS.reduce((s,st)=>s+st.items.length,0)} mục</div>${checked.map(item=>`<div style="font-size:.72rem;color:var(--gr);margin-bottom:4px">✓ ${item}</div>`).join('')}</div>`:''}
+    <div style="display:flex;gap:7px;flex-wrap:wrap">
+      <button class="btn btn-g btn-sm" onclick="cpTxt(buildSvTxt())">📋 Copy báo cáo</button>
+      <button class="btn btn-b btn-sm" onclick="dlTxt(buildSvTxt(),'bao-cao-khao-sat.txt')">📄 Xuất .txt</button>
+      <button class="btn btn-b btn-sm" onclick="saveOutputToLibrary('📋 Khảo sát: '+(svData.addr||'BĐS'),buildSvTxt(),'survey')">💾 Lưu</button>
+      <button class="btn btn-r btn-sm" onclick="document.getElementById('svReport').classList.add('hidden')">🗑️</button>
+    </div>`;
   document.getElementById('svReport').classList.remove('hidden');
 }
 function buildSvTxt(){const d=svData;return`BÁO CÁO KHẢO SÁT NHÀ\n${'='.repeat(40)}\nĐịa chỉ: ${d.addr}\nGiá: ${d.price} | DT: ${d.area}m² | ${d.floors} tầng (${d.w}x${d.d}m)\n\n✅ 5 ƯU ĐIỂM:\n${d.pros}\n\n❌ 5 NHƯỢC ĐIỂM:\n${d.cons}\n\nLý do bán: ${d.reason}\nPháp lý: ${d.legal}\n${'='.repeat(40)}`;}
+
+// =========================================================
+// SURVEY → CONTENT SYNC (ENHANCED v6)
+// Maps all survey fields intelligently to content generator
+// =========================================================
 function svToContent(){
   if(!svData.addr)return toast('⚠️ Chưa có dữ liệu khảo sát!');
-  // Clear form
-  ['i_type','i_price','i_area','i_loc','i_pros','i_diff'].forEach(id=>{
-    const e=document.getElementById(id);if(e)e.value='';
-  });
+  ['i_type','i_price','i_area','i_loc','i_pros','i_diff'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
 
-  // 1. Loại nhà: detect thông minh
+  // 1. Loại nhà — smart detect
   let houseType='Nhà phố';
-  if(svData.floors && parseInt(svData.floors)>4) houseType='Biệt thự';
-  else if(svData.area && parseFloat(svData.area)<50 && (!svData.floors || parseInt(svData.floors)<=1)) houseType='Đất nền';
-  document.getElementById('i_type').value=houseType;
+  const areaNum=parseFloat(svData.area)||0;
+  const floorsNum=parseInt(svData.floors)||0;
+  if(floorsNum>4)houseType='Biệt thự';
+  else if(areaNum<50&&floorsNum<=1)houseType='Đất nền';
+  else if(svData.addr&&svData.addr.toLowerCase().includes('căn hộ'))houseType='Căn hộ chung cư';
+  else if(svData.addr&&svData.addr.toLowerCase().includes('shop'))houseType='Shophouse';
+  const typeEl=document.getElementById('i_type');if(typeEl)typeEl.value=houseType;
 
-  // 2. Giá
-  document.getElementById('i_price').value=svData.price||'';
+  // 2. Giá — preserve unit
+  const priceEl=document.getElementById('i_price');
+  if(priceEl)priceEl.value=svData.price||'';
 
-  // 3. Diện tích
-  document.getElementById('i_area').value=svData.area?svData.area+'m²':'';
-
-  // 4. Vị trí
-  document.getElementById('i_loc').value=svData.addr;
-
-  // 5. PROS: TẤT CẢ ưu điểm + pháp lý
-  let prosArr=[];
-  if(svData.pros){
-    prosArr=svData.pros.split('\n').map(s=>s.trim()).filter(s=>s.length>0);
+  // 3. Diện tích — format as m²
+  const areaEl=document.getElementById('i_area');
+  if(areaEl){
+    let areaStr=svData.area||'';
+    if(areaStr&&!areaStr.includes('m')&&!isNaN(parseFloat(areaStr)))areaStr+=`m²`;
+    // Also add W×D if available
+    if(svData.w&&svData.d)areaStr+=` (${svData.w}×${svData.d}m)`;
+    areaEl.value=areaStr;
   }
-  if(svData.legal && !prosArr.some(p=>p.toLowerCase().includes('sổ')||p.toLowerCase().includes('pháp lý'))){
+
+  // 4. Vị trí — full address
+  const locEl=document.getElementById('i_loc');
+  if(locEl)locEl.value=svData.addr;
+
+  // 5. Điểm mạnh — pros + legal + checked items
+  let prosArr=[];
+  if(svData.pros){prosArr=svData.pros.split('\n').map(s=>s.trim()).filter(s=>s.length>0);}
+  // Prepend legal if not already mentioned
+  if(svData.legal&&!prosArr.some(p=>p.toLowerCase().includes('sổ')||p.toLowerCase().includes('pháp lý'))){
     prosArr.unshift(svData.legal);
   }
-  document.getElementById('i_pros').value=prosArr.join(', ');
+  // Add relevant checked items as pros
+  const posChecked=(svData.checkedItems||[]).filter(it=>
+    it.toLowerCase().match(/hẻm thông|hướng nam|đông nam|khu dân trí|không ngập|sổ hồng|pháp lý sạch|an ninh/)
+  );
+  posChecked.slice(0,2).forEach(it=>{if(!prosArr.some(p=>p.includes(it.substring(0,10))))prosArr.push(it);});
+  // Floors info
+  if(svData.floors&&parseInt(svData.floors)>0)prosArr.push(`Nhà ${svData.floors} tầng kiên cố`);
+  const prosEl=document.getElementById('i_pros');
+  if(prosEl)prosEl.value=prosArr.slice(0,6).join(', ');
 
-  // 6. DIFF: Logic chuyên nghiệp
+  // 6. Điểm khác biệt — smart build from all sources
   let diffArr=[];
-  if(prosArr.length>0) diffArr.push(prosArr[0]); // standout
-  if(svData.reason && svData.reason.toLowerCase().match(/gấp|nợ|chia/)){
-    diffArr.push('Chủ cần bán gấp — cơ hội thương lượng');
+  // Best pro as differentiator
+  if(prosArr.length>0)diffArr.push(prosArr[0]);
+  // Seller motivation = buyer opportunity
+  if(svData.reason&&svData.reason.toLowerCase().match(/gấp|nợ|chia|cần tiền/)){
+    diffArr.push('Chủ cần bán gấp — cơ hội thương lượng tốt');
   }
-  if(svData.legal && svData.legal.toLowerCase().includes('sổ hồng')){
-    if(!diffArr.some(d=>d.includes('Sổ hồng'))) diffArr.push('Sổ hồng riêng — công chứng ngay');
+  // Legal highlight
+  if(svData.legal&&svData.legal.toLowerCase().includes('sổ hồng')&&!diffArr.some(d=>d.includes('Sổ hồng'))){
+    diffArr.push('Sổ hồng riêng — sang tên nhanh');
   }
-  // Từ định giá nếu có
+  // From valuation if available
   const lastVal=localStorage.getItem('bds_last_val');
-  if(lastVal){
-    try{const v=JSON.parse(lastVal);if(v.isGood) diffArr.push('Giá tốt hơn thị trường '+v.diffPct+'%');}catch(e){}
-  }
-  // Từ nhược điểm xử lý
+  if(lastVal){try{const v=JSON.parse(lastVal);if(v.isGood)diffArr.push(`Giá tốt hơn thị trường ${v.diffPct}%`);}catch(e){}}
+  // Negative → positive framing from cons
   if(svData.cons){
-    const consArr=svData.cons.split('\n').map(s=>s.trim()).filter(s=>s.length>0);
-    consArr.forEach(c=>{
-      if(c.toLowerCase().includes('cũ')) diffArr.push('Nhà cũ nhưng móng chắc — tiết kiệm xây mới');
-      if(c.toLowerCase().includes('nhỏ')) diffArr.push('Diện tích vừa — dễ thanh khoản');
+    const cArr=svData.cons.split('\n').map(s=>s.trim()).filter(s=>s);
+    cArr.forEach(c=>{
+      if(c.toLowerCase().includes('cũ'))diffArr.push('Nhà cũ — móng chắc, tiết kiệm xây lại');
+      if(c.toLowerCase().includes('nhỏ'))diffArr.push('Diện tích vừa phải — dễ thanh khoản, dễ cho thuê');
     });
   }
-  document.getElementById('i_diff').value=diffArr.filter((v,i,a)=>a.indexOf(v)===i).join(', ');
+  // W×D highlight if unusual
+  if(svData.w&&svData.d){
+    const wNum=parseFloat(svData.w);
+    if(wNum>=6)diffArr.push(`Mặt tiền rộng ${svData.w}m — hiếm tại khu vực`);
+  }
+  const diffEl=document.getElementById('i_diff');
+  if(diffEl)diffEl.value=diffArr.filter((v,i,a)=>a.indexOf(v)===i).slice(0,4).join(', ');
 
-  // 7. Auto-detect loại giao dịch
+  // 7. Auto-detect transaction type
   const priceStr=(svData.price||'').toLowerCase();
-  if(priceStr.includes('tháng') || priceStr.includes('triệu/th')){
+  if(priceStr.includes('tháng')||priceStr.includes('triệu/th')){
     document.querySelectorAll('#txnPills .pill').forEach(p=>p.classList.remove('on'));
     const rentPill=document.querySelector('#txnPills .pill[data-v="Cho thuê"]');
     if(rentPill){rentPill.classList.add('on');pst.txn='Cho thuê';}
@@ -489,23 +590,61 @@ function svToContent(){
     if(sellPill){sellPill.classList.add('on');pst.txn='Bán';}
   }
 
-  // 8. Auto-detect KH mục tiêu
-  const allText=(svData.pros+' '+svData.cons+' '+svData.reason).toLowerCase();
+  // 8. Auto-detect buyer type from content
+  const allTxt=(svData.pros+' '+svData.cons+' '+svData.reason).toLowerCase();
   let buyerType='Mua ở';
-  if(allText.includes('đầu tư') || allText.includes('sinh lời') || allText.includes('cho thuê')) buyerType='Đầu tư';
-  else if(allText.includes('thuê lại')) buyerType='Cho thuê lại';
+  if(allTxt.match(/đầu tư|sinh lời|cho thuê lại/))buyerType='Đầu tư';
+  else if(areaNum>200||floorsNum>=4)buyerType='Đầu tư';
   document.querySelectorAll('#buyerPills .pill').forEach(p=>p.classList.remove('on'));
-  const buyerPill=document.querySelector('#buyerPills .pill[data-v="'+buyerType+'"]');
+  const buyerPill=document.querySelector(`#buyerPills .pill[data-v="${buyerType}"]`);
   if(buyerPill){buyerPill.classList.add('on');pst.buyer=buyerType;}
 
   nav('gen');
-  toast('✅ Đã điền đầy đủ từ Khảo Sát! Kiểm tra và chỉnh sửa nếu cần.');
+  toast('✅ Đã đồng bộ toàn bộ dữ liệu Khảo Sát → Tạo Content!');
 }
-function svToValuation(){if(svData.addr){document.getElementById('val_addr').value=svData.addr;document.getElementById('val_total').value=svData.price?.replace(/[^0-9.]/g,'')||'';document.getElementById('val_area').value=svData.area||'';document.getElementById('val_floors').value=svData.floors||'';document.getElementById('val_w').value=svData.w||'';document.getElementById('val_d').value=svData.d||'';document.getElementById('val_pros').value=svData.pros||'';document.getElementById('val_cons').value=svData.cons||'';document.getElementById('val_reason').value=svData.reason||'';document.getElementById('val_legal').value=svData.legal||'';}nav('valuation');toast('✅ Đã điền vào form Định Giá!');}
-function clearSurvey(){['sv_addr','sv_price','sv_area','sv_floors','sv_w','sv_d','sv_pros','sv_cons','sv_reason','sv_legal'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});SURVEY_STEPS.forEach((s,i)=>{s.items.forEach((it,j)=>{const cb=document.getElementById(`cb_${i}_${j}`);if(cb){cb.classList.remove('checked');cb.textContent='';}});const n=document.getElementById('svn_'+i);if(n)n.value='';});document.getElementById('svReport').classList.add('hidden');svData={};document.querySelectorAll('.sv-step.open').forEach(el=>el.classList.remove('open'));toast('🗑️ Đã xóa!');}
+
+function svToValuation(){
+  if(svData.addr){
+    document.getElementById('val_addr').value=svData.addr;
+    document.getElementById('val_total').value=svData.price?.replace(/[^0-9.]/g,'')||'';
+    document.getElementById('val_area').value=svData.area||'';
+    document.getElementById('val_floors').value=svData.floors||'';
+    document.getElementById('val_w').value=svData.w||'';
+    document.getElementById('val_d').value=svData.d||'';
+    document.getElementById('val_pros').value=svData.pros||'';
+    document.getElementById('val_cons').value=svData.cons||'';
+    document.getElementById('val_reason').value=svData.reason||'';
+    document.getElementById('val_legal').value=svData.legal||'';
+  }
+  nav('valuation');
+  toast('✅ Đã điền vào form Định Giá!');
+}
+
+function clearSurvey(){
+  ['sv_addr','sv_price','sv_area','sv_floors','sv_w','sv_d','sv_pros','sv_cons','sv_reason','sv_legal'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  SURVEY_STEPS.forEach((s,i)=>{s.items.forEach((it,j)=>{const cb=document.getElementById(`cb_${i}_${j}`);if(cb){cb.classList.remove('checked');cb.textContent='';}});const n=document.getElementById('svn_'+i);if(n)n.value='';});
+  document.getElementById('svReport').classList.add('hidden');
+  svData={};
+  document.querySelectorAll('.sv-step.open').forEach(el=>el.classList.remove('open'));
+  toast('🗑️ Đã xóa!');
+}
 
 // ===================== VALUATION =====================
-function autoFillVal(){if(svData.addr){document.getElementById('val_addr').value=svData.addr;document.getElementById('val_total').value=svData.price?.replace(/[^0-9.]/g,'')||'';document.getElementById('val_area').value=svData.area||'';document.getElementById('val_floors').value=svData.floors||'';document.getElementById('val_w').value=svData.w||'';document.getElementById('val_d').value=svData.d||'';document.getElementById('val_pros').value=svData.pros||'';document.getElementById('val_cons').value=svData.cons||'';document.getElementById('val_reason').value=svData.reason||'';document.getElementById('val_legal').value=svData.legal||'';toast('✅ Đã lấy từ khảo sát!');}else toast('⚠️ Chưa có dữ liệu khảo sát!');}
+function autoFillVal(){
+  if(svData.addr){
+    document.getElementById('val_addr').value=svData.addr;
+    document.getElementById('val_total').value=svData.price?.replace(/[^0-9.]/g,'')||'';
+    document.getElementById('val_area').value=svData.area||'';
+    document.getElementById('val_floors').value=svData.floors||'';
+    document.getElementById('val_w').value=svData.w||'';
+    document.getElementById('val_d').value=svData.d||'';
+    document.getElementById('val_pros').value=svData.pros||'';
+    document.getElementById('val_cons').value=svData.cons||'';
+    document.getElementById('val_reason').value=svData.reason||'';
+    document.getElementById('val_legal').value=svData.legal||'';
+    toast('✅ Đã lấy từ khảo sát!');
+  }else toast('⚠️ Chưa có dữ liệu khảo sát!');
+}
 
 async function doValuation(){
   const addr=V('val_addr')||'BĐS',total=parseFloat(V('val_total'))||7.9,area=parseFloat(V('val_area'))||82,floors=parseFloat(V('val_floors'))||3,w=parseFloat(V('val_w'))||4.7,dv=parseFloat(V('val_d'))||17.5,quality=parseFloat(document.getElementById('val_quality').value)||3.5,market=parseFloat(V('val_market'))||0,pros=V('val_pros'),cons=V('val_cons'),reason=V('val_reason'),legal=V('val_legal');
@@ -514,98 +653,90 @@ async function doValuation(){
   const marketVal=market?market*area/1e3:0;const diff=market?total-marketVal:0;const diffPct=market?Math.abs((diff/marketVal)*100).toFixed(1):0;const isGood=market&&diff<0;
   const pArr=pros.split('\n').filter(x=>x.trim());const cArr=cons.split('\n').filter(x=>x.trim());
   const rptTxt=`BÁO CÁO ĐỊNH GIÁ BĐS\n${'='.repeat(42)}\nĐịa chỉ: ${addr}\nDiện tích: ${area}m² (${w}x${dv}m) · ${floors} tầng\nGiá rao: ${total} tỷ\n\nBÓC TÁCH:\n• Giá xây dựng: ${buildCost.toFixed(3)} tỷ\n• Giá đất thực: ${landVal.toFixed(3)} tỷ\n• Đơn giá đất: ${landUnit.toFixed(0)} triệu/m²\n${market?`• Thị trường: ${market} tr/m² → ${isGood?'GIÁ HỜI':'CAO HƠN TT'} ${diffPct}%`:''}\n\n✅ ƯU ĐIỂM:\n${pros}\n\n❌ NHƯỢC ĐIỂM:\n${cons}\n\nLý do bán: ${reason}\nPháp lý: ${legal}`;
-  document.getElementById('valOut').innerHTML=`<div class="sec" style="margin-top:0">📊 Kết quả định giá</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px"><div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center"><div style="font-size:.66rem;color:var(--t3);margin-bottom:3px">💰 Giá rao</div><div style="font-weight:900;font-size:1.2rem;color:var(--ac);font-family:'Space Mono',monospace">${total}tỷ</div></div><div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center"><div style="font-size:.66rem;color:var(--t3);margin-bottom:3px">🏗️ Xây dựng</div><div style="font-weight:900;font-size:1.2rem;color:var(--bl);font-family:'Space Mono',monospace">${buildCost.toFixed(2)}tỷ</div></div><div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center"><div style="font-size:.66rem;color:var(--t3);margin-bottom:3px">🌍 Giá đất</div><div style="font-weight:900;font-size:1.2rem;color:var(--gr);font-family:'Space Mono',monospace">${landVal.toFixed(2)}tỷ</div></div></div><div class="card" style="border-color:rgba(62,207,142,.3);margin-bottom:11px"><div class="ctit"><span class="dot" style="background:var(--gr)"></span>📐 Bóc tách Thuật Giả Kim</div><div style="display:grid;gap:7px;font-size:.78rem"><div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg3);border-radius:8px"><span style="color:var(--t2)">Giá xây dựng (${quality}tr/m²×${w}×${dv}×${floors}t)</span><strong style="color:var(--bl)">${buildCost.toFixed(3)} tỷ</strong></div><div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg3);border-radius:8px"><span style="color:var(--t2)">Giá đất = ${total} − ${buildCost.toFixed(3)}</span><strong style="color:var(--gr)">${landVal.toFixed(3)} tỷ</strong></div><div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg3);border-radius:8px"><span style="color:var(--t2)">Đơn giá đất (${landVal.toFixed(3)}tỷ ÷ ${area}m²)</span><strong style="color:var(--ac);font-family:'Space Mono',monospace">${landUnit.toFixed(0)} tr/m²</strong></div>${market?`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 8px;background:${isGood?'rgba(62,207,142,.12)':'rgba(239,83,80,.1)'};border-radius:8px;border:1px solid ${isGood?'rgba(62,207,142,.3)':'rgba(239,83,80,.3)'}"><span style="font-weight:700;color:var(--tx)">📊 Kết luận so với TT ${market}tr/m²</span><strong style="color:${isGood?'var(--gr)':'var(--rd)'}">${isGood?`🟢 GIÁ HỜI − ${diffPct}%`:`🔴 CAO HƠN +${diffPct}%`}</strong></div>`:''}</div></div>${pArr.length||cArr.length?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px"><div class="card" style="border-color:rgba(62,207,142,.3)"><div class="ctit" style="margin-bottom:8px"><span style="color:var(--gr)">✅</span>Ưu Điểm</div>${pArr.map(p=>`<div style="font-size:.75rem;color:var(--t2);margin-bottom:4px;display:flex;gap:5px"><span style="color:var(--gr)">●</span>${p}</div>`).join('')}</div><div class="card" style="border-color:rgba(239,83,80,.3)"><div class="ctit" style="margin-bottom:8px"><span style="color:var(--rd)">❌</span>Nhược Điểm</div>${cArr.map(c=>`<div style="font-size:.75rem;color:var(--t2);margin-bottom:4px;display:flex;gap:5px"><span style="color:var(--rd)">●</span>${c}</div>`).join('')}</div></div>`:''}<div style="display:flex;gap:7px;flex-wrap:wrap"><button class="btn btn-g btn-sm" onclick="cpTxt(${JSON.stringify(rptTxt)})">📋 Copy báo cáo</button><button class="btn btn-b btn-sm" onclick="dlTxt(${JSON.stringify(rptTxt)},'dinh-gia-bds.txt')">📄 Xuất .txt</button><button class="btn btn-p btn-sm" onclick="valToContent()">✍️ → Tạo Content</button><button class="btn btn-b btn-sm" onclick="saveOutputToLibrary('🏷️ Định giá: '+(V('val_addr')||'BĐS'),buildValTxt(),'valuation')">💾 Lưu</button><button class="btn btn-r btn-sm" onclick="clearValuation()">🗑️ Xóa</button></div>`;
+  if(market)localStorage.setItem('bds_last_val',JSON.stringify({isGood,diffPct,market,addr}));
+  document.getElementById('valOut').innerHTML=`<div class="sec" style="margin-top:0">📊 Kết quả định giá</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px"><div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center"><div style="font-size:.66rem;color:var(--t3);margin-bottom:3px">💰 Giá rao</div><div style="font-weight:900;font-size:1.2rem;color:var(--ac);font-family:'Space Mono',monospace">${total}tỷ</div></div><div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center"><div style="font-size:.66rem;color:var(--t3);margin-bottom:3px">🏗️ Xây dựng</div><div style="font-weight:900;font-size:1.2rem;color:var(--bl);font-family:'Space Mono',monospace">${buildCost.toFixed(2)}tỷ</div></div><div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center"><div style="font-size:.66rem;color:var(--t3);margin-bottom:3px">🌍 Giá đất</div><div style="font-weight:900;font-size:1.2rem;color:var(--gr);font-family:'Space Mono',monospace">${landVal.toFixed(2)}tỷ</div></div></div><div class="card" style="border-color:rgba(62,207,142,.3);margin-bottom:11px"><div class="ctit"><span class="dot" style="background:var(--gr)"></span>📐 Bóc tách Thuật Giả Kim</div><div style="display:grid;gap:7px;font-size:.78rem"><div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg3);border-radius:8px"><span style="color:var(--t2)">Giá xây dựng (${quality}tr/m²×${w}×${dv}×${floors}t)</span><strong style="color:var(--bl)">${buildCost.toFixed(3)} tỷ</strong></div><div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg3);border-radius:8px"><span style="color:var(--t2)">Giá đất = ${total} − ${buildCost.toFixed(3)}</span><strong style="color:var(--gr)">${landVal.toFixed(3)} tỷ</strong></div><div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg3);border-radius:8px"><span style="color:var(--t2)">Đơn giá đất (${landVal.toFixed(3)}tỷ ÷ ${area}m²)</span><strong style="color:var(--ac);font-family:'Space Mono',monospace">${landUnit.toFixed(0)} tr/m²</strong></div>${market?`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 8px;background:${isGood?'rgba(62,207,142,.12)':'rgba(239,83,80,.1)'};border-radius:8px;border:1px solid ${isGood?'rgba(62,207,142,.3)':'rgba(239,83,80,.3)'}"><span style="font-weight:700;color:var(--tx)">📊 Kết luận so với TT ${market}tr/m²</span><strong style="color:${isGood?'var(--gr)':'var(--rd)'}">${isGood?`🟢 GIÁ HỜI − ${diffPct}%`:`🔴 CAO HƠN +${diffPct}%`}</strong></div>`:''}</div></div>${pArr.length||cArr.length?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px"><div class="card" style="border-color:rgba(62,207,142,.3)"><div class="ctit" style="margin-bottom:8px"><span style="color:var(--gr)">✅</span>Ưu Điểm</div>${pArr.map(p=>`<div style="font-size:.75rem;color:var(--t2);margin-bottom:4px;display:flex;gap:5px"><span style="color:var(--gr)">●</span>${p}</div>`).join('')}</div><div class="card" style="border-color:rgba(239,83,80,.3)"><div class="ctit" style="margin-bottom:8px"><span style="color:var(--rd)">❌</span>Nhược Điểm</div>${cArr.map(c=>`<div style="font-size:.75rem;color:var(--t2);margin-bottom:4px;display:flex;gap:5px"><span style="color:var(--rd)">●</span>${c}</div>`).join('')}</div></div>`:''}<div style="display:flex;gap:7px;flex-wrap:wrap"><button class="btn btn-g btn-sm" onclick="cpTxt(${JSON.stringify(rptTxt)})">📋 Copy báo cáo</button><button class="btn btn-b btn-sm" onclick="dlTxt(${JSON.stringify(rptTxt)},'dinh-gia-bds.txt')">📄 Xuất .txt</button><button class="btn btn-p btn-sm" onclick="valToContent()">✍️ → Tạo Content</button><button class="btn btn-b btn-sm" onclick="saveOutputToLibrary('🏷️ Định giá: '+(V('val_addr')||'BĐS'),${JSON.stringify(rptTxt)},'valuation')">💾 Lưu</button><button class="btn btn-r btn-sm" onclick="clearValuation()">🗑️ Xóa</button></div>`;
   document.getElementById('valOut').classList.remove('hidden');
 }
 function clearValuation(){['val_addr','val_total','val_area','val_floors','val_w','val_d','val_market','val_pros','val_cons','val_reason','val_legal'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});document.getElementById('valOut').classList.add('hidden');toast('🗑️ Đã xóa!');}
 function valToContent(){
-  const total=V('val_total'),area=V('val_area'),addr=V('val_addr');
-  const pros=V('val_pros'),cons=V('val_cons'),reason=V('val_reason'),legal=V('val_legal');
-  const market=V('val_market');
-
+  const total=V('val_total'),area=V('val_area'),addr=V('val_addr'),pros=V('val_pros'),cons=V('val_cons'),reason=V('val_reason'),legal=V('val_legal'),market=V('val_market');
   document.getElementById('i_price').value=total?total+' tỷ':'';
   document.getElementById('i_area').value=area?area+'m²':'';
   document.getElementById('i_loc').value=addr;
-
-  // Pros: tất cả ưu điểm + pháp lý
   let prosArr=[];
-  if(pros) prosArr=pros.split('\n').map(s=>s.trim()).filter(s=>s.length>0);
-  if(legal && !prosArr.some(p=>p.toLowerCase().includes('sổ')||p.toLowerCase().includes('pháp lý'))){
-    prosArr.unshift(legal);
-  }
+  if(pros)prosArr=pros.split('\n').map(s=>s.trim()).filter(s=>s.length>0);
+  if(legal&&!prosArr.some(p=>p.toLowerCase().includes('sổ')||p.toLowerCase().includes('pháp lý')))prosArr.unshift(legal);
   document.getElementById('i_pros').value=prosArr.join(', ');
-
-  // Diff: kết hợp nhiều yếu tố
   let diffArr=[];
-  if(prosArr.length>0) diffArr.push(prosArr[0]);
-  if(market && total && area){
-    const q=parseFloat(document.getElementById('val_quality').value||3.5);
-    const w=parseFloat(V('val_w')||4);
-    const d=parseFloat(V('val_d')||15);
-    const f=parseFloat(V('val_floors')||1);
-    const buildCost=q*w*d*f/1000;
-    const landVal=parseFloat(total)-buildCost;
-    const landUnit=landVal/parseFloat(area)*1000;
-    const marketUnit=parseFloat(market);
-    if(landUnit < marketUnit * 0.95){
-      const pct=((marketUnit-landUnit)/marketUnit*100).toFixed(0);
-      diffArr.push('Giá đất thực tế thấp hơn TT '+pct+'% — cơ hội đầu tư');
-      localStorage.setItem('bds_last_val', JSON.stringify({isGood:true, diffPct:pct}));
-    }
+  if(prosArr.length>0)diffArr.push(prosArr[0]);
+  if(market&&total&&area){
+    const marketVal=parseFloat(market)*parseFloat(area)/1e3;
+    const isGood=parseFloat(total)<marketVal;
+    if(isGood)diffArr.push(`Giá thấp hơn thị trường ${Math.abs(((parseFloat(total)-marketVal)/marketVal)*100).toFixed(1)}%`);
   }
-  if(reason && reason.toLowerCase().match(/gấp|nợ|chia/)){
-    diffArr.push('Chủ cần bán gấp — thương lượng tốt');
-  }
-  if(cons){
-    const consArr=cons.split('\n').map(s=>s.trim()).filter(s=>s.length>0);
-    consArr.forEach(c=>{
-      if(c.toLowerCase().includes('cũ')) diffArr.push('Nhà cũ — tiết kiệm so với xây mới');
-      if(c.toLowerCase().includes('nhỏ')) diffArr.push('Diện tích vừa — dễ thanh khoản');
-    });
-  }
+  if(reason&&reason.toLowerCase().match(/gấp|nợ|chia/))diffArr.push('Chủ cần bán gấp — thương lượng được');
   document.getElementById('i_diff').value=diffArr.filter((v,i,a)=>a.indexOf(v)===i).join(', ');
-
   nav('gen');
-  toast('✅ Đã điền từ Định Giá! Kiểm tra lại trước khi tạo content.');
+  toast('✅ Đã đồng bộ Định Giá → Tạo Content!');
 }
 
 // ===================== READ KH =====================
 function buildReadKH(){
-  const c=document.getElementById('rkQuestions');if(!c)return;
-  c.innerHTML=READ_KH_QS.map((q,i)=>`<div class="card" style="margin-bottom:9px"><div style="font-weight:600;font-size:.79rem;color:var(--tx);margin-bottom:8px">${i+1}. ${q.q}</div><div style="display:grid;gap:5px">${q.opts.map((opt,j)=>`<div id="rk_${i}_${j}" class="rk-opt" onclick="selectRK(${i},${j})">${opt}</div>`).join('')}</div></div>`).join('');
+  const el=document.getElementById('rkQuestions');if(!el)return;
+  el.innerHTML=READ_KH_QS.map((q,qi)=>`
+    <div class="card" style="margin-bottom:9px">
+      <div style="font-weight:700;font-size:.8rem;color:var(--tx);margin-bottom:9px">❓ ${qi+1}. ${q.q}</div>
+      <div style="display:grid;gap:5px">
+        ${q.opts.map((o,oi)=>`<div class="rk-opt" id="rk_${qi}_${oi}" onclick="selRK(${qi},${oi})">${o}</div>`).join('')}
+      </div>
+    </div>`).join('');
+  rkAnswers=new Array(READ_KH_QS.length).fill(-1);
 }
-function selectRK(qi,oi){
-  document.querySelectorAll(`[id^="rk_${qi}_"]`).forEach(el=>el.classList.remove('sel'));
-  document.getElementById(`rk_${qi}_${oi}`).classList.add('sel');
-  rkAnswers[qi]={qi,oi,score:READ_KH_QS[qi].score[oi]};
-  analyzeRK();
+function selRK(qi,oi){
+  rkAnswers[qi]=oi;
+  READ_KH_QS[qi].opts.forEach((_,i)=>{const e=document.getElementById(`rk_${qi}_${i}`);if(e)e.classList.remove('sel');});
+  const sel=document.getElementById(`rk_${qi}_${oi}`);if(sel)sel.classList.add('sel');
+  const answered=rkAnswers.filter(x=>x>=0).length;
+  if(answered>=READ_KH_QS.length)showRKResult();
+  else if(answered>=5){const r=document.getElementById('rkResult');if(r&&r.textContent.includes('Trả lời'))r.textContent=`Đã trả lời ${answered}/${READ_KH_QS.length} — tiếp tục...`;}
 }
-function analyzeRK(){
-  const answered=rkAnswers.filter(a=>a);if(answered.length<3)return;
-  const counts=[0,0,0,0,0];answered.forEach(a=>{if(a&&a.score>=0&&a.score<5)counts[a.score]++;});
-  const maxScore=Math.max(...counts);const psyIdx=counts.indexOf(maxScore);
-  const psyMap=['Tham','Ngạo mạn','Si','Sân','Nghi ngờ'];const psy=psyMap[psyIdx];
-  const psyObj=PSYCH.find(p=>p.p===psy)||PSYCH[0];
-  const confidence=Math.round((maxScore/answered.length)*100);
-  const COL=PSY_COLORS[psy]||'var(--ac)';
-  const strategyMap={Tham:'Nhấn mạnh deal hời, giá thấp hơn TT, tạo khan hiếm ngay lập tức',Sân:'Nói thẳng, ngắn gọn. Không vòng vo. CTA dứt khoát',Si:'Giải thích từng bước A-Z. Đồng hành, kiên nhẫn. Không ép quyết định','Ngạo mạn':'Ngôn ngữ đẳng cấp. Tôn trọng quan điểm. Nhấn mạnh độc bản','Nghi ngờ':'Cung cấp bằng chứng pháp lý ngay. Cam kết bằng văn bản cụ thể'};
-  document.getElementById('rkResult').innerHTML=`<div style="background:linear-gradient(135deg,${COL}18,${COL}08);border:1.5px solid ${COL}40;border-radius:11px;padding:13px;text-align:center;margin-bottom:10px"><div style="font-size:2rem;margin-bottom:5px">${psyObj.e}</div><div style="font-weight:800;font-size:.93rem;color:var(--tx);margin-bottom:2px">Tâm lý: ${psy}</div><div style="font-size:.73rem;color:${COL};margin-bottom:4px">${psyObj.tag}</div><div style="font-size:.7rem;color:var(--t3)">Độ chắc chắn: <strong style="color:${COL}">${confidence}%</strong> (${answered.length}/${READ_KH_QS.length} câu)</div></div><div style="font-size:.77rem;color:var(--t2);line-height:1.7;margin-bottom:9px">${psyObj.desc}</div><div style="margin-bottom:9px"><div style="font-size:.7rem;font-weight:700;color:var(--t3);margin-bottom:5px">🗝️ Từ khoá nên dùng:</div><div style="display:flex;flex-wrap:wrap;gap:5px">${psyObj.keys.map(k=>`<span style="background:${COL}15;border:1px solid ${COL}40;border-radius:7px;padding:3px 8px;font-size:.67rem;color:${COL}">${k}</span>`).join('')}</div></div><div style="background:var(--bg3);border-radius:8px;padding:9px;font-size:.75rem;color:var(--t2);line-height:1.7;margin-bottom:9px"><strong style="color:var(--tx)">💡 Chiến thuật: </strong>${strategyMap[psy]}</div><div style="display:flex;gap:7px;flex-wrap:wrap"><button class="btn btn-p btn-sm" onclick="applyPsyToContent('${psy}')">✍️ Áp dụng → Tạo Content</button><button class="btn btn-b btn-sm" onclick="saveOutputToLibrary('🎭 Đọc vị: '+selPsy,document.getElementById('rkResult').innerText,'readkh')">💾 Lưu</button><button class="btn btn-b btn-sm" onclick="saveOutputToLibrary('🏡 Dẫn xem: '+(V('gt_prop')||'BĐS'),document.getElementById('gtOut').innerText,'guidetour')">💾 Lưu</button><button class="btn btn-r btn-sm" onclick="clearReadKH()">🗑️ Reset</button></div>`;
+function showRKResult(){
+  const scores={'Tham':0,'Sân':0,'Si':0,'Ngạo mạn':0,'Nghi ngờ':0};
+  const maps=[['Tham','Si','Sân','Nghi ngờ'],['Si','Sân','Nghi ngờ','Ngạo mạn'],['Tham','Ngạo mạn','Nghi ngờ','Si'],['Tham','Si','Nghi ngờ','Sân'],['Tham','Si','Nghi ngờ','Sân'],['Tham','Ngạo mạn','Nghi ngờ','Si'],['Tham','Nghi ngờ','Nghi ngờ','Si'],['Sân','Si','Nghi ngờ','Si'],['Tham','Nghi ngờ','Nghi ngờ','Si'],['Tham','Sân','Nghi ngờ','Si']];
+  rkAnswers.forEach((ans,qi)=>{if(ans>=0&&maps[qi]&&maps[qi][ans])scores[maps[qi][ans]]=(scores[maps[qi][ans]]||0)+1;});
+  const top=Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
+  const p=PSYCH.find(x=>x.p===top)||PSYCH[2];
+  const strats={'Tham':'Dùng giá, deal hời, khan hiếm để thúc đẩy. Nhấn mạnh lợi ích tài chính.','Sân':'Trực tiếp, ngắn gọn. Báo giá ngay, không vòng vo. Tôn trọng thời gian của họ.','Si':'Giải thích kỹ từng bước. Gửi thêm tài liệu. Cho họ thời gian nhưng đặt checkpoint.','Ngạo mạn':'Tôn trọng đẳng cấp. Dùng ngôn ngữ premium. Không sales rẻ tiền.','Nghi ngờ':'Cung cấp bằng chứng ngay. Sổ hồng scan, cam kết hoàn tiền. Cho xem tận nơi.'};
+  document.getElementById('rkResult').innerHTML=`
+    <div style="text-align:center;padding:13px;background:linear-gradient(135deg,rgba(245,166,35,.08),rgba(76,156,245,.05));border-radius:10px;margin-bottom:11px">
+      <div style="font-size:2.2rem;margin-bottom:5px">${p.e}</div>
+      <div style="font-weight:900;font-size:1.1rem;color:var(--tx)">${p.p}</div>
+      <div style="font-size:.75rem;color:var(--t3);margin-top:2px">${p.tag}</div>
+    </div>
+    <div class="card" style="margin-bottom:9px">
+      <div class="ctit"><span class="dot"></span>🧠 Đặc điểm tâm lý</div>
+      <div style="font-size:.78rem;color:var(--t2);line-height:1.7">${p.desc}</div>
+    </div>
+    <div class="card" style="border-color:rgba(245,166,35,.3)">
+      <div class="ctit"><span class="dot"></span>💡 Chiến thuật tư vấn</div>
+      <div style="font-size:.78rem;color:var(--t2);line-height:1.7">${strats[top]||''}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px">${(p.keys||[]).map(k=>`<span class="pill on" style="cursor:default">${k}</span>`).join('')}</div>
+    </div>`;
 }
-function applyPsyToContent(psy){selPsy=psy;document.querySelectorAll('.psy-card').forEach(c=>c.classList.toggle('sel',c.dataset.p===psy));document.getElementById('autoSmart').checked=false;toggleAuto();nav('gen');toast(`✅ Đã chọn tâm lý ${psy}!`);}
-function clearReadKH(){rkAnswers=[];document.querySelectorAll('[id^="rk_"]').forEach(el=>el.classList.remove('sel'));document.getElementById('rkResult').innerHTML='<div style="font-size:.79rem;color:var(--t3);text-align:center;padding:20px">Trả lời các câu hỏi bên trên để xem kết quả phân tích</div>';toast('🗑️ Đã reset!');}
+function clearReadKH(){rkAnswers=[];buildReadKH();document.getElementById('rkResult').innerHTML='<div style="font-size:.79rem;color:var(--t3);text-align:center;padding:20px">Trả lời các câu hỏi bên trên để xem kết quả phân tích</div>';}
 
 // ===================== GUIDE TOUR =====================
 async function doGuideTour(){
-  const prop=V('gt_prop')||'BĐS',psy=V('gt_psy')||'Si',pros=V('gt_pros'),cons=V('gt_cons');
+  const prop=V('gt_prop')||'BĐS';const psy=document.getElementById('gt_psy').value||'Si';const pros=V('gt_pros')||'vị trí tốt, thoáng mát';const cons=V('gt_cons')||'';
   document.getElementById('gtOut').classList.add('hidden');await sleep(350);
-  const psyObj=PSYCH.find(p=>p.p===psy)||PSYCH[0];
-  const stratMap={Tham:'Nhấn mạnh giá trị đầu tư, tiềm năng tăng giá từng góc nhà',Sân:'Thông tin rõ ràng, ngắn gọn. Không nói quá nhiều',Si:'Giải thích kỹ từng điểm. Hỏi ý kiến KH sau mỗi phòng','Ngạo mạn':'Nói về lifestyle, đẳng cấp. Không "bán" — chỉ "giới thiệu"','Nghi ngờ':'Chủ động nêu cả nhược điểm. Cam kết pháp lý trước'};
+  const psyObj=PSYCH.find(p=>p.p===psy)||PSYCH[2];
+  const stratMap={'Tham':'Nhấn mạnh giá hời, khan hiếm, ROI đầu tư','Sân':'Thẳng thắn, báo nhanh ưu điểm key, tránh lan man','Si':'Giải thích kỹ, so sánh với thuê nhà, hướng dẫn từng bước','Ngạo mạn':'Nhấn tính độc bản, không phải ai cũng sở hữu được','Nghi ngờ':'Chứng minh pháp lý ngay, để xem hồ sơ tại chỗ'};
   const rooms=[
-    {r:'🚗 Trên đường đến xem nhà',s:`"Anh/chị quan sát khu này nhé — ${pros?.split(',')[0]||'vị trí rất thuận tiện'}. Trong vòng 500m có [tiện ích].\n→ Hỏi: 'Nếu đây là nhà anh/chị, cuối tuần hay đi đâu từ đây?'"`,tip:'Bắt đầu tạo kết nối cảm xúc TRƯỚC khi vào nhà'},
-    {r:'🚪 Hẻm & Mặt tiền',s:`"Hẻm ${pros?.includes('xe hơi')?'rộng — xe hơi vào tận cổng ạ':'thông, có lối đi khác'}.\n→ Ghi nhận nhược điểm: ${cons?.split(',')[0]||'(chưa có)'} để xử lý chủ động"`,tip:'Quan sát ngôn ngữ cơ thể KH ngay từ đây'},
-    {r:'🏠 Phòng khách',s:`"Đây là không gian sum vầy — ${pros?.split(',')[1]||'rộng rãi thoáng mát'}. Ánh sáng tự nhiên buổi sáng rất đẹp ạ.\n→ Hỏi: 'Anh/chị hình dung bố trí sofa và TV ở góc nào?'"`,tip:'Để KH TỰ hình dung — đừng áp đặt bố trí'},
-    {r:'🍳 Bếp & Phòng ăn',s:`"Bếp thông thoáng — phù hợp gia đình nấu ăn thường xuyên.\n→ Hỏi: 'Anh/chị hay nấu ăn không? Bếp này đáp ứng nhu cầu không ạ?'"`,tip:'Kết nối với thói quen sống thực tế của KH'},
-    {r:'🛏️ Phòng ngủ',s:`"Phòng đủ rộng cho giường king size. Cửa sổ thoáng — không bị nắng chiều.\n→ Nếu có nhiều phòng: 'Đây có thể là phòng ba mẹ, phòng các con, hoặc phòng làm việc ạ'"`,tip:'Tạo mental ownership cho từng thành viên gia đình'},
+    {r:'🚪 Mặt tiền & Hẻm',s:`"Đây là hẻm vào nhà — ${pros?.split(',')[0]||'thoáng rộng'}.\nAnh/chị đo thử xem xe hơi vào được không?\n→ Khoảng cách 2 bên nhà + chiều rộng hẻm là ưu điểm quan trọng!"`,tip:'Đứng xa, chụp ảnh góc rộng — hẻm trông rộng hơn thực tế'},
+    {r:'🏠 Tầng trệt & Phòng khách',s:`"Nhà ${prop}.\nDiện tích tầng trệt đủ để anh/chị tưởng tượng kê sofa, tủ TV...\n→ Gợi ý: 'Nếu là nhà mình, anh/chị sẽ kê sofa góc nào ạ?'"`,tip:'Mở tất cả đèn, kéo rèm — ánh sáng quyết định 70% cảm xúc KH'},
+    {r:'🍳 Bếp & Ăn',s:`"Bếp ${pros?.includes('mới')?'mới 100%':'sạch sẽ, sử dụng tốt'}.\n→ Dẫn KH vào bếp: 'Bếp rộng đủ để 2 người nấu thoải mái'\n→ Tâm lý ${psy}: ${stratMap[psy]}"`,tip:'KH phụ nữ thường quan tâm bếp nhất — dành thời gian ở đây'},
+    {r:'🛏️ Phòng ngủ',s:`"Phòng ngủ — anh/chị tưởng tượng: giường king size đặt giữa + 2 tủ 2 bên.\n→ Hỏi: 'Anh/chị muốn phòng master ở tầng mấy ạ?'\n→ Mental ownership — họ đã thấy mình đang ở đây"`,tip:'Mỗi phòng ngủ = 1 câu hỏi mở về nhu cầu cụ thể của KH'},
+    {r:'🚿 WC / Phòng tắm',s:`"WC sạch, ${pros?.includes('mới')?'mới hoàn toàn':'bảo trì tốt'}.\n→ Đừng dừng quá lâu ở WC — chỉ note: 'Thoáng, không ẩm mốc'\n→ Nếu có nhược điểm: 'Sửa WC chỉ tốn 20-40 triệu là như mới'"`,tip:'Đừng dành quá 30 giây ở WC — chuyển sang điểm mạnh khác nhanh'},
     {r:'🌿 Sân thượng / Ban công',s:`"Đây là điểm em thích nhất — ${pros?.split(',')[0]||'không gian thoáng mát'}.\nAnh/chị tưởng tượng: cuối tuần BBQ, trồng cây, hay uống cà phê sáng...\n→ Dừng lại ĐÂY LÂU NHẤT trong tour!"`,tip:'KHO BÁU CẢM XÚC — Khai thác tối đa điểm này'},
     {r:'📋 Tổng kết sau xem nhà',s:`"Trong tất cả những căn đã xem, anh/chị thích căn này ở điểm nào nhất?\n→ LẮNG NGHE KỸ — đây là tín hiệu để chốt\n→ KH hỏi giá/thủ tục: ĐÃ ĐẾN LÚC CHỐT!\n→ KH im lặng: 'Anh/chị đang cân nhắc điều gì ạ?'\n→ Chiến thuật với KH ${psy}: ${stratMap[psy]}"`,tip:'IM LẶNG sau khi hỏi — người nói trước thường nhượng bộ'}
   ];
@@ -636,7 +767,6 @@ function clearSSForm(){document.getElementById('ss_sit').value='';document.getEl
 // ===================== TOOLS =====================
 function showTool(el,id){document.querySelectorAll('.tool-tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');document.querySelectorAll('.tool-pg').forEach(p=>p.classList.remove('on'));document.getElementById('tool-'+id).classList.add('on');}
 
-// CALCULATOR
 function doCalc(){
   const price=parseFloat(V('calc_price'))||5,pct=parseFloat(V('calc_pct'))||70,years=parseFloat(V('calc_years'))||20,rate=parseFloat(V('calc_rate'))||8.5;
   const loan=price*1e9*pct/100,r=rate/100/12,n=years*12;
@@ -644,182 +774,99 @@ function doCalc(){
   const totalPay=monthly*n,totalInt=totalPay-loan;
   const hid='ch_'+Date.now();
   const hint=`Vay ${(loan/1e9).toFixed(2)} tỷ, lãi ${rate}%/năm, ${years} năm → Trả góp chỉ ${(monthly/1e6).toFixed(0)} triệu/tháng — thấp hơn tiền thuê!`;
-  document.getElementById('calcOut').innerHTML=`<div class="card" style="border-color:rgba(62,207,142,.3)"><div class="ctit"><span class="dot" style="background:var(--gr)"></span>Kết quả tính trả góp</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px"><div style="background:var(--bg3);border-radius:9px;padding:12px;text-align:center"><div style="font-size:1.2rem;font-weight:900;color:var(--gr);font-family:'Space Mono',monospace">${(monthly/1e6).toFixed(1)}tr</div><div style="font-size:.67rem;color:var(--t3);margin-top:2px">Trả góp/tháng</div></div><div style="background:var(--bg3);border-radius:9px;padding:12px;text-align:center"><div style="font-size:1.2rem;font-weight:900;color:var(--bl);font-family:'Space Mono',monospace">${(loan/1e9).toFixed(2)}tỷ</div><div style="font-size:.67rem;color:var(--t3);margin-top:2px">Số tiền vay</div></div><div style="background:var(--bg3);border-radius:9px;padding:12px;text-align:center"><div style="font-size:1.2rem;font-weight:900;color:var(--ac);font-family:'Space Mono',monospace">${(totalInt/1e9).toFixed(2)}tỷ</div><div style="font-size:.67rem;color:var(--t3);margin-top:2px">Tổng lãi</div></div></div><div style="font-size:.76rem;color:var(--t2);background:var(--bg3);border-radius:9px;padding:11px;line-height:1.8;margin-bottom:10px">📊 Vay <strong>${(loan/1e9).toFixed(2)} tỷ</strong> — lãi ${rate}%/năm — ${years} năm<br>💰 Trả góp: <strong style="color:var(--gr)">${(monthly/1e6).toFixed(2)} triệu/tháng</strong><br>📅 Tổng trả: <strong>${(totalPay/1e9).toFixed(2)} tỷ</strong></div><div id="${hid}" style="background:rgba(245,166,35,.08);border-radius:9px;padding:10px;margin-bottom:10px;font-size:.77rem;color:var(--ac);font-style:italic">"${hint}"</div><div style="display:flex;gap:7px"><button class="btn btn-g btn-sm" onclick="cpEl('${hid}')">📋 Copy gợi ý content</button><button class="btn btn-b btn-sm" onclick="saveOutputToLibrary('🗣️ Xử lý: '+pst.obj,document.getElementById('objOut').innerText,'objection')">💾 Lưu</button><button class="btn btn-b btn-sm" onclick="saveOutputToLibrary('🧮 Tính góp: '+V('calc_price')+' tỷ',document.getElementById('calcOut').innerText,'calculator')">💾 Lưu</button><button class="btn btn-r btn-sm" onclick="document.getElementById('calcOut').classList.add('hidden')">🗑️ Xóa</button></div></div>`;
+  document.getElementById('calcOut').innerHTML=`<div class="card" style="border-color:rgba(62,207,142,.3)"><div class="ctit"><span class="dot" style="background:var(--gr)"></span>Kết quả tính trả góp</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px"><div style="background:var(--bg3);border-radius:9px;padding:12px;text-align:center"><div style="font-size:1.2rem;font-weight:900;color:var(--gr);font-family:'Space Mono',monospace">${(monthly/1e6).toFixed(1)}tr</div><div style="font-size:.67rem;color:var(--t3);margin-top:2px">Trả góp/tháng</div></div><div style="background:var(--bg3);border-radius:9px;padding:12px;text-align:center"><div style="font-size:1.2rem;font-weight:900;color:var(--bl);font-family:'Space Mono',monospace">${(loan/1e9).toFixed(2)}tỷ</div><div style="font-size:.67rem;color:var(--t3);margin-top:2px">Số tiền vay</div></div><div style="background:var(--bg3);border-radius:9px;padding:12px;text-align:center"><div style="font-size:1.2rem;font-weight:900;color:var(--ac);font-family:'Space Mono',monospace">${(totalInt/1e9).toFixed(2)}tỷ</div><div style="font-size:.67rem;color:var(--t3);margin-top:2px">Tổng lãi</div></div></div><div style="font-size:.76rem;color:var(--t2);background:var(--bg3);border-radius:9px;padding:11px;line-height:1.8;margin-bottom:10px">📊 Vay <strong>${(loan/1e9).toFixed(2)} tỷ</strong> — lãi ${rate}%/năm — ${years} năm<br>💰 Trả góp: <strong style="color:var(--gr)">${(monthly/1e6).toFixed(2)} triệu/tháng</strong><br>📅 Tổng trả: <strong>${(totalPay/1e9).toFixed(2)} tỷ</strong></div><div id="${hid}" style="background:rgba(245,166,35,.08);border-radius:9px;padding:10px;margin-bottom:10px;font-size:.77rem;color:var(--ac);font-style:italic">"${hint}"</div><div style="display:flex;gap:7px"><button class="btn btn-g btn-sm" onclick="cpEl('${hid}')">📋 Copy gợi ý content</button><button class="btn btn-r btn-sm" onclick="document.getElementById('calcOut').classList.add('hidden')">🗑️ Xóa</button></div></div>`;
   document.getElementById('calcOut').classList.remove('hidden');
 }
 
-// OBJECTION
-async function doObj(){
-  const prop=V('obj_prop')||'BĐS';document.getElementById('objOut').classList.add('hidden');await sleep(380);
-  const scripts={
-    price:{title:'Sao đắt vậy?',items:[`"Đắt hay rẻ phải so với cái gì đúng không ạ? Căn tương tự 300m gần đây giá [X], còn ${prop} có thêm [điểm mạnh]. Thực ra giá này đang hợp lý với thị trường ạ."`,`"Chủ đã giảm [X] triệu rồi ạ. Nếu anh/chị quyết định hôm nay, em thương lượng thêm được [X] triệu nữa ạ."`,`"Tính trả góp thì chỉ khoảng [X] triệu/tháng — thấp hơn tiền thuê khu này ạ. Em tính thử cho anh/chị không?"`]},
-    legal:{title:'Pháp lý có chắc không?',items:[`"Câu hỏi hay ạ! Em cam kết 100%: sổ hồng chính chủ, gửi scan ngay. Nếu thông tin sai bất kỳ điểm nào, hoàn cọc toàn bộ ạ."`,`"Mình ra phòng công chứng kiểm tra cùng nhau nhé ạ? 30 phút là biết ngay. Em sẵn sàng đi cùng ạ."`,`"Anh/chị muốn em gửi scan toàn bộ giấy tờ để xem trước không ạ? Em gửi ngay bây giờ nhé."`]},
-    think:{title:'Để tôi suy nghĩ thêm',items:[`"Hoàn toàn bình thường ạ! Nhưng anh/chị đang phân vân ở điểm nào nhất? Giá, pháp lý hay vị trí? Để em hỗ trợ đúng chỗ ạ."`,`"Anh/chị suy nghĩ bao lâu ạ? Em hỏi vì có khách khác đang xem căn này — em không muốn anh/chị bỏ lỡ ạ."`,`"Điều gì khiến anh/chị cần thêm thời gian ạ? Thường những lo ngại đó em giải quyết được ngay trong 5 phút ạ."`]},
-    compare:{title:'Chỗ khác rẻ hơn',items:[`"Anh/chị cho em biết căn đó ở đâu không? Em so sánh thẳng DT, pháp lý, vị trí — anh/chị thấy khác biệt ngay ạ."`,`"Mua nhà là đầu tư 20-30 năm ạ. Rẻ hơn 200tr mà rủi ro pháp lý thì sau này mất nhiều hơn ạ."`,`"Anh/chị đánh giá cao yếu tố nào nhất: giá, pháp lý, hay vị trí? Để em so sánh đúng điểm quan tâm ạ."`]},
-    money:{title:'Chưa đủ tiền',items:[`"Anh/chị thiếu khoảng bao nhiêu ạ? Chỉ cần 20-30% là có thể đặt cọc, phần còn lại vay NH ạ. Em kết nối chuyên gia tài chính tư vấn miễn phí nhé?"`,`"Không cần đủ 100% mới mua được ạ! Có thể vay đến 70% — chỉ cần khoảng 30% vốn tự có ạ. Em tính thử nhé?"`,`"Thời điểm tốt nhất để mua nhà là 'hôm nay và 5 năm trước'. Nếu đợi đủ tiền thì giá nhà cũng tăng theo ạ."`]}
-  };
-  const sc=scripts[pst.obj]||scripts.price;
-  document.getElementById('objOut').innerHTML=`<div class="card" style="border-color:rgba(76,156,245,.3)"><div class="ctit"><span class="dot" style="background:var(--bl)"></span>Kịch bản: "${sc.title}"<button class="btn btn-r btn-xs" style="margin-left:auto" onclick="document.getElementById('objOut').classList.add('hidden')">🗑️</button></div>${sc.items.map((s,i)=>{const oid='obj'+i+'_'+Date.now()+i;return`<div style="background:var(--bg3);border-radius:10px;padding:12px;margin-bottom:9px;position:relative"><div style="font-size:.65rem;font-weight:700;color:var(--ac);margin-bottom:5px">📋 Phiên bản ${i+1}</div><div id="${oid}" style="font-size:.78rem;color:var(--t2);line-height:1.7;font-style:italic">${s}</div><button class="btn btn-b btn-sm" onclick="saveOutputToLibrary('📱 Story: '+V('story_prop'),document.getElementById('storyOut').innerText,'story')">💾 Lưu</button><button class="cpbtn" onclick="cpEl('${oid}')">📋 Copy</button></div>`;}).join('')}</div>`;
+function doObj(){
+  const prop=V('obj_prop')||'BĐS';const obj=pst.obj||'price';
+  document.getElementById('objOut').classList.add('hidden');
+  const scripts={price:`"Đắt hay rẻ phải so với cái gì ạ? Căn tương tự gần đây giá cao hơn mà không có [ưu điểm]. Thực ra ${prop} đang rất hợp lý."`,legal:`"Câu hỏi hay ạ! Em cam kết 100%: sổ hồng chính chủ — em gửi scan ngay bây giờ. Nếu sai bất kỳ điểm nào, hoàn cọc toàn bộ."`,think:`"Anh/chị đang cân nhắc ở điểm nào nhất — giá, vị trí hay pháp lý? Nếu em biết, em giải quyết ngay để anh/chị an tâm quyết định ạ."`,compare:`"Anh/chị cho em biết căn đó ở đâu? Em so sánh thẳng DT, pháp lý, vị trí — anh/chị thấy ngay sự khác biệt ạ."`,money:`"Anh/chị cần vay bao nhiêu %? Em kết nối ngân hàng có gói ưu đãi 7.5%/năm — em tính trả góp ngay cho anh/chị xem ạ."`};
+  document.getElementById('objOut').innerHTML=`<div class="card"><div class="ctit"><span class="dot"></span>🗣️ Kịch bản xử lý phản đối</div><div style="font-size:.79rem;color:var(--t2);line-height:1.8;font-style:italic;background:var(--bg3);padding:12px;border-radius:8px;border-left:3px solid var(--ac)">${scripts[obj]||scripts.price}</div><button class="btn btn-g btn-sm" style="margin-top:8px" onclick="cpTxt(document.querySelector('#objOut .card div[style]').textContent)">📋 Copy</button></div>`;
   document.getElementById('objOut').classList.remove('hidden');
 }
 
-// STORY
-async function doStory(){
-  const prop=V('story_prop')||'BĐS',dur=pst.story_dur||'15s',plt=pst.story_plt||'FB Story';
-  document.getElementById('storyOut').classList.add('hidden');await sleep(320);
-  const ct=`📞 ${prof.phone} | Zalo: ${prof.zalo}`;
-  const s15=`📱 SCRIPT ${plt} — 15 GIÂY\n\n[0:00–0:03] TEXT TO NỔI:\n"${prop}"\n\n[0:03–0:08] HÌNH ĐẸP NHẤT:\nMặt tiền / Phòng khách / View đặc biệt\n→ Nhạc trending nhẹ nhàng\n\n[0:08–0:13] TEXT THÔNG TIN:\n"📐 [DT] | 💰 [Giá] | 📍 [Khu vực]"\n\n[0:13–0:15] CTA:\n➡️ "Nhắn tin ngay để xem nhà!"\n\n${ct}\n\n💡 MẸO: Text đủ lớn đọc trong 2 giây · Có sticker "Nhắn tin"`;
-  const s30=`📱 SCRIPT ${plt} — 30 GIÂY\n\n[0:00–0:05] HOOK:\n"BẠN CÓ 30 GIÂY ĐỂ XEM CĂN NHÀ NÀY!"\n\n[0:05–0:15] TOUR NHANH 3 CẢNH:\nCảnh 1: Mặt ngoài + địa chỉ\nCảnh 2: Điểm nổi bật nhất\nCảnh 3: View đặc biệt / sổ hồng\n\n[0:15–0:25] THÔNG TIN:\n"${prop} — [Giá] · [DT] · Sổ hồng riêng"\n\n[0:25–0:30] CTA MẠNH:\n"⚡ Chỉ còn [X] lượt xem — Nhắn NGAY!"\n\n${ct}\n\n💡 MẸO: Quay dọc 9:16 · Nhạc beat mạnh`;
-  const s60=`📱 SCRIPT ${plt} — 60 GIÂY (Reels)\n\n[0:00–0:05] HOOK:\n"Tôi vừa tìm được căn nhà này..."\n\n[0:05–0:20] INTRO:\nQuay toàn cảnh\nGiọng: "${prop} — đây là lý do tôi phải chia sẻ!"\n\n[0:20–0:40] TOUR 4 PHÒNG:\nPhòng khách → Bếp → Ngủ → Điểm đặc biệt\nChèn text điểm mạnh từng phòng\n\n[0:40–0:55] BẰNG CHỨNG:\nFlash: Ảnh sổ hồng · Giá TT · Map vị trí\n\n[0:55–1:00] CTA:\n"Comment 'XEM NHÀ' — liên hệ trong 30 phút!"\n\n${ct}\n\n💡 MẸO: Caption dài + 15-20 hashtag · Đăng 19:00–21:00`;
-  const scripts={'15s':s15,'30s':s30,'60s':s60};const sid='st_'+Date.now();
-  document.getElementById('storyOut').innerHTML=`<div class="cbox"><pre id="${sid}">${esc(scripts[dur])}</pre><button class="cpbtn" onclick="cpEl('${sid}')">📋 Copy</button></div><div style="margin-top:7px;text-align:right"><button class="btn btn-b btn-sm" onclick="saveOutputToLibrary('🏷️ Hashtag: '+V('ht_type')+' '+V('ht_loc'),document.getElementById('hashtagOut').innerText,'hashtag')">💾 Lưu</button><button class="btn btn-r btn-sm" onclick="document.getElementById('storyOut').classList.add('hidden')">🗑️ Xóa</button></div>`;
+function doStory(){
+  const prop=V('story_prop')||'BĐS';const dur=pst.story_dur||'15s';const plt=pst.story_plt||'FB Story';
+  document.getElementById('storyOut').classList.add('hidden');
+  const scripts={'15s':`🎬 SCRIPT ${plt} — 15 GIÂY\n\n[0-3s] Text nổi: "${prop}"\n[3-8s] Quay góc đẹp nhất\n[8-12s] Text: "Giá tốt — Sổ hồng riêng"\n[12-15s] Logo + SĐT`,'30s':`🎬 SCRIPT ${plt} — 30 GIÂY\n\n[0-5s] Hook: "DỪNG LẠI — Nhà đẹp giá tốt!"\n[5-15s] Tour nhanh 3 góc đẹp nhất\n[15-22s] Thông tin: giá, DT, vị trí\n[22-27s] Ưu điểm: pháp lý, tiện ích\n[27-30s] CTA: "Inbox ngay!"`,'60s':`🎬 SCRIPT REELS — 60 GIÂY\n\n[0-5s] Hook mạnh: "Đây là căn nhà khiến 47 người hỏi trong 3 ngày!"\n[5-20s] Tour toàn bộ: ngoài → trong → từng phòng\n[20-35s] Điểm nhấn đặc biệt + so sánh giá TT\n[35-50s] Pháp lý + cam kết + ưu điểm độc đáo\n[50-60s] CTA mạnh + thông tin liên hệ rõ ràng`};
+  const sid='st_'+Date.now();
+  document.getElementById('storyOut').innerHTML=`<div class="card"><div class="ctit"><span class="dot"></span>📱 Script ${plt}</div><pre id="${sid}" style="white-space:pre-wrap;font-size:.76rem;color:var(--t2);line-height:1.7">${scripts[dur]||scripts['15s']}</pre><button class="cpbtn" onclick="cpEl('${sid}')">📋 Copy</button></div>`;
   document.getElementById('storyOut').classList.remove('hidden');
 }
 
-// HASHTAG
-async function doHashtag(){
-  const type=V('ht_type')||'nhà phố',loc=V('ht_loc')||'TPHCM',plt=pst.ht_plt||'FB';
-  const seg=V('ht_seg')||'mid',goal=V('ht_goal')||'sell';
-  document.getElementById('hashtagOut').classList.add('hidden');await sleep(280);
-  const lc=loc.replace(/[^a-zA-ZÀ-ỹ0-9 ]/g,'').replace(/ /g,'');
-  const tc=type.replace(/ /g,'');
-  const goalTags={sell:['#banNhaNhanh','#canBanGap','#nhaDepGiaTot'],rent:['#choThueNha','#timPhongThue','#canChoThue'],invest:['#dauTuBatDongSan','#dauTuNhadat','#batDongSanSinhLoi']};
-  const segTags={budget:['#nhaGiaRe','#nhaGiaBinhDan','#muaNhaDuoi3Ty'],mid:['#nhaGiaTot','#trungCap','#muaNhaTphcm'],high:['#nhaCaoCap','#luxuryHome','#batDongSanCaoCap'],luxury:['#luxuryRealEstate','#penthouse','#villaHoChiMinh']};
-  const sets={
-    FB:{main:[`#${tc}${lc}`,`#BanNha${lc}`,`#BatDongSan${lc}`,`#NhaDat${lc}`,`#MuaBanNha${lc}`],support:['#BatDongSanVietNam','#SoHongRieng','#VayMuaNha','#AnCuLapNghiep','#NhaDatMoi','#MoiGioiBDS'],goal:goalTags[goal]||[],seg:segTags[seg]||[],trending:['#batdongsan','#muanhatphcm','#nhadatviet','#homebuying','#realestatevietnam']},
-    Zalo:{main:[`#${tc}${lc}`,`#BanNha${lc}`,`#NhaDat${lc}`],support:['#SoHongRieng','#PhapLySach','#MoiGioiUyTin'],goal:goalTags[goal]?.slice(0,2)||[],seg:[],trending:['#batdongsan','#nhadat']},
-    TikTok:{main:[`#${tc.toLowerCase()}${lc.toLowerCase()}`,`#bannha${lc.toLowerCase()}`,`#batdongsantphcm`,`#batdongsan${lc.toLowerCase()}`],support:['#nhapho','#muanhasaigon','#bdsreview','#homesofvietnam','#tourdulieu'],goal:[],seg:[],trending:['#xuhuong','#viral','#realestatelife','#househunting','#batdongsanvietnam']},
-    Website:{main:[`${type}-${loc.toLowerCase().replace(/ /g,'-')}`,`ban-nha-${lc.toLowerCase()}`,`bat-dong-san-${lc.toLowerCase()}`],support:['bat-dong-san','nha-dat','so-hong-rieng','phap-ly-sach'],goal:[],seg:[],trending:['mua-ban-nha','bat-dong-san-tphcm','nha-dat-viet-nam']}
-  };
-  const s=sets[plt]||sets.FB;
-  const isWeb=plt==='Website';
-  const allMain=[...s.main,...(s.goal||[]),...(s.seg||[]),...s.support,...s.trending];
-  const allStr=isWeb?allMain.join(', '):allMain.join(' ');
-  const tagStyle=isWeb?
-    'background:rgba(76,156,245,.1);border:1px solid rgba(76,156,245,.3);border-radius:6px;padding:3px 9px;font-size:.71rem;color:var(--bl);font-family:monospace':
-    'background:rgba(245,166,35,.15);border:1px solid rgba(245,166,35,.4);border-radius:8px;padding:3px 9px;font-size:.72rem;color:var(--ac)';
-  const supStyle='background:rgba(76,156,245,.1);border:1px solid rgba(76,156,245,.3);border-radius:8px;padding:3px 9px;font-size:.72rem;color:var(--bl)';
-  const trStyle='background:rgba(62,207,142,.1);border:1px solid rgba(62,207,142,.3);border-radius:8px;padding:3px 9px;font-size:.72rem;color:var(--gr)';
-  const goalStyle='background:rgba(156,110,245,.1);border:1px solid rgba(156,110,245,.3);border-radius:8px;padding:3px 9px;font-size:.72rem;color:var(--pu)';
-  const htid='ht_all_'+Date.now();
-  document.getElementById('hashtagOut').innerHTML=`
-    <div class="card">
-      <div class="ctit"><span class="dot"></span>🏷️ Hashtag ${isWeb?'SEO Keywords':'Set'} — ${plt} · ${type} · ${loc}</div>
-      ${isWeb?`<div style="background:rgba(76,156,245,.08);border:1px solid rgba(76,156,245,.25);border-radius:9px;padding:10px;margin-bottom:12px;font-size:.76rem;color:var(--t2)">💡 <strong style="color:var(--bl)">Website / SEO:</strong> Đây là từ khoá (keywords) dạng slug để dùng trong URL, meta tags, và thẻ bài viết — không dùng dấu #</div>`:''}
-      <div style="margin-bottom:10px">
-        <div style="font-size:.69rem;font-weight:700;color:var(--ac);margin-bottom:5px">🎯 ${isWeb?'Keywords chính':'Hashtag chính'}</div>
-        <div style="display:flex;flex-wrap:wrap;gap:5px">${s.main.map(h=>`<span style="${tagStyle}">${isWeb?h:'#'+h.replace(/^#/,'')}</span>`).join('')}</div>
-      </div>
-      ${s.goal?.length?`<div style="margin-bottom:10px"><div style="font-size:.69rem;font-weight:700;color:var(--pu);margin-bottom:5px">🎯 Theo mục đích (${goal==='sell'?'Bán':goal==='rent'?'Cho thuê':'Đầu tư'})</div><div style="display:flex;flex-wrap:wrap;gap:5px">${s.goal.map(h=>`<span style="${goalStyle}">${h}</span>`).join('')}</div></div>`:''}
-      ${s.seg?.length?`<div style="margin-bottom:10px"><div style="font-size:.69rem;font-weight:700;color:var(--gr);margin-bottom:5px">💰 Theo phân khúc</div><div style="display:flex;flex-wrap:wrap;gap:5px">${s.seg.map(h=>`<span style="${trStyle}">${h}</span>`).join('')}</div></div>`:''}
-      <div style="margin-bottom:10px"><div style="font-size:.69rem;font-weight:700;color:var(--bl);margin-bottom:5px">💬 ${isWeb?'Keywords hỗ trợ':'Hashtag hỗ trợ'}</div><div style="display:flex;flex-wrap:wrap;gap:5px">${s.support.map(h=>`<span style="${supStyle}">${h}</span>`).join('')}</div></div>
-      <div style="margin-bottom:13px"><div style="font-size:.69rem;font-weight:700;color:var(--gr);margin-bottom:5px">🔥 ${isWeb?'Long-tail keywords':'Trending'}</div><div style="display:flex;flex-wrap:wrap;gap:5px">${s.trending.map(h=>`<span style="${trStyle}">${h}</span>`).join('')}</div></div>
-      <div id="${htid}" style="display:none">${allStr}</div>
-      <div style="display:flex;gap:7px;flex-wrap:wrap">
-        <button class="btn btn-g btn-sm" onclick="cpEl('${htid}')">📋 Copy tất cả</button>
-        <button class="btn btn-b btn-sm" onclick="saveHT('${htid}','${type} ${loc} ${plt}')">💾 Lưu</button>
-        <button class="btn btn-b btn-sm" onclick="saveOutputToLibrary('📞 Cold Call: '+V('cc_prop'),document.getElementById('ccOut').innerText,'coldcall')">💾 Lưu</button><button class="btn btn-r btn-sm" onclick="document.getElementById('hashtagOut').classList.add('hidden')">🗑️ Xóa</button>
-      </div>
-    </div>`;
+function doHashtag(){
+  const type=V('ht_type')||'nhà phố',loc=V('ht_loc')||'hcm',seg=document.getElementById('ht_seg').value,goal=document.getElementById('ht_goal').value,plt=pst.ht_plt||'FB';
+  document.getElementById('hashtagOut').classList.add('hidden');
+  const base=`#${type.toLowerCase().replace(/\s+/g,'')} #bds${loc.toLowerCase().replace(/\s+/g,'')} #${goal==='sell'?'bánhà':'cho_thuê_nhà'} #môigiới #bds #nhàđẹp`;
+  const segHt={'budget':'#nhàrẻ #nhàbìnhdân #nhàgiárẻ','mid':'#nhàtrungcấp #nhà3đến7tỷ','high':'#nhàcaocấp #nhàsangt rọng','luxury':'#luxury #penthouse #villanhandé'};
+  const platHt={'FB':'#facebook #bdsviệtnam #mualandranh','TikTok':'#tiktokrealestate #nhàtiktok #trendnhà','Zalo':'#zalomôigiới','Website':'#seobds #timkiếmnhà'};
+  const hid='ht_'+Date.now();
+  const htTxt=`${base} ${segHt[seg]||''} ${platHt[plt]||''}`;
+  document.getElementById('hashtagOut').innerHTML=`<div class="card"><div class="ctit"><span class="dot"></span>🏷️ Hashtag cho ${plt}</div><div id="${hid}" style="background:var(--bg3);border-radius:8px;padding:12px;font-size:.78rem;color:var(--ac);line-height:1.9;word-break:break-word">${htTxt}</div><div style="margin-top:8px;display:flex;gap:6px"><button class="btn btn-g btn-sm" onclick="cpEl('${hid}')">📋 Copy</button><button class="btn btn-r btn-sm" onclick="document.getElementById('hashtagOut').classList.add('hidden')">🗑️</button></div></div>`;
   document.getElementById('hashtagOut').classList.remove('hidden');
 }
-function saveHT(id,name){const el=document.getElementById(id);if(!el)return;const content=el.textContent;tpl.unshift({id:Date.now(),name:'🏷️ Hashtag: '+name,time:new Date().toLocaleString('vi-VN'),vs:[{py:'Hashtag',frm:'',gs:[],fb:content,zalo:content,tiktok:content,web:content}]});saveSt();buildTpl();toast('💾 Đã lưu vào Templates!');}
 
-// COLD CALL
-async function doColdCall(){
-  const prop=V('cc_prop')||'BĐS',psy=V('cc_psy')||'Tham';
-  document.getElementById('ccOut').classList.add('hidden');await sleep(330);
-  const ct=`📞 ${prof.phone} | 👤 ${prof.name}`;
-  const scripts={
-    Tham:`📞 COLD CALL — ${prop} (Tâm lý: Ham deal)\n\n[0–10s] CHÀO:\n"Chào anh/chị! Em ${prof.name}, chuyên gia BĐS khu vực. Em có căn ${prop} — giá đang thấp hơn TT khoảng 10%. Anh/chị có 30 giây không ạ?"\n\n[10–30s] HOOK:\n"Chủ cần bán gấp nên giá CỰC TỐT. Sổ hồng riêng, pháp lý sạch ạ."\n\n[30–50s] CTA:\n"Anh/chị có thể xem ngay trong tuần này không? Em sắp lịch ngay ạ."\n\n[Xử lý từ chối "Bận"]:\n"Anh/chị rảnh buổi sáng hay chiều T7 ạ? Chỉ cần 20 phút thôi ạ."\n\n${ct}`,
-    Si:`📞 COLD CALL — ${prop} (Tâm lý: Phân vân)\n\n[0–10s] CHÀO:\n"Chào anh/chị! Em ${prof.name}. Em hỏi thăm — anh/chị có kế hoạch mua nhà trong 6 tháng tới không ạ?"\n\n[10–25s] THĂM DÒ:\n"Anh/chị đang tìm loại nào, khu vực nào ạ? Em có thể gợi ý phù hợp ạ."\n\n[25–45s] GIỚI THIỆU:\n"Em có ${prop} — em gửi thông tin qua Zalo để anh/chị tham khảo trước nhé? Không có áp lực gì ạ."\n\n${ct}`,
-    Sân:`📞 COLD CALL — ${prop} (Tâm lý: Nóng tính)\n\n[0–5s] THẲNG VÀO:\n"Chào anh/chị! ${prop}. Giá tốt. Sổ hồng. Anh/chị quan tâm không ạ?"\n\n[Nếu CÓ]:\n"Thông tin: [DT], [Vị trí], [Giá]. Xem khi nào ạ?"\n\n[Nếu KHÔNG]:\n"Dạ em xin lỗi đã làm phiền! Số ${prof.phone} nếu cần tư vấn BĐS ạ."\n\n${ct}`,
-    'Nghi ngờ':`📞 COLD CALL — ${prop} (Tâm lý: Nghi ngờ)\n\n[0–10s] XÂY DỰNG TIN:\n"Chào anh/chị! Em ${prof.name}. Em biết nhiều môi giới làm phiền nên em hứa ngắn gọn: Em có ${prop} — sổ hồng chính chủ, kiểm tra ngay được ạ."\n\n[10–30s] BẰNG CHỨNG:\n"Em đã bán 3 căn tương tự khu này — KH đều hài lòng, anh/chị có thể nói chuyện với họ nếu muốn ạ."\n\n[30–50s] OFFER AN TOÀN:\n"Anh/chị không cần đặt cọc gì — chỉ cần 20 phút xem nhà và hồ sơ gốc ạ."\n\n${ct}`
-  };
-  const sid='cc_'+Date.now();
-  document.getElementById('ccOut').innerHTML=`<div class="cbox"><pre id="${sid}">${esc(scripts[psy]||scripts.Tham)}</pre><button class="cpbtn" onclick="cpEl('${sid}')">📋 Copy</button></div><div style="margin-top:7px;text-align:right"><button class="btn btn-b btn-sm" onclick="saveOutputToLibrary('📋 Checklist: '+pst.cl_type,document.getElementById('clOut').innerText,'checklist')">💾 Lưu</button><button class="btn btn-r btn-sm" onclick="document.getElementById('ccOut').classList.add('hidden')">🗑️ Xóa</button></div>`;
+function doColdCall(){
+  const prop=V('cc_prop')||'BĐS';const psy=document.getElementById('cc_psy').value||'Si';
+  document.getElementById('ccOut').classList.add('hidden');
+  const scripts={'Tham':`📞 COLD CALL — KH HAM DEAL\n\n"Xin chào anh/chị! Em [tên], môi giới BĐS khu vực.\nEm đang có 1 căn ${prop} — giá đang CỰC TỐT, thấp hơn thị trường 10%.\nAnh/chị có đang tìm nhà khu vực này không ạ?"\n\n→ Nếu có: "Anh/chị rảnh chiều nay hoặc sáng mai để em đưa đi xem không ạ?"\n→ Nếu không: "Anh/chị có ai cần mua nhà không ạ? Em có thưởng giới thiệu 5-10tr."`,
+  'Si':`📞 COLD CALL — KH PHÂN VÂN\n\n"Chào anh/chị! Em [tên] ạ.\nEm muốn hỏi — anh/chị có đang cân nhắc chuyện nhà cửa không ạ?\nEm hiểu tìm nhà phức tạp lắm — em chuyên hỗ trợ từng bước từ xem nhà đến vay ngân hàng.\nEm có thể gửi anh/chị 3 căn phù hợp ngân sách không ạ?"`,
+  'Sân':`📞 COLD CALL — KH NÓNG TÍNH\n\n"Chào anh/chị! Em [tên], 30 giây thôi ạ.\nEm có ${prop} — giá tốt, pháp lý sạch.\nAnh/chị cần không? Có thể xem ngay hôm nay."`,
+  'Nghi ngờ':`📞 COLD CALL — KH NGHI NGỜ\n\n"Chào anh/chị! Em [tên], công ty [Tên].\nEm gọi giới thiệu ${prop} — sổ hồng chính chủ, có thể xem hồ sơ trước khi xem nhà.\nAnh/chị muốn em gửi scan sổ hồng kiểm tra trước không ạ?"`};
+  const cid='cc_'+Date.now();
+  document.getElementById('ccOut').innerHTML=`<div class="card"><div class="ctit"><span class="dot"></span>📞 Script Cold Call — Tâm lý ${psy}</div><pre id="${cid}" style="white-space:pre-wrap;font-size:.76rem;color:var(--t2);line-height:1.75">${scripts[psy]||scripts['Si']}</pre><button class="cpbtn" onclick="cpEl('${cid}')">📋 Copy</button></div>`;
   document.getElementById('ccOut').classList.remove('hidden');
 }
 
-// CHECKLIST
-async function doChecklist(){
-  document.getElementById('clOut').classList.add('hidden');await sleep(280);
+function doChecklist(){
   const type=pst.cl_type||'Nhà phố';
+  document.getElementById('clOut').classList.add('hidden');
   const lists={
-    'Nhà phố':{title:'Checklist Pháp Lý Mua Nhà Phố',items:[['✅ Sổ hồng / Sổ đỏ','Kiểm tra tên chủ sở hữu, số thửa, diện tích, mục đích sử dụng'],['✅ Giấy phép xây dựng','So sánh với thực tế: số tầng, diện tích, setback'],['✅ Bản vẽ hoàn công','Đảm bảo công trình đã nghiệm thu hợp pháp'],['✅ Không có tranh chấp','Kiểm tra tại UBND phường và toà án địa phương'],['✅ Không bị thế chấp','Kiểm tra tại ngân hàng và văn phòng đăng ký đất đai'],['✅ Không nợ thuế đất','Xác nhận không có nợ thuế đất, phí dịch vụ'],['✅ Quy hoạch đất','Kiểm tra tại Sở QHKT: đất có bị quy hoạch lộ giới không'],['✅ Hộ khẩu và nhân khẩu','Xác nhận đã giải tỏa nhân khẩu trước khi bàn giao']]},
-    'Căn hộ':{title:'Checklist Pháp Lý Mua Căn Hộ',items:[['✅ Sổ hồng căn hộ','Kiểm tra tầng, số căn, diện tích thông thủy và tim tường'],['✅ Hợp đồng mua bán gốc','So sánh với sổ hồng, đảm bảo khớp thông tin'],['✅ Biên lai đóng phí','Phí quản lý, quỹ bảo trì 2% không còn nợ'],['✅ Chủ đầu tư uy tín','Tra cứu lịch sử dự án, khiếu kiện, chậm tiến độ'],['✅ Quy chế quản lý','Đọc kỹ điều khoản ban quản lý, phí tháng'],['✅ Không thế chấp NH','Căn chưa bị thế chấp bởi chủ đầu tư hoặc chủ cũ'],['✅ Phần diện tích chung','Xác nhận diện tích chung được tính như thế nào'],['✅ Đăng ký tạm trú','Kiểm tra quy định về đăng ký hộ khẩu/tạm trú']]},
-    'Đất nền':{title:'Checklist Pháp Lý Mua Đất Nền',items:[['✅ Sổ đỏ (GCN QSDĐ)','Mục đích: đất ở hay nông nghiệp, đã thổ cư chưa'],['✅ Quy hoạch 1/500','Đất không bị quy hoạch treo hay lộ giới'],['✅ Không tranh chấp/thế chấp','Xác nhận tại UBND và ngân hàng địa phương'],['✅ Hạ tầng kỹ thuật','Điện, nước, đường vào: đã có hay quy hoạch tương lai'],['✅ Chỉ giới xây dựng','Khoảng lùi, chiều cao tối đa, số tầng cho phép'],['✅ Thuế đất & lệ phí','Không còn nợ nghĩa vụ tài chính với nhà nước'],['✅ Đo đạc thực tế','So sánh sổ đỏ với thực tế: diện tích, mốc giới'],['✅ Pháp lý hàng xóm','Kiểm tra tranh chấp ranh giới với các lô liền kề']]}
+    'Nhà phố':['✅ Sổ hồng/sổ đỏ chính chủ — kiểm tra tên, diện tích, mục đích sử dụng','✅ Giấy tờ tuỳ thân chủ nhà (CCCD 2 mặt)','✅ Không có tranh chấp, không thế chấp ngân hàng','✅ Không dính quy hoạch lộ giới (hỏi UBND phường)','✅ Không có án phí, thuế chưa nộp','✅ Hợp đồng đặt cọc công chứng tại văn phòng','✅ Có biên bản bàn giao nhà, điện nước'],
+    'Căn hộ':['✅ Sổ hồng căn hộ riêng biệt (không phải sổ chung)','✅ Không nợ phí quản lý chung cư','✅ Quy định pet, cải tạo từ ban quản lý','✅ Tình trạng thang máy, hành lang','✅ Phí dịch vụ hàng tháng bao nhiêu','✅ Hợp đồng mua bán có công chứng'],
+    'Đất nền':['✅ Sổ đỏ/sổ hồng — đất ONT hay ODT','✅ Không dính quy hoạch treo (hỏi Sở TNMT)','✅ Ranh đất rõ ràng, đã phân lô hợp lệ','✅ Có điện, nước, đường vào (hoặc cam kết làm)','✅ Không có hạn chế xây dựng đặc biệt','✅ Nghĩa vụ tài chính với nhà nước đã thanh toán']
   };
-  const cl=lists[type]||lists['Nhà phố'];
-  const clTxt=`${cl.title}\n\n${cl.items.map(([i])=>i).join('\n')}`;
-  document.getElementById('clOut').innerHTML=`<div class="card"><div class="ctit"><span class="dot"></span>📋 ${cl.title}</div><div style="font-size:.75rem;color:var(--t2);margin-bottom:12px;background:rgba(62,207,142,.08);border-radius:8px;padding:9px;border:1px solid rgba(62,207,142,.2)">💡 <strong style="color:var(--gr)">Cách dùng:</strong> Gửi checklist này cho KH trước buổi xem nhà → Tạo hình ảnh chuyên gia → KH tin tưởng hơn.</div>${cl.items.map(([item,note])=>`<div style="display:flex;gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)"><div style="width:19px;height:19px;border:2px solid var(--border);border-radius:4px;flex-shrink:0;margin-top:1px;background:var(--bg3)"></div><div><div style="font-weight:600;font-size:.78rem;color:var(--tx)">${item}</div><div style="font-size:.7rem;color:var(--t3);margin-top:2px">${note}</div></div></div>`).join('')}<div style="display:flex;gap:7px;margin-top:5px"><button class="btn btn-g btn-sm" onclick="cpTxt(${JSON.stringify(clTxt)})">📋 Copy checklist</button><button class="btn btn-b btn-sm" onclick="saveOutputToLibrary('🎭 Persona: '+V('ps_prop'),document.getElementById('personaOut').innerText,'persona')">💾 Lưu</button><button class="btn btn-r btn-sm" onclick="document.getElementById('clOut').classList.add('hidden')">🗑️ Xóa</button></div></div>`;
+  const clid='cl_'+Date.now();
+  document.getElementById('clOut').innerHTML=`<div class="card"><div class="ctit"><span class="dot"></span>📋 Checklist Pháp Lý — ${type}</div><div id="${clid}" style="font-size:.78rem;color:var(--t2);line-height:2">${(lists[type]||lists['Nhà phố']).join('<br>')}</div><div style="margin-top:9px;display:flex;gap:6px"><button class="btn btn-g btn-sm" onclick="cpEl('${clid}')">📋 Copy tặng KH</button><button class="btn btn-r btn-sm" onclick="document.getElementById('clOut').classList.add('hidden')">🗑️</button></div></div>`;
   document.getElementById('clOut').classList.remove('hidden');
 }
 
-// PERSONA
-async function doPersona(){
-  const prop=V('ps_prop')||'BĐS',seg=V('ps_seg')||'mid';
-  document.getElementById('personaOut').classList.add('hidden');await sleep(380);
-  const personas={
-    budget:{name:'Anh Minh — Lần Đầu Mua Nhà',age:'28–35',income:'15–25 triệu/tháng',pain:['Thuê nhà mãi không có chỗ thoải mái','Sợ pháp lý phức tạp, không hiểu gì','Lo không đủ tiền, không biết vay thế nào'],desire:['An cư, ổn định cho gia đình nhỏ','Hiểu từng bước mua nhà dễ dàng','Trả góp không quá 40% thu nhập'],tone:'Đồng hành, giải thích kỹ, dẫn dắt từng bước. Tránh từ chuyên môn.',formula:'FAB · BAB'},
-    mid:{name:'Chị Lan — Nâng Cấp Cuộc Sống',age:'32–45',income:'30–60 triệu/tháng',pain:['Căn hiện tại quá chật','Muốn môi trường tốt cho con học','Lo mua sai khu, giá không tăng'],desire:['Không gian rộng, đủ tiện nghi','Khu văn minh, trường tốt gần','Đầu tư giữ giá, cho thuê được'],tone:'Tin tưởng, chứng minh giá trị dài hạn. Nhấn mạnh lifestyle, gia đình.',formula:'4P · AIDA'},
-    high:{name:'Anh Tuấn — Nhà Đầu Tư',age:'35–50',income:'80–200 triệu/tháng',pain:['BĐS không sinh lời như kỳ vọng','Thị trường biến động khó đoán','Pháp lý phức tạp mất thời gian'],desire:['Tỷ suất lợi nhuận cao, thanh khoản tốt','Thông tin thị trường chính xác','Giao dịch nhanh gọn'],tone:'Chuyên nghiệp, dữ liệu cụ thể. Tôn trọng sự thông minh.',formula:'FAB · AICP'},
-    luxury:{name:'Ông Phú — Đẳng Cấp & Độc Bản',age:'45–65',income:'500tr+/tháng',pain:['Khó tìm BĐS xứng tầm, độc bản','Không muốn mất thời gian với môi giới không chuyên','Cần sự riêng tư tuyệt đối'],desire:['Tài sản tích lũy và truyền đời','Sản phẩm limited, không đại trà','Được phục vụ VIP, riêng tư'],tone:'Tinh tế, đẳng cấp. Tiếp cận như người bạn đồng cấp, không bán.',formula:'4P · Ngạo mạn tâm lý'}
-  };
-  const p=personas[seg]||personas.mid;
-  document.getElementById('personaOut').innerHTML=`<div class="card" style="border-color:rgba(156,110,245,.3)"><div class="ctit"><span class="dot" style="background:var(--pu)"></span>🎭 ${p.name}</div><div class="fg2"><div style="background:var(--bg3);border-radius:9px;padding:12px"><div style="font-size:.67rem;font-weight:700;color:var(--t3);margin-bottom:7px">👤 THÔNG TIN</div><div style="font-size:.76rem;color:var(--t2);line-height:1.8">Tuổi: <strong>${p.age}</strong><br>Thu nhập: <strong>${p.income}</strong><br>BĐS phù hợp: <strong>${prop}</strong></div></div><div style="background:var(--bg3);border-radius:9px;padding:12px"><div style="font-size:.67rem;font-weight:700;color:var(--ac);margin-bottom:5px">⚡ CÔNG THỨC ĐỀ XUẤT</div><div style="font-size:.76rem;color:var(--t2)">${p.formula}</div><div style="font-size:.67rem;font-weight:700;color:var(--gr);margin-top:8px;margin-bottom:4px">🎯 TONE VIẾT</div><div style="font-size:.74rem;color:var(--t2);line-height:1.6">${p.tone}</div></div></div><div class="fg2" style="margin-top:10px"><div><div style="font-size:.67rem;font-weight:700;color:var(--rd);margin-bottom:6px">😰 NỖI ĐAU</div>${p.pain.map(x=>`<div style="display:flex;gap:6px;margin-bottom:5px;font-size:.75rem;color:var(--t2)"><span style="color:var(--rd)">•</span>${x}</div>`).join('')}</div><div><div style="font-size:.67rem;font-weight:700;color:var(--gr);margin-bottom:6px">✨ MONG MUỐN</div>${p.desire.map(x=>`<div style="display:flex;gap:6px;margin-bottom:5px;font-size:.75rem;color:var(--t2)"><span style="color:var(--gr)">•</span>${x}</div>`).join('')}</div></div><div style="margin-top:12px;background:rgba(156,110,245,.08);border-radius:9px;padding:10px;border:1px solid rgba(156,110,245,.2)"><div style="font-size:.67rem;font-weight:700;color:var(--pu);margin-bottom:4px">💡 ÁP DỤNG VÀO CONTENT</div><div style="font-size:.74rem;color:var(--t2);line-height:1.6">Viết content cho <strong>${p.name.split('—')[0].trim()}</strong>: Dùng ngôn ngữ <em>${p.tone.split('.')[0]}</em>. Công thức tốt nhất: <strong>${p.formula}</strong>.</div></div><div style="margin-top:10px;text-align:right"><button class="btn btn-b btn-sm" onclick="saveOutputToLibrary('📧 Email: '+V('em_prop'),document.getElementById('emailOut').innerText,'email')">💾 Lưu</button><button class="btn btn-r btn-sm" onclick="document.getElementById('personaOut').classList.add('hidden')">🗑️ Xóa</button></div></div>`;
-  document.getElementById('personaOut').classList.remove('hidden');
+function doPersona(){
+  const el=document.getElementById('personaOut');if(!el)return;
+  document.getElementById('personaTabs').querySelectorAll('.tool-tab').forEach((t,i)=>{if(i===0){t.classList.add('on');}else t.classList.remove('on');});
+  const personas=[
+    {name:'Trần Văn Mạnh',age:35,job:'Kỹ sư IT',income:'40tr/tháng',goal:'Mua nhà ở thực cho gia đình 4 người',pain:'Giá leo thang, lo sợ mua sai quyết định lớn',psy:'Nghi ngờ',tip:'Cung cấp dữ liệu thực, sổ hồng scan trước, so sánh căn cùng khu'},
+    {name:'Nguyễn Thị Lan',age:45,job:'Kinh doanh',income:'100tr+/tháng',goal:'Đầu tư sinh lời — cho thuê hoặc bán lại',pain:'Sợ mua giá cao, muốn ROI tối thiểu 8%/năm',psy:'Tham',tip:'Tính ROI cụ thể, so sánh với gửi tiết kiệm, nhấn tiềm năng tăng giá'},
+    {name:'Lê Hoàng Nam',age:28,job:'Nhân viên văn phòng',income:'15tr/tháng',goal:'Lần đầu mua nhà — không biết bắt đầu từ đâu',pain:'Thiếu kinh nghiệm, sợ bị lừa, không hiểu vay NH',psy:'Si',tip:'Hướng dẫn từng bước, giải thích vay NH, kết nối dịch vụ công chứng'}
+  ];
+  el.innerHTML=personas.map((p,i)=>`<div class="card" style="display:${i===0?'block':'none'}" id="persona${i}"><div style="display:flex;align-items:center;gap:10px;margin-bottom:11px"><div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--a2));display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">👤</div><div><div style="font-weight:800;font-size:.9rem;color:var(--tx)">${p.name}</div><div style="font-size:.72rem;color:var(--t3)">${p.age} tuổi · ${p.job} · ${p.income}</div></div></div><div style="display:grid;gap:7px;font-size:.76rem"><div style="background:rgba(62,207,142,.08);border-radius:8px;padding:9px;border-left:3px solid var(--gr)"><strong style="color:var(--gr)">🎯 Mục tiêu:</strong> ${p.goal}</div><div style="background:rgba(239,83,80,.08);border-radius:8px;padding:9px;border-left:3px solid var(--rd)"><strong style="color:var(--rd)">😤 Nỗi đau:</strong> ${p.pain}</div><div style="background:rgba(245,166,35,.08);border-radius:8px;padding:9px;border-left:3px solid var(--ac)"><strong style="color:var(--ac)">🧠 Tâm lý:</strong> ${p.psy}</div><div style="background:rgba(76,156,245,.08);border-radius:8px;padding:9px;border-left:3px solid var(--bl)"><strong style="color:var(--bl)">💡 Cách tiếp cận:</strong> ${p.tip}</div></div></div>`).join('');
+  el.classList.remove('hidden');
 }
 
-// EMAIL NURTURE
-async function doEmail(){
-  const prop=V('em_prop')||'BĐS',goal=V('em_goal')||'buy';
-  document.getElementById('emailOut').classList.add('hidden');await sleep(350);
-  const goalMap={buy:'mua để ở',invest:'đầu tư',rent:'thuê'};
+function doEmail(){
+  const el=document.getElementById('emailOut');if(!el)return;
+  const eid='em_'+Date.now();
   const emails=[
-    {day:'Email 1 — Ngay sau khi nhận lead',sub:`Chào mừng! Thông tin về ${prop} bạn quan tâm`,body:`Chào anh/chị!\n\nCảm ơn anh/chị đã quan tâm đến ${prop}.\n\nEm ${prof.name} — chuyên gia tư vấn BĐS khu vực. Em hiểu anh/chị đang tìm kiếm ${goalMap[goal]} phù hợp.\n\n📋 Thông tin tóm tắt:\n• Sản phẩm: ${prop}\n• Pháp lý: Sổ hồng riêng, chính chủ\n• Hỗ trợ: Tư vấn vay NH, xem nhà miễn phí\n\nEm sẽ gửi thêm thông tin chi tiết trong email tiếp theo.\n\n📞 ${prof.phone} | Zalo: ${prof.zalo}`},
-    {day:'Email 2 — Sau 2 ngày',sub:`3 lý do ${prop} phù hợp với anh/chị`,body:`Chào anh/chị!\n\nHôm qua em nghĩ về nhu cầu của anh/chị và muốn chia sẻ 3 lý do tại sao ${prop} đang là lựa chọn tốt:\n\n1️⃣ Pháp lý 100% rõ ràng — anh/chị có thể kiểm tra ngay\n2️⃣ Giá đang thấp hơn thị trường khu vực\n3️⃣ Tiềm năng ${goal==='invest'?'đầu tư, cho thuê ổn định':'tăng giá theo hạ tầng khu vực'}\n\nAnh/chị có muốn em sắp xếp 1 buổi xem nhà không?\n\n📞 ${prof.phone} | Zalo: ${prof.zalo}`},
-    {day:'Email 3 — Sau 5 ngày (nội dung giá trị)',sub:'Checklist 8 điều PHẢI kiểm tra trước khi mua nhà',body:`Chào anh/chị!\n\nDù anh/chị chọn căn nào, đây là checklist 8 điều PHẢI kiểm tra:\n\n✅ Sổ hồng chính chủ\n✅ Không dính quy hoạch\n✅ Không có tranh chấp\n✅ Hướng nhà phù hợp\n✅ Hẻm xe hơi vào được\n✅ Không ngập nước\n✅ Môi trường xung quanh tốt\n✅ Hạ tầng điện nước đầy đủ\n\nEm đã kiểm tra tất cả 8 điểm này cho ${prop} rồi ạ — kết quả rất tốt.\n\n📞 ${prof.phone}`},
-    {day:'Email 4 — Sau 10 ngày (urgency)',sub:`Thông tin mới về ${prop}`,body:`Chào anh/chị!\n\nEm muốn chia sẻ: vừa có thêm khách quan tâm đến ${prop}.\n\nEm không muốn anh/chị bỏ lỡ nếu đây là căn phù hợp với anh/chị.\n\nAnh/chị có thể xem nhà vào cuối tuần này không? Em giữ lịch cho anh/chị.\n\n→ Chỉ cần reply email này hoặc nhắn Zalo: ${prof.zalo}\n\n📞 ${prof.phone}`},
-    {day:'Email 5 — Sau 15 ngày (break-up email)',sub:'Anh/chị đã tìm được nhà phù hợp chưa?',body:`Chào anh/chị!\n\nĐây là email cuối em gửi về ${prop}.\n\nNếu anh/chị đã tìm được nhà phù hợp rồi, chúc mừng anh/chị! Nếu chưa, em vẫn ở đây sẵn sàng hỗ trợ.\n\nEm cũng có thêm một số sản phẩm mới trong khu vực. Nếu anh/chị muốn tham khảo, chỉ cần reply email này.\n\nTrân trọng!\n${prof.name}\n📞 ${prof.phone} | Zalo: ${prof.zalo}`}
+    {n:'Email 1 — Giới thiệu',content:`Chào anh/chị [Tên],\n\nEm [Tên bạn] — chuyên gia BĐS khu vực. Em biết anh/chị đang tìm nhà tại [Khu vực].\n\nEm có [X] căn phù hợp ngân sách và nhu cầu của anh/chị.\n\nAnh/chị có thể dành 15 phút để em giới thiệu không ạ?\n\nTrân trọng,\n[Tên bạn] | [SĐT]`},
+    {n:'Email 2 — Follow-up sau 3 ngày',content:`Chào anh/chị [Tên],\n\nEm muốn hỏi thăm — anh/chị đã có cơ hội xem thông tin em gửi chưa ạ?\n\nTuần này em vừa có thêm 2 căn mới tại [Khu vực] — giá và vị trí rất tốt.\n\nNếu anh/chị muốn, em sắp lịch xem ngay trong tuần này nhé?\n\n[Tên bạn] | [SĐT]`},
+    {n:'Email 3 — Cung cấp giá trị',content:`Chào anh/chị [Tên],\n\nEm gửi anh/chị báo cáo thị trường BĐS [Khu vực] tháng này:\n\n• Giá trung bình: [X] tr/m²\n• Tốc độ tăng 6 tháng: +[Y]%\n• Thanh khoản: [Nhanh/Trung bình]\n\nKhông cần phản hồi — chỉ muốn anh/chị có thêm thông tin hữu ích.\n\n[Tên bạn]`}
   ];
-  document.getElementById('emailOut').innerHTML=`<div class="sec">📧 Chuỗi 5 Email Nurture — ${prop}</div>${emails.map((e,i)=>{const eid='em'+i+'_'+Date.now();return`<div class="card" style="border-left:3px solid var(--bl);margin-bottom:10px"><div class="ctit" style="margin-bottom:8px"><span style="color:var(--bl)">📧 ${e.day}</span><button class="btn btn-s btn-xs" style="margin-left:auto" onclick="cpEl('${eid}')">📋 Copy</button></div><div style="font-size:.75rem;color:var(--t3);margin-bottom:6px">Subject: <strong>${e.sub}</strong></div><div id="${eid}" style="white-space:pre-line;font-size:.77rem;color:var(--t2);line-height:1.78;background:var(--bg3);border-radius:8px;padding:10px">${e.body}</div></div>`;}).join('')}<div style="margin-top:5px;text-align:right"><button class="btn btn-r btn-sm" onclick="document.getElementById('emailOut').classList.add('hidden')">🗑️ Xóa</button></div>`;
-  document.getElementById('emailOut').classList.remove('hidden');
+  el.innerHTML=`<div id="${eid}">${emails.map((e,i)=>`<div class="card" style="margin-bottom:9px"><div class="ctit"><span class="dot"></span>${e.n}</div><pre style="white-space:pre-wrap;font-size:.75rem;color:var(--t2);line-height:1.7">${e.content}</pre><button class="btn btn-s btn-xs" style="margin-top:6px" onclick="cpTxt(this.previousElementSibling.textContent)">📋 Copy</button></div>`).join('')}</div>`;
+  el.classList.remove('hidden');
 }
 
-// ===================== COMPETITOR =====================
+// ===================== CMP =====================
 async function doCmp(){
-  const c=V('cmp_txt'),m=V('cmp_mine')||'BĐS của tôi';
-  if(!c)return toast('⚠️ Nhập content đối thủ!');
-  document.getElementById('cmpOut').classList.add('hidden');await sleep(480);
-  const criteria=[
-    {label:'Hook mở đầu',e:rn(3,6),m:rn(7,9),en:'Thiếu yếu tố gây sốc, dễ bị scroll qua',mn:'Hook mạnh, tạo FOMO ngay từ dòng đầu'},
-    {label:'Thông tin BĐS',e:rn(5,8),m:rn(7,9),en:'Thiếu một số thông tin quan trọng',mn:'Đầy đủ giá, DT, vị trí, pháp lý'},
-    {label:'Tâm lý KH',e:rn(3,6),m:rn(7,9),en:'Viết chung chung, không nhắm đối tượng',mn:'Đánh đúng tâm lý khách mục tiêu'},
-    {label:'CTA rõ ràng',e:rn(4,7),m:rn(7,10),en:'CTA thiếu urgency, quá chung chung',mn:'CTA cụ thể + khan hiếm + deadline'},
-    {label:'Pháp lý & Uy tín',e:rn(3,6),m:rn(8,10),en:'Không đề cập cam kết pháp lý',mn:'Cam kết rõ, có thể kiểm chứng'},
-    {label:'Cảm xúc & Kết nối',e:rn(3,6),m:rn(6,9),en:'Khô khan, thiếu câu chuyện',mn:'Có yếu tố cảm xúc, dễ đồng cảm'}
-  ];
-  const eTotal=Math.round(criteria.reduce((s,x)=>s+x.e,0)/criteria.length*10)/10;
-  const mTotal=Math.round(criteria.reduce((s,x)=>s+x.m,0)/criteria.length*10)/10;
-  const diff=(mTotal-eTotal).toFixed(1);
-  document.getElementById('cmpRes').innerHTML=`
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-      <div class="cmp-col" style="border-color:rgba(239,83,80,.3)">
-        <div class="cmp-hd red">❌ Đối thủ — ${eTotal}/10</div>
-        ${criteria.map(x=>`<div class="cmp-srow"><div class="cmp-slbl">${x.label}</div><div class="cmp-sbar"><div class="cmp-sfill" style="width:${x.e*10}%;background:var(--rd)"></div></div><div class="cmp-snum" style="color:var(--rd)">${x.e}</div></div>`).join('')}
-        <div style="margin-top:11px"><div style="font-size:.66rem;font-weight:700;color:var(--rd);margin-bottom:5px">ĐIỂM YẾU CẦN KHAI THÁC</div>${criteria.map(x=>`<div style="display:flex;gap:5px;margin-bottom:5px;font-size:.74rem;color:var(--t2)"><span style="color:var(--rd);flex-shrink:0">▸</span><span><strong>${x.label}:</strong> ${x.en}</span></div>`).join('')}</div>
-      </div>
-      <div class="cmp-col" style="border-color:rgba(62,207,142,.3)">
-        <div class="cmp-hd green">✅ Của bạn — ${mTotal}/10</div>
-        ${criteria.map(x=>`<div class="cmp-srow"><div class="cmp-slbl">${x.label}</div><div class="cmp-sbar"><div class="cmp-sfill" style="width:${x.m*10}%;background:var(--gr)"></div></div><div class="cmp-snum" style="color:var(--gr)">${x.m}</div></div>`).join('')}
-        <div style="margin-top:11px"><div style="font-size:.66rem;font-weight:700;color:var(--gr);margin-bottom:5px">ĐIỂM MẠNH CỦA BẠN</div>${criteria.map(x=>`<div style="display:flex;gap:5px;margin-bottom:5px;font-size:.74rem;color:var(--t2)"><span style="color:var(--gr);flex-shrink:0">✓</span><span><strong>${x.label}:</strong> ${x.mn}</span></div>`).join('')}</div>
-      </div>
-    </div>
-    <div style="background:linear-gradient(135deg,rgba(62,207,142,.1),rgba(76,156,245,.08));border:1px solid rgba(62,207,142,.3);border-radius:10px;padding:13px;text-align:center">
-      <div style="font-weight:800;font-size:.95rem;color:var(--gr);margin-bottom:5px">🏆 Content của bạn vượt trội +${diff} điểm!</div>
-      <div style="font-size:.77rem;color:var(--t2)">Tiếp tục nhấn mạnh pháp lý, CTA rõ ràng và tâm lý khách hàng để duy trì lợi thế.</div>
-    </div>`;
+  const their=V('cmp_txt'),mine=V('cmp_mine');
+  if(!their||!mine)return toast('⚠️ Nhập cả 2 bài viết để so sánh!');
+  document.getElementById('cmpOut').classList.add('hidden');await sleep(400);
+  const score=t=>{let s=5;if(t.match(/[!?💥🔥⚡]/))s+=1;if(t.length>200)s+=1;if(t.match(/liên hệ|inbox|gọi|nhắn/i))s+=1;if(t.match(/sổ hồng|pháp lý/i))s+=0.5;if(t.match(/\d+.*tỷ|\d+m²/))s+=0.5;return Math.min(10,Math.round(s*10)/10);};
+  const ts=score(their),ms=score(mine);
+  const diff=ms-ts;
+  const crit=['🎣 Hook','📢 CTA','📋 Thông tin','🎯 Thuyết phục','📱 Format'];
+  const theirS=crit.map(()=>rn(4,8));const mineS=crit.map(()=>rn(5,9));
+  document.getElementById('cmpRes').innerHTML=`<div class="cmp-cols"><div class="cmp-col"><div class="cmp-hd red">📄 Đối thủ — ${ts}/10</div>${theirS.map((s,i)=>`<div class="cmp-srow"><div class="cmp-slbl">${crit[i]}</div><div class="cmp-sbar"><div class="cmp-sfill" style="width:${s*10}%;background:var(--rd)"></div></div><div class="cmp-snum" style="color:var(--rd)">${s}</div></div>`).join('')}</div><div class="cmp-col"><div class="cmp-hd green">✍️ Của bạn — ${ms}/10</div>${mineS.map((s,i)=>`<div class="cmp-srow"><div class="cmp-slbl">${crit[i]}</div><div class="cmp-sbar"><div class="cmp-sfill" style="width:${s*10}%;background:var(--gr)"></div></div><div class="cmp-snum" style="color:var(--gr)">${s}</div></div>`).join('')}</div></div>${diff>0?`<div class="card" style="margin-top:11px;border-color:rgba(62,207,142,.3);text-align:center;padding:13px"><div style="font-weight:800;font-size:.95rem;color:var(--gr);margin-bottom:5px">🏆 Content của bạn vượt trội +${diff.toFixed(1)} điểm!</div><div style="font-size:.77rem;color:var(--t2)">Tiếp tục nhấn mạnh pháp lý, CTA rõ ràng và tâm lý khách hàng để duy trì lợi thế.</div></div>`:`<div class="card" style="margin-top:11px;border-color:rgba(239,83,80,.3);text-align:center;padding:13px"><div style="font-weight:800;font-size:.95rem;color:var(--rd);margin-bottom:5px">⚠️ Cần cải thiện ${Math.abs(diff).toFixed(1)} điểm</div><div style="font-size:.77rem;color:var(--t2)">Thêm hook mạnh hơn, CTA rõ ràng và số liệu thực tế vào bài.</div></div>`}`;
   document.getElementById('cmpOut').classList.remove('hidden');
 }
 function clearCmp(){document.getElementById('cmp_txt').value='';document.getElementById('cmp_mine').value='';document.getElementById('cmpOut').classList.add('hidden');}
@@ -897,7 +944,7 @@ function clearAllTpl(){if(!confirm('Xóa tất cả template?'))return;tpl=[];sa
 function loadProfInp(){['name','title','phone','zalo','quote'].forEach(k=>{const e=document.getElementById('p_'+k);if(e)e.value=prof[k]||'';});}
 function saveProf(){
   const newName=V('p_name'),newTitle=V('p_title'),newPhone=V('p_phone'),newZalo=V('p_zalo'),newQuote=V('p_quote');
-  if(!newName && !newPhone)return toast('⚠️ Nhập ít nhất tên hoặc SĐT!');
+  if(!newName&&!newPhone)return toast('⚠️ Nhập ít nhất tên hoặc SĐT!');
   prof={...prof,name:newName,title:newTitle,phone:newPhone,zalo:newZalo,quote:newQuote};
   saveSt();buildProf();toast('💾 Đã lưu hồ sơ cá nhân!');
 }
@@ -916,14 +963,10 @@ function showAv(src){const img=document.getElementById('avImg'),emo=document.get
 function removeAv(){prof.avatar='';const img=document.getElementById('avImg'),emo=document.getElementById('avEmoji');if(img)img.style.display='none';if(emo)emo.style.display='block';saveSt();buildProf();toast('🗑️ Đã xóa ảnh!');}
 function buildProf(){
   const el=document.getElementById('profPrev');if(!el)return;
-  // Hiển thị Hồ Sơ Của Tôi
   const avHtml=prof.avatar?`<img src="${prof.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:'👤';
   const userHtml=prof.name?`<div class="aav" style="margin:0 auto 9px;cursor:default">${avHtml}</div><div class="anm">${prof.name}</div><div class="atit">${prof.title}</div><div class="aqt">"${prof.quote}"</div><div class="ccrow"><div class="cchip">📞 ${prof.phone}</div><div class="cchip">💬 ${prof.zalo}</div></div>`:'<div style="color:var(--t3);font-size:.85rem;padding:20px;text-align:center">👆 Nhập thông tin bên trên để xem preview</div>';
-
-  // Hiển thị Tác Giả (không đổi)
   const authAv=authorProf.avatar?`<img src="${authorProf.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:'👑';
   const authHtml=`<div style="margin-top:16px;padding-top:16px;border-top:2px solid var(--border)"><div style="font-size:.65rem;font-weight:700;color:var(--ac);text-transform:uppercase;letter-spacing:1.3px;margin-bottom:10px">🏆 Tác Giả Công Cụ</div><div class="aav" style="margin:0 auto 9px;cursor:default;width:56px;height:56px;font-size:1.2rem">${authAv}</div><div class="anm" style="font-size:.88rem">${authorProf.name}</div><div class="atit">${authorProf.title}</div><div style="font-size:.72rem;color:var(--t2);margin-top:6px">${authorProf.social}</div><div class="ccrow" style="margin-top:8px"><a href="${authorProf.link}" target="_blank" class="cchip" style="color:var(--bl);text-decoration:none">💬 Liên hệ tác giả</a></div></div>`;
-
   el.innerHTML=userHtml+authHtml;
 }
 
@@ -936,20 +979,399 @@ function buildAgents(){
 // ===================== EARN =====================
 function buildEarn(){
   const el=document.getElementById('earnCtc');if(!el)return;
-  // Luôn hiển thị tác giả trong mục Kiếm Tiền (giới thiệu cơ hội)
   const avHtml=authorProf.avatar?`<img src="${authorProf.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:'👑';
   el.innerHTML=`<div class="acrd"><div class="aav" style="margin:0 auto 9px;cursor:default">${avHtml}</div><div class="anm">${authorProf.name}</div><div class="atit">${authorProf.title}</div><div style="font-size:.72rem;color:var(--t2);margin-top:6px">${authorProf.social}</div><div class="ccrow" style="margin-top:9px"><a href="${authorProf.link}" target="_blank" class="cchip" style="color:var(--bl);text-decoration:none">💬 Liên hệ tác giả</a></div></div>`;
 }
 
 // ===================== STATS / HOME =====================
 function updStats(){
-  const a=document.getElementById('stTotal'),b=document.getElementById('stTpl'),c=document.getElementById('crmbdg');
-  if(a)a.textContent=crm.length;if(b)b.textContent=tpl.length;if(c)c.textContent=crm.length;
+  const a=document.getElementById('stTotal'),b=document.getElementById('stTpl'),c=document.getElementById('crmbdg'),d=document.getElementById('stReminders');
+  if(a)a.textContent=contentLog.length||crm.length;
+  if(b)b.textContent=tpl.length;
+  if(c)c.textContent=crm.length;
+  if(d)d.textContent=reminders.filter(r=>!r.done).length;
+  // Update reminder badge
+  const rmBadge=document.getElementById('rmBadge');
+  const dueCount=reminders.filter(r=>!r.done&&new Date(r.datetime)<=new Date()).length;
+  if(rmBadge)rmBadge.textContent=dueCount;
+  if(rmBadge)rmBadge.style.display=dueCount>0?'':'none';
 }
 function buildHomeRecent(){
   const el=document.getElementById('homeRecent');if(!el)return;
   if(!crm.length){el.innerHTML='<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;text-align:center;color:var(--t3);font-size:.79rem">Chưa có tin nào. <span style="color:var(--ac);cursor:pointer" onclick="nav(\'gen\')">Tạo content ngay →</span></div>';return;}
   el.innerHTML='<div style="display:flex;flex-direction:column;gap:7px">'+crm.slice(0,5).map((e,i)=>`<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 14px;display:flex;align-items:center;gap:11px;cursor:pointer;transition:.15s" onclick="loadCRM(${i})" onmouseover="this.style.borderColor='rgba(245,166,35,.35)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:1.3rem">🏠</div><div style="flex:1"><div style="font-weight:700;font-size:.8rem;color:var(--tx)">${e.type} — ${e.loc}</div><div style="font-size:.7rem;color:var(--t3);margin-top:1px">${e.price} · ${e.time}</div></div><div style="font-size:.68rem;color:var(--t3)">${e.vs?e.vs.length:1}v</div></div>`).join('')+'</div>';
+}
+
+// ===================== FOLLOW-UP REMINDERS (NEW) =====================
+function buildReminders(){
+  const el=document.getElementById('reminderList');if(!el)return;
+  if(!reminders.length){
+    el.innerHTML=`<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;text-align:center;color:var(--t3)"><div style="font-size:2rem;margin-bottom:8px">⏰</div><div style="font-size:.83rem">Chưa có nhắc nhở nào.<br>Thêm nhắc nhở follow-up KH bên trên!</div></div>`;
+    return;
+  }
+  const now=new Date();
+  const sorted=[...reminders].sort((a,b)=>new Date(a.datetime)-new Date(b.datetime));
+  el.innerHTML=sorted.map((r,i)=>{
+    const dt=new Date(r.datetime);
+    const isDue=dt<=now&&!r.done;
+    const isUpcoming=dt>now&&!r.done;
+    const status=r.done?'done':isDue?'due':'upcoming';
+    const statusColors={done:'rgba(62,207,142,.15)',due:'rgba(239,83,80,.15)',upcoming:'rgba(245,166,35,.1)'};
+    const statusBorder={done:'rgba(62,207,142,.4)',due:'rgba(239,83,80,.4)',upcoming:'rgba(245,166,35,.35)'};
+    const statusLabel={done:'✅ Hoàn thành',due:'🔴 Đã đến hạn!',upcoming:`⏰ ${formatTimeLeft(dt)}`};
+    return`<div style="background:${statusColors[status]};border:1px solid ${statusBorder[status]};border-radius:11px;padding:12px 14px;margin-bottom:8px;${r.done?'opacity:.6':''}">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:.83rem;color:var(--tx);margin-bottom:3px">👤 ${r.khName||'Khách hàng'}</div>
+          <div style="font-size:.73rem;color:var(--t2);margin-bottom:4px">🏠 ${r.property||'BĐS'}</div>
+          <div style="font-size:.72rem;color:var(--t3);margin-bottom:5px">📞 ${r.phone||'—'} · ${r.type||'Follow-up'}</div>
+          ${r.note?`<div style="font-size:.71rem;color:var(--t2);background:var(--bg3);border-radius:6px;padding:5px 8px;margin-bottom:5px">📝 ${r.note}</div>`:''}
+          <div style="font-size:.71rem;font-weight:700;color:${status==='due'?'var(--rd)':status==='done'?'var(--gr)':'var(--ac)'}">${statusLabel[status]}</div>
+          <div style="font-size:.67rem;color:var(--t3);margin-top:2px">🕐 ${dt.toLocaleString('vi-VN')}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">
+          ${!r.done?`<button class="btn btn-g btn-xs" onclick="doneReminder(${reminders.indexOf(r)})">✅ Xong</button>`:''}
+          <button class="btn btn-s btn-xs" onclick="copyReminderScript(${reminders.indexOf(r)})">💬 Script</button>
+          <button class="btn btn-r btn-xs" onclick="deleteReminder(${reminders.indexOf(r)})">🗑️</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function addReminder(){
+  const khName=V('rm_name'),phone=V('rm_phone'),property=V('rm_property'),datetime=document.getElementById('rm_datetime')?.value,type=document.getElementById('rm_type')?.value||'Follow-up',note=V('rm_note');
+  if(!khName)return toast('⚠️ Nhập tên khách hàng!');
+  if(!datetime)return toast('⚠️ Chọn ngày giờ nhắc!');
+  reminders.push({id:Date.now(),khName,phone,property,datetime,type,note,done:false,created:new Date().toISOString()});
+  saveSt();buildReminders();updStats();
+  // Clear form
+  ['rm_name','rm_phone','rm_property','rm_note'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  toast('⏰ Đã đặt nhắc lịch!');
+}
+
+function doneReminder(idx){
+  reminders[idx].done=true;
+  reminders[idx].completedAt=new Date().toISOString();
+  saveSt();buildReminders();updStats();toast('✅ Đã hoàn thành!');
+}
+
+function deleteReminder(idx){
+  if(!confirm('Xóa nhắc lịch này?'))return;
+  reminders.splice(idx,1);saveSt();buildReminders();updStats();toast('🗑️ Đã xóa!');
+}
+
+function copyReminderScript(idx){
+  const r=reminders[idx];
+  const scripts={
+    'Follow-up':`Chào ${r.khName}! Em [tên] ạ. Em muốn hỏi thăm về căn ${r.property||'nhà'} hôm trước — anh/chị đang cân nhắc ở điểm nào nhất ạ? Để em hỗ trợ đúng chỗ. 🙏`,
+    'Nhắc xem nhà':`Chào ${r.khName}! Em nhắc lịch xem nhà ${r.property||''} theo lịch hẹn. Anh/chị còn tiện không ạ? Em đã sắp xếp để dẫn anh/chị xem hôm nay.`,
+    'Nhắc cọc':`Chào ${r.khName}! Theo thỏa thuận, hạn đặt cọc ${r.property||''} là hôm nay. Anh/chị có thể ra công chứng lúc mấy giờ? Em sắp xếp cùng anh/chị.`,
+    'Nhắc thanh toán':`Chào ${r.khName}! Em nhắc lịch thanh toán đợt [X] cho ${r.property||''}. Anh/chị muốn em hỗ trợ thủ tục gì không ạ?`,
+    'Hỏi thăm':`Chào ${r.khName}! Lâu rồi không liên hệ — anh/chị dạo này thế nào? Em vừa có thông tin mới về thị trường BĐS khu [khu vực] — có thể hữu ích cho anh/chị. 😊`
+  };
+  cpTxt(scripts[r.type]||scripts['Follow-up']);
+  toast('✅ Đã copy script follow-up!');
+}
+
+function clearDoneReminders(){
+  reminders=reminders.filter(r=>!r.done);
+  saveSt();buildReminders();updStats();toast('🗑️ Đã xóa nhắc đã hoàn thành!');
+}
+
+function checkDueReminders(){
+  const dueCount=reminders.filter(r=>!r.done&&new Date(r.datetime)<=new Date()).length;
+  if(dueCount>0){
+    setTimeout(()=>toast(`⏰ Có ${dueCount} nhắc lịch đã đến hạn!`),1500);
+  }
+  // Check every minute
+  setInterval(()=>{
+    updStats();
+    const newDue=reminders.filter(r=>!r.done&&new Date(r.datetime)<=new Date()).length;
+    if(newDue>0){
+      const rmBadge=document.getElementById('rmBadge');
+      if(rmBadge){rmBadge.textContent=newDue;rmBadge.style.display='';}
+    }
+  },60000);
+}
+
+function formatTimeLeft(dt){
+  const now=new Date();
+  const diff=dt-now;
+  if(diff<0)return'Đã qua';
+  const mins=Math.floor(diff/60000);
+  const hours=Math.floor(mins/60);
+  const days=Math.floor(hours/24);
+  if(days>0)return`Còn ${days} ngày`;
+  if(hours>0)return`Còn ${hours} giờ`;
+  return`Còn ${mins} phút`;
+}
+
+// ===================== DASHBOARD (NEW) =====================
+function buildDashboard(){
+  const el=document.getElementById('dashboardContent');if(!el)return;
+  const now=new Date();
+  const thisWeek=getWeekNumber(now);
+  const thisMonth=now.getMonth()+1;
+  const thisYear=now.getFullYear();
+
+  // Stats
+  const totalContent=contentLog.length;
+  const thisWeekContent=contentLog.filter(c=>c.week===thisWeek&&c.year===thisYear).length;
+  const thisMonthContent=contentLog.filter(c=>c.month===thisMonth&&c.year===thisYear).length;
+  const totalReminders=reminders.length;
+  const dueReminders=reminders.filter(r=>!r.done&&new Date(r.datetime)<=now).length;
+  const doneReminders=reminders.filter(r=>r.done).length;
+
+  // Last 7 days chart data
+  const last7=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date(now);d.setDate(d.getDate()-i);
+    const dayStr=d.toISOString().split('T')[0];
+    const count=contentLog.filter(c=>c.date===dayStr).length;
+    const dayName=['CN','T2','T3','T4','T5','T6','T7'][d.getDay()];
+    last7.push({day:dayName,date:dayStr,count});
+  }
+  const maxDay=Math.max(...last7.map(d=>d.count),1);
+
+  // Last 4 weeks
+  const last4weeks=[];
+  for(let i=3;i>=0;i--){
+    const weekNum=thisWeek-i;
+    const count=contentLog.filter(c=>c.week===weekNum&&c.year===thisYear).length;
+    last4weeks.push({week:`T${weekNum}`,count});
+  }
+  const maxWeek=Math.max(...last4weeks.map(w=>w.count),1);
+
+  // Content by platform (simulated from CRM data)
+  const byType={};
+  crm.forEach(c=>{byType[c.type]=(byType[c.type]||0)+1;});
+  const topTypes=Object.entries(byType).sort((a,b)=>b[1]-a[1]).slice(0,5);
+
+  el.innerHTML=`
+    <!-- Stats row -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">
+      <div style="background:linear-gradient(135deg,rgba(245,166,35,.15),rgba(245,166,35,.05));border:1px solid rgba(245,166,35,.3);border-radius:12px;padding:14px;text-align:center">
+        <div style="font-size:2rem;font-weight:900;color:var(--ac);font-family:'Space Mono',monospace">${totalContent}</div>
+        <div style="font-size:.68rem;color:var(--t3);margin-top:3px">Tổng content</div>
+      </div>
+      <div style="background:linear-gradient(135deg,rgba(62,207,142,.15),rgba(62,207,142,.05));border:1px solid rgba(62,207,142,.3);border-radius:12px;padding:14px;text-align:center">
+        <div style="font-size:2rem;font-weight:900;color:var(--gr);font-family:'Space Mono',monospace">${thisWeekContent}</div>
+        <div style="font-size:.68rem;color:var(--t3);margin-top:3px">Tuần này</div>
+      </div>
+      <div style="background:linear-gradient(135deg,rgba(76,156,245,.15),rgba(76,156,245,.05));border:1px solid rgba(76,156,245,.3);border-radius:12px;padding:14px;text-align:center">
+        <div style="font-size:2rem;font-weight:900;color:var(--bl);font-family:'Space Mono',monospace">${thisMonthContent}</div>
+        <div style="font-size:.68rem;color:var(--t3);margin-top:3px">Tháng này</div>
+      </div>
+      <div style="background:linear-gradient(135deg,rgba(239,83,80,.15),rgba(239,83,80,.05));border:1px solid rgba(239,83,80,.3);border-radius:12px;padding:14px;text-align:center">
+        <div style="font-size:2rem;font-weight:900;color:var(--rd);font-family:'Space Mono',monospace">${dueReminders}</div>
+        <div style="font-size:.68rem;color:var(--t3);margin-top:3px">Nhắc đến hạn</div>
+      </div>
+    </div>
+
+    <!-- 7-day chart -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="ctit"><span class="dot"></span>📈 Content 7 ngày qua</div>
+      <div style="display:flex;align-items:flex-end;gap:6px;height:100px;padding:0 4px">
+        ${last7.map(d=>`
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="font-size:.65rem;color:var(--t3);font-family:'Space Mono',monospace">${d.count}</div>
+            <div style="width:100%;background:${d.count>0?'linear-gradient(180deg,var(--ac),var(--a2))':'var(--bg3)'};border-radius:4px 4px 0 0;height:${Math.max(4,Math.round((d.count/maxDay)*72))}px;transition:.3s"></div>
+            <div style="font-size:.62rem;color:var(--t3)">${d.day}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Weekly chart -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="ctit"><span class="dot"></span>📊 Content 4 tuần qua</div>
+      <div style="display:flex;align-items:flex-end;gap:8px;height:80px;padding:0 4px">
+        ${last4weeks.map(w=>`
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="font-size:.65rem;color:var(--t3);font-family:'Space Mono',monospace">${w.count}</div>
+            <div style="width:100%;background:${w.count>0?'linear-gradient(180deg,var(--bl),#2979e0)':'var(--bg3)'};border-radius:4px 4px 0 0;height:${Math.max(4,Math.round((w.count/maxWeek)*56))}px;transition:.3s"></div>
+            <div style="font-size:.62rem;color:var(--t3)">${w.week}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Summary cards -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:12px">
+      <div class="card">
+        <div class="ctit"><span class="dot"></span>🗄️ Mini CRM</div>
+        <div style="font-size:.77rem;color:var(--t2);line-height:1.9">
+          📦 Tổng tin: <strong style="color:var(--ac)">${crm.length}</strong><br>
+          📌 Templates: <strong style="color:var(--bl)">${tpl.length}</strong>
+        </div>
+        <button class="btn btn-s btn-xs" style="margin-top:8px;width:100%;justify-content:center" onclick="nav('crm')">Mở CRM →</button>
+      </div>
+      <div class="card">
+        <div class="ctit"><span class="dot"></span>⏰ Nhắc Lịch</div>
+        <div style="font-size:.77rem;color:var(--t2);line-height:1.9">
+          🔴 Đến hạn: <strong style="color:var(--rd)">${dueReminders}</strong><br>
+          ✅ Hoàn thành: <strong style="color:var(--gr)">${doneReminders}</strong><br>
+          ⏳ Sắp tới: <strong style="color:var(--ac)">${totalReminders-dueReminders-doneReminders}</strong>
+        </div>
+        <button class="btn btn-s btn-xs" style="margin-top:8px;width:100%;justify-content:center" onclick="nav('reminder')">Xem lịch →</button>
+      </div>
+    </div>
+
+    ${topTypes.length?`<div class="card">
+      <div class="ctit"><span class="dot"></span>🏠 Loại nhà hay đăng nhất</div>
+      ${topTypes.map(([t,c])=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+        <div style="font-size:.75rem;color:var(--t2);width:100px;flex-shrink:0">${t}</div>
+        <div style="flex:1;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden">
+          <div style="height:100%;background:linear-gradient(90deg,var(--ac),var(--a2));border-radius:4px;width:${Math.round((c/topTypes[0][1])*100)}%"></div>
+        </div>
+        <div style="font-size:.7rem;font-weight:700;color:var(--ac);width:20px;text-align:right">${c}</div>
+      </div>`).join('')}
+    </div>`:''}
+
+    <div style="text-align:center;padding:10px 0;font-size:.7rem;color:var(--t3)">
+      📅 Cập nhật: ${now.toLocaleString('vi-VN')} · <span style="cursor:pointer;color:var(--ac)" onclick="buildDashboard()">🔄 Refresh</span>
+    </div>`;
+}
+
+// ===================== GUIDE (NEW) =====================
+function buildGuide(){
+  const el=document.getElementById('guideContent');if(!el)return;
+  const guides=[
+    {
+      icon:'🔍',title:'Khảo Sát Nhà → Tạo Content',color:'var(--gr)',
+      steps:[
+        'Vào <strong>Khảo Sát Nhà</strong> — điền đầy đủ địa chỉ, giá, diện tích, số tầng',
+        'Tích checklist 9 bước khi đi khảo sát thực tế',
+        'Điền 5 Ưu điểm và 5 Nhược điểm vào ô báo cáo',
+        'Nhấn <strong>"✍️ → Tạo Content"</strong> — toàn bộ dữ liệu tự động điền vào form Content',
+        'Kiểm tra các trường đã được điền, chỉnh sửa nếu cần → Bấm Tạo!'
+      ],
+      tip:'💡 Mẹo: Khảo sát kỹ → Content đúng và thuyết phục hơn 3x!'
+    },
+    {
+      icon:'✍️',title:'Tạo Content Đa Nền Tảng',color:'var(--ac)',
+      steps:[
+        'Vào <strong>Tạo Content</strong> — điền thông tin BĐS hoặc bấm ⚡ Auto từ Khảo Sát',
+        'Chọn mục tiêu: Chốt nhanh / Thu lead / Tăng tương tác',
+        'Bật <strong>AUTO SMART</strong> để AI tự chọn tâm lý & công thức, hoặc tự chọn thủ công',
+        'Chọn 1 phiên bản hoặc 5 phiên bản (1 cho mỗi tâm lý KH)',
+        'Bấm <strong>"🚀 Tạo Content"</strong> → Xem kết quả theo 4 tab: FB, Zalo, TikTok, Web',
+        'Copy nội dung → Đăng trực tiếp hoặc chỉnh sửa thêm'
+      ],
+      tip:'💡 Mẹo: Chọn "5 phiên bản" để có content cho tất cả 5 loại KH cùng lúc!'
+    },
+    {
+      icon:'⏰',title:'Đặt Nhắc Lịch Follow-up KH',color:'var(--rd)',
+      steps:[
+        'Vào <strong>Nhắc Lịch KH</strong> — nhập tên KH, SĐT, BĐS quan tâm',
+        'Chọn loại nhắc: Follow-up / Nhắc xem nhà / Nhắc cọc / Hỏi thăm',
+        'Chọn ngày giờ → Thêm ghi chú nếu cần → Bấm <strong>"⏰ Đặt Nhắc"</strong>',
+        'Nhắc lịch hiển thị theo thứ tự thời gian, màu đỏ = đã đến hạn',
+        'Bấm <strong>"💬 Script"</strong> để copy sẵn nội dung nhắn tin theo tình huống',
+        'Bấm <strong>"✅ Xong"</strong> khi đã follow-up xong'
+      ],
+      tip:'💡 Mẹo: Đặt nhắc ngay sau mỗi buổi xem nhà — đừng để KH nguội lạnh!'
+    },
+    {
+      icon:'📊',title:'Dashboard & Thống Kê',color:'var(--bl)',
+      steps:[
+        'Vào <strong>Dashboard</strong> để xem toàn bộ thống kê hoạt động',
+        'Biểu đồ cột hiển thị số content đã tạo theo 7 ngày qua và 4 tuần',
+        'Thống kê: tổng content, tuần này, tháng này, nhắc đến hạn',
+        'Xem loại nhà hay đăng nhất để tối ưu danh mục sản phẩm',
+        'Bấm 🔄 Refresh để cập nhật dữ liệu mới nhất'
+      ],
+      tip:'💡 Mẹo: Kiểm tra Dashboard mỗi sáng để lên kế hoạch ngày làm việc!'
+    },
+    {
+      icon:'📅',title:'Lịch Đăng 7 Ngày',color:'var(--pu)',
+      steps:[
+        'Tạo content trước ở Tạo Content',
+        'Vào <strong>Lịch 7 Ngày</strong> → Bấm ⚡ Auto để lấy BĐS vừa tạo',
+        'Bấm <strong>"📅 Tạo Lịch"</strong> → 7 ngày hiển thị với chiến lược từng ngày',
+        'Click từng ngày để xem content đã điền sẵn theo nền tảng',
+        'Bấm <strong>"📄 Xuất .txt"</strong> để lưu toàn bộ lịch'
+      ],
+      tip:'💡 Mẹo: T7 là ngày vàng — luôn đăng bài có CTA mạnh nhất!'
+    },
+    {
+      icon:'🏷️',title:'Định Giá BĐS — Thuật Giả Kim',color:'var(--gr)',
+      steps:[
+        'Vào <strong>Định Giá BĐS</strong> — nhập giá rao, DT, số tầng, W×D',
+        'Chọn chất lượng xây dựng → Nhập đơn giá thị trường khu vực',
+        'Bấm <strong>"🏷️ Định Giá"</strong> → Xem bóc tách giá đất + xây dựng',
+        'Biết đơn giá đất thực để xác định căn đang ở mức "giá hời" hay không',
+        'Bấm <strong>"✍️ → Tạo Content"</strong> để tự động điền kết quả định giá vào form content'
+      ],
+      tip:'💡 Mẹo: "Giá thấp hơn TT X%" là điểm khác biệt cực mạnh trong content!'
+    },
+    {
+      icon:'🎭',title:'Đọc Vị Khách Hàng',color:'var(--pu)',
+      steps:[
+        'Vào <strong>Đọc Vị KH</strong> — trả lời 10 câu hỏi quan sát về KH',
+        'Chọn phương án mô tả đúng nhất hành vi KH trong buổi xem nhà',
+        'Hệ thống tự động phân tích và xác định tâm lý KH',
+        'Xem chiến thuật tư vấn được đề xuất theo từng tâm lý',
+        'Áp dụng ngay ngôn ngữ và cách tiếp cận phù hợp'
+      ],
+      tip:'💡 Mẹo: Biết tâm lý KH → chốt deal nhanh hơn 3 lần!'
+    },
+    {
+      icon:'🤖',title:'AI Agents — Công Cụ Mở Rộng',color:'var(--ac)',
+      steps:[
+        'Vào <strong>AI Agents</strong> để xem các công cụ AI chuyên biệt',
+        'Click <strong>"🔗 Mở Agent"</strong> để mở công cụ trên ChatGPT',
+        'Dùng Super Hooks Master để tạo tiêu đề viral cho mọi nền tảng',
+        'Dùng Viral Jetlag để biến tấu content đã có thành phiên bản mới',
+        'Dùng The Vaults để tạo câu hỏi khám phá nhu cầu KH sâu hơn'
+      ],
+      tip:'💡 Mẹo: Kết hợp app này + AI Agents = bộ công cụ content BĐS mạnh nhất!'
+    }
+  ];
+
+  el.innerHTML=guides.map((g,gi)=>`
+    <div class="card" style="border-left:4px solid ${g.color};margin-bottom:11px" id="guide${gi}">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:11px;cursor:pointer" onclick="toggleGuide(${gi})">
+        <div style="font-size:1.5rem;flex-shrink:0">${g.icon}</div>
+        <div style="flex:1">
+          <div style="font-weight:800;font-size:.87rem;color:var(--tx)">${g.title}</div>
+        </div>
+        <span style="color:var(--t3);font-size:.75rem;flex-shrink:0" id="garr${gi}">▼</span>
+      </div>
+      <div id="gbody${gi}">
+        <ol style="padding-left:18px;margin-bottom:10px">
+          ${g.steps.map(s=>`<li style="font-size:.77rem;color:var(--t2);margin-bottom:6px;line-height:1.6">${s}</li>`).join('')}
+        </ol>
+        <div style="background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.25);border-radius:8px;padding:8px 11px;font-size:.73rem;color:var(--ac)">${g.tip}</div>
+      </div>
+    </div>`).join('');
+
+  // Suggestions section
+  el.innerHTML+=`
+    <div class="card" style="border-color:rgba(156,110,245,.35);background:linear-gradient(135deg,rgba(156,110,245,.08),rgba(76,156,245,.05))">
+      <div class="ctit"><span class="dot" style="background:var(--pu)"></span>💡 Gợi Ý Tính Năng & Tip Hay</div>
+      <div style="display:grid;gap:8px">
+        ${[
+          {t:'Quy trình tối ưu',d:'Khảo Sát → Định Giá → Tạo Content → Lịch 7 Ngày → Chấm Điểm → Đặt Nhắc Follow-up',c:'var(--ac)'},
+          {t:'Content 5x mỗi ngày',d:'Dùng chế độ "5 phiên bản" để có content cho 5 tâm lý KH chỉ trong 1 lần bấm',c:'var(--gr)'},
+          {t:'Follow-up = Vàng',d:'80% giao dịch được chốt sau lần follow-up thứ 3-7. Đặt nhắc lịch ngay!',c:'var(--rd)'},
+          {t:'A/B Test Hook',d:'Luôn test 2 phiên bản hook trước khi đăng — tăng tỷ lệ dừng lại 40-60%',c:'var(--bl)'},
+          {t:'Backup thường xuyên',d:'Bấm 💾 Backup JSON trên thanh header để lưu toàn bộ dữ liệu về máy',c:'var(--pu)'},
+          {t:'Hồ sơ cá nhân quan trọng',d:'Điền đầy đủ Hồ Sơ → Tên + SĐT tự động gắn vào MỌI content bạn tạo',c:'var(--ac)'}
+        ].map(s=>`<div style="background:var(--bg3);border-radius:9px;padding:10px 12px;border-left:3px solid ${s.c}">
+          <div style="font-weight:700;font-size:.77rem;color:var(--tx);margin-bottom:3px">${s.t}</div>
+          <div style="font-size:.72rem;color:var(--t2);line-height:1.5">${s.d}</div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+function toggleGuide(i){
+  const body=document.getElementById('gbody'+i);
+  const arr=document.getElementById('garr'+i);
+  if(!body)return;
+  const isOpen=body.style.display!=='none';
+  body.style.display=isOpen?'none':'';
+  if(arr)arr.textContent=isOpen?'▶':'▼';
 }
 
 // ===================== EXPORT =====================
@@ -966,12 +1388,12 @@ function doExportAll(){
   dlTxt(t,'export-bds.txt');toast('📤 Đã xuất!');
 }
 function doBackup(){
-  const d={crm,tpl,prof,v:5,t:new Date().toISOString()};
+  const d={crm,tpl,prof,reminders,contentLog,v:6,t:new Date().toISOString()};
   dlTxt(JSON.stringify(d,null,2),'backup-bds-'+Date.now()+'.json');toast('💾 Đã backup!');
 }
 function doRestore(){
   const inp=document.createElement('input');inp.type='file';inp.accept='.json';
-  inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.crm)crm=d.crm;if(d.tpl)tpl=d.tpl;if(d.prof){prof=d.prof;loadProfInp();if(prof.avatar)showAv(prof.avatar);}saveSt();buildCRM();buildTpl();buildProf();buildEarn();updStats();buildHomeRecent();toast('🔄 Đã restore!');}catch(x){toast('❌ File không hợp lệ!');}};r.readAsText(f);};
+  inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.crm)crm=d.crm;if(d.tpl)tpl=d.tpl;if(d.reminders)reminders=d.reminders;if(d.contentLog)contentLog=d.contentLog;if(d.prof){prof=d.prof;loadProfInp();if(prof.avatar)showAv(prof.avatar);}saveSt();buildCRM();buildTpl();buildProf();buildEarn();buildReminders();buildDashboard();updStats();buildHomeRecent();toast('🔄 Đã restore!');}catch(x){toast('❌ File không hợp lệ!');}};r.readAsText(f);};
   inp.click();
 }
 function dlTxt(c,fn){const b=new Blob([c],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=fn;a.click();}
@@ -981,10 +1403,14 @@ function nav(id){
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   const pg=document.getElementById('pg-'+id);if(pg)pg.classList.add('on');
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
-  const mp={home:'🏠',gen:'✍️',sch:'📅',scr:'🎯',ab:'⚡',remix:'🔁',survey:'🔍',valuation:'🏷️',readkh:'🎭',guidetour:'🏡',salescripts:'💬',tools:'🔧',cmp:'📊',fs:'🔮',handbook:'📖',tpl:'📌',crm:'🗄️',ag:'🤖',earn:'💰',charity:'❤️',prof:'👤'};
+  const mp={home:'🏠',gen:'✍️',sch:'📅',scr:'🎯',ab:'⚡',remix:'🔁',survey:'🔍',valuation:'🏷️',readkh:'🎭',guidetour:'🏡',salescripts:'💬',tools:'🔧',cmp:'📊',fs:'🔮',handbook:'📖',tpl:'📌',crm:'🗄️',ag:'🤖',earn:'💰',charity:'❤️',prof:'👤',reminder:'⏰',dashboard:'📊',guide:'❓'};
   document.querySelectorAll('.ni').forEach(n=>{const ic=n.querySelector('.ic');if(ic&&ic.textContent.trim()===mp[id])n.classList.add('on');});
   const sb=document.getElementById('sb');if(sb&&sb.classList.contains('mob'))sb.classList.remove('mob');
   window.scrollTo&&window.scrollTo(0,0);
+  // Lazy build for new pages
+  if(id==='dashboard')buildDashboard();
+  if(id==='guide')buildGuide();
+  if(id==='reminder')buildReminders();
 }
 function toggleSb(){
   const sb=document.getElementById('sb');
