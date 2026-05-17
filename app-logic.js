@@ -141,7 +141,7 @@ const DEFAULT_SCRIPTS=[
 let VS=[],VI=0,PLT='fb',
 pst={ver:'1',abp:'FB',obj:'price',story_dur:'15s',story_plt:'FB Story',ht_plt:'FB',cl_type:'Nhà phố'},
 crm=[],tpl=[],reminders=[],contentLog=[],
-authorProf={name:'Trần Thế Vinh',title:'Chuyên gia tư vấn BĐS TP.HCM',phone:'0938.121.937',zalo:'0792.227.522',quote:'Lời nói có thể truyền cảm hứng, nhưng chỉ có hành động mới mang bạn đến gần ước mơ.',avatar:'',link:'https://zalo.me/0792227522',social:'@tranthevinh.bds'},
+authorProf={name:'Trần Thế Vinh',title:'Chuyên gia tư vấn BĐS TP.HCM',phone:'0938.121.937',zalo:'0792.227.522',quote:'Lời nói có thể truyền cảm hứng, nhưng chỉ có hành động mới mang bạn đến gần ước mơ.',avatar:'',link:'https://zalo.me/0792227522',social:'@tranthevinh'},
 prof={name:'',title:'',phone:'',zalo:'',quote:'',avatar:''},
 selEl='Kim',selPsy='Si',selFrm='AIDA',
 schedProp='',svData={},rkAnswers=[],

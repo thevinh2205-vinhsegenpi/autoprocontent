@@ -295,6 +295,26 @@ select option{background:var(--bg3)}
 .rm-item-due{animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(239,83,80,.4)}50%{box-shadow:0 0 0 6px rgba(239,83,80,0)}}
 
+/* SUGGESTION POPUP LIBRARY */
+.lib-btn{display:inline-flex;align-items:center;gap:3px;background:var(--bg3);border:1px solid var(--border);color:var(--t3);font-size:.6rem;padding:1px 6px;border-radius:10px;cursor:pointer;transition:.15s;margin-top:3px;vertical-align:middle}
+.lib-btn:hover{border-color:var(--ac);color:var(--ac);background:rgba(245,166,35,.08)}
+.lib-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:600;display:none;align-items:flex-end;justify-content:center;padding:0}
+.lib-overlay.on{display:flex}
+.lib-sheet{background:var(--card2);border-radius:18px 18px 0 0;width:100%;max-width:520px;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 -8px 40px rgba(0,0,0,.5)}
+.lib-hd{padding:14px 16px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.lib-hd h4{font-size:.9rem;font-weight:800;color:var(--tx)}
+.lib-hd span{font-size:.7rem;color:var(--t3)}
+.lib-close{background:none;border:none;color:var(--t3);font-size:1.1rem;cursor:pointer;padding:4px;border-radius:6px}
+.lib-close:hover{color:var(--tx);background:var(--bg3)}
+.lib-body{overflow-y:auto;padding:12px 14px;flex:1}
+.lib-section{margin-bottom:13px}
+.lib-section h5{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--t3);margin-bottom:7px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.lib-chips{display:flex;flex-wrap:wrap;gap:5px}
+.lib-chip{background:var(--bg3);border:1px solid var(--border);color:var(--t2);font-size:.73rem;padding:4px 10px;border-radius:11px;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:4px}
+.lib-chip:hover{border-color:var(--ac);color:var(--ac);background:rgba(245,166,35,.08)}
+.lib-chip.selected{background:rgba(245,166,35,.15);border-color:var(--ac);color:var(--ac);font-weight:700}
+.lib-foot{padding:11px 14px;border-top:1px solid var(--border);display:flex;gap:7px;flex-shrink:0}
+
 /* RESPONSIVE */
 @media(max-width:768px){.sb{width:170px}.fg2{grid-template-columns:1fr}.main{padding:13px}.strow{grid-template-columns:1fr 1fr}.fgr{grid-template-columns:1fr 1fr}.elgr{grid-template-columns:repeat(3,1fr)}.abg{grid-template-columns:1fr}.psy-grid{grid-template-columns:1fr}.cmp-cols{grid-template-columns:1fr}}
 @media(max-width:560px){.sb{position:fixed;left:-222px;top:56px;height:calc(100vh - 56px);z-index:150;transition:left .3s;width:218px!important}.sb.mob{left:0;box-shadow:4px 0 20px rgba(0,0,0,.5)}.main{padding:11px}.strow{grid-template-columns:1fr 1fr}.fgr{grid-template-columns:1fr}.psy-grid{grid-template-columns:1fr}}
@@ -410,7 +430,11 @@ select option{background:var(--bg3)}
   <div class="card">
     <div class="ctit"><span class="dot"></span>Thông tin BĐS</div>
     <div class="fg2">
-      <div class="fg"><label>🏠 Loại nhà</label><input type="text" id="i_type" placeholder="Nhà phố, căn hộ..."><div class="sgr" id="sg_type"></div></div>
+      <div class="fg">
+        <label>🏠 Loại nhà <span class="lib-btn" onclick="openLib('i_type','type')">➕ Gợi ý</span></label>
+        <input type="text" id="i_type" placeholder="Nhà phố, căn hộ...">
+        <div class="sgr" id="sg_type"></div>
+      </div>
       <div class="fg"><label>📋 Loại giao dịch</label>
         <div class="pgr" style="margin-top:4px" id="txnPills">
           <div class="pill on" data-v="Bán" onclick="spill(this,'txn','Bán')">🏷️ Bán</div>
@@ -418,9 +442,21 @@ select option{background:var(--bg3)}
           <div class="pill" data-v="Sang nhượng" onclick="spill(this,'txn','Sang nhượng')">🤝 Sang nhượng</div>
         </div>
       </div>
-      <div class="fg"><label>💰 Giá <span id="priceLabel" style="color:var(--t3);font-weight:400">(bán)</span></label><input type="text" id="i_price" placeholder="5.5 tỷ..."><div class="sgr" id="sg_price"></div></div>
-      <div class="fg"><label>📐 Diện tích</label><input type="text" id="i_area" placeholder="80m²..."><div class="sgr" id="sg_area"></div></div>
-      <div class="fg"><label>📍 Khu vực</label><input type="text" id="i_loc" placeholder="Quận 7..."><div class="sgr" id="sg_loc"></div></div>
+      <div class="fg">
+        <label>💰 Giá <span id="priceLabel" style="color:var(--t3);font-weight:400">(bán)</span> <span class="lib-btn" onclick="openLib('i_price','price')">➕ Gợi ý giá</span></label>
+        <input type="text" id="i_price" placeholder="5.5 tỷ...">
+        <div class="sgr" id="sg_price"></div>
+      </div>
+      <div class="fg">
+        <label>📐 Diện tích <span class="lib-btn" onclick="openLib('i_area','area')">➕ Gợi ý</span></label>
+        <input type="text" id="i_area" placeholder="80m²...">
+        <div class="sgr" id="sg_area"></div>
+      </div>
+      <div class="fg">
+        <label>📍 Khu vực <span class="lib-btn" onclick="openLib('i_loc','loc')">➕ Gợi ý</span></label>
+        <input type="text" id="i_loc" placeholder="Quận 7...">
+        <div class="sgr" id="sg_loc"></div>
+      </div>
       <div class="fg"><label>🎯 Khách hàng mục tiêu</label>
         <div class="pgr" style="margin-top:4px" id="buyerPills">
           <div class="pill on" data-v="Mua ở" onclick="spill(this,'buyer','Mua ở')">🏠 Mua ở</div>
@@ -428,8 +464,16 @@ select option{background:var(--bg3)}
           <div class="pill" data-v="Cho thuê lại" onclick="spill(this,'buyer','Cho thuê lại')">💰 Cho thuê lại</div>
         </div>
       </div>
-      <div class="fg full"><label>⭐ Điểm mạnh nổi bật</label><input type="text" id="i_pros" placeholder="VD: Sổ hồng riêng, hẻm xe hơi, gần trường, không ngập..."><div class="sgr" id="sg_pros"></div></div>
-      <div class="fg full"><label>💎 Điểm khác biệt</label><input type="text" id="i_diff" placeholder="VD: Giá thấp hơn TT 10%, tặng full nội thất, view sông..."><div class="sgr" id="sg_diff"></div></div>
+      <div class="fg full">
+        <label>⭐ Điểm mạnh nổi bật <span class="lib-btn" onclick="openLib('i_pros','pros')">➕ Thư viện ưu điểm</span></label>
+        <input type="text" id="i_pros" placeholder="VD: Sổ hồng riêng, hẻm xe hơi, gần trường, không ngập...">
+        <div class="sgr" id="sg_pros"></div>
+      </div>
+      <div class="fg full">
+        <label>💎 Điểm khác biệt <span class="lib-btn" onclick="openLib('i_diff','diff')">➕ Thư viện điểm khác biệt</span></label>
+        <input type="text" id="i_diff" placeholder="VD: Giá thấp hơn TT 10%, tặng full nội thất, view sông...">
+        <div class="sgr" id="sg_diff"></div>
+      </div>
     </div>
     <div id="genTip" style="display:none;margin-top:9px;background:rgba(62,207,142,.08);border:1px solid rgba(62,207,142,.25);border-radius:8px;padding:8px 11px;font-size:.72rem;color:var(--gr)"></div>
   </div>
@@ -632,10 +676,23 @@ select option{background:var(--bg3)}
 ✅ "Có gì cần lưu ý khi khảo sát không ạ?"
 ❌ Nếu đã bán: "Anh/chị có căn nào khu vực gần đây gửi em khảo sát luôn không ạ?"</div>
     <div class="fg2">
-      <div class="fg"><label>🏠 Địa chỉ BĐS</label><input type="text" id="sv_addr" placeholder="Số nhà, hẻm, đường, phường, quận..."></div>
-      <div class="fg"><label>💰 Giá rao bán</label><input type="text" id="sv_price" placeholder="VD: 7.9 tỷ"></div>
-      <div class="fg"><label>📐 Diện tích (m²)</label><input type="number" id="sv_area" placeholder="82"></div>
-      <div class="fg"><label>🏗️ Số tầng</label><input type="number" id="sv_floors" placeholder="3"></div>
+      <div class="fg">
+        <label>🏠 Địa chỉ BĐS</label>
+        <input type="text" id="sv_addr" placeholder="Số nhà, hẻm, đường, phường, quận...">
+        <div style="margin-top:3px"><span class="lib-btn" onclick="openLib('sv_addr','loc')">➕ Gợi ý khu vực</span></div>
+      </div>
+      <div class="fg">
+        <label>💰 Giá rao bán <span class="lib-btn" onclick="openLib('sv_price','price')">➕ Gợi ý giá</span></label>
+        <input type="text" id="sv_price" placeholder="VD: 7.9 tỷ">
+      </div>
+      <div class="fg">
+        <label>📐 Diện tích (m²) <span class="lib-btn" onclick="openLib('sv_area','area')">➕ Gợi ý</span></label>
+        <input type="number" id="sv_area" placeholder="82">
+      </div>
+      <div class="fg">
+        <label>🏗️ Số tầng <span class="lib-btn" onclick="openLib('sv_floors','floors')">➕ Gợi ý</span></label>
+        <input type="number" id="sv_floors" placeholder="3">
+      </div>
       <div class="fg"><label>↔️ Ngang (m)</label><input type="number" id="sv_w" placeholder="4.7" step="0.1"></div>
       <div class="fg"><label>↕️ Dài (m)</label><input type="number" id="sv_d" placeholder="17.5" step="0.1"></div>
     </div>
@@ -646,19 +703,30 @@ select option{background:var(--bg3)}
     <div class="ctit"><span class="dot"></span>📊 Báo Cáo 5x5 — Tổng hợp sau khảo sát</div>
     <div style="font-size:.75rem;color:var(--t2);margin-bottom:11px;background:rgba(245,166,35,.07);border-radius:8px;padding:9px">💡 Đây là nguyên liệu để: Viết bài đăng bán, Lên kịch bản video, Xử lý từ chối KH</div>
     <div class="fg2">
-      <div class="fg"><label style="color:var(--gr)">✅ 5 Ưu điểm (Vàng)</label><textarea id="sv_pros" style="min-height:110px" placeholder="1. Hẻm ô tô vào tận cửa&#10;2. Khu dân trí cao&#10;3. Gần chợ&#10;4. &#10;5. "></textarea></div>
-      <div class="fg"><label style="color:var(--rd)">❌ 5 Nhược điểm (Đá)</label><textarea id="sv_cons" style="min-height:110px" placeholder="1. Hẻm hơi nhỏ&#10;2. Gần chùa&#10;3. Thiếu chỗ đậu xe&#10;4. &#10;5. "></textarea></div>
+      <div class="fg">
+        <label style="color:var(--gr)">✅ 5 Ưu điểm (Vàng) <span class="lib-btn" onclick="openLib('sv_pros','pros_ta')">➕ Thư viện ưu điểm</span></label>
+        <textarea id="sv_pros" style="min-height:110px" placeholder="1. Hẻm ô tô vào tận cửa&#10;2. Khu dân trí cao&#10;3. Gần chợ&#10;4. &#10;5. "></textarea>
+      </div>
+      <div class="fg">
+        <label style="color:var(--rd)">❌ 5 Nhược điểm (Đá) <span class="lib-btn" onclick="openLib('sv_cons','cons_ta')">➕ Thư viện nhược điểm</span></label>
+        <textarea id="sv_cons" style="min-height:110px" placeholder="1. Hẻm hơi nhỏ&#10;2. Gần chùa&#10;3. Thiếu chỗ đậu xe&#10;4. &#10;5. "></textarea>
+      </div>
     </div>
     <div class="fg2" style="margin-top:11px">
-      <div class="fg"><label>🔍 Lý do bán (đọc vị)</label><input type="text" id="sv_reason" placeholder="Nợ nần, chia tài sản..."></div>
-      <div class="fg"><label>📋 Pháp lý</label><input type="text" id="sv_legal" placeholder="Sổ hồng riêng, ODT..."></div>
+      <div class="fg">
+        <label>🔍 Lý do bán (đọc vị) <span class="lib-btn" onclick="openLib('sv_reason','reason')">➕ Gợi ý</span></label>
+        <input type="text" id="sv_reason" placeholder="Nợ nần, chia tài sản...">
+      </div>
+      <div class="fg">
+        <label>📋 Pháp lý <span class="lib-btn" onclick="openLib('sv_legal','legal')">➕ Gợi ý</span></label>
+        <input type="text" id="sv_legal" placeholder="Sổ hồng riêng, ODT...">
+      </div>
     </div>
     <div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap">
       <button class="btn btn-p" onclick="doSurveyReport()">📊 Tổng Hợp Báo Cáo</button>
       <button class="btn btn-g" onclick="svToContent()">✍️ → Tạo Content</button>
-      <button class="btn btn-b" onclick="svToValuation()">🏷️ → Định Giá</button>
-      <button class="btn btn-s btn-sm" onclick="nav('reminder')">⏰ Đặt Nhắc KH</button>
-      <button class="btn btn-r" onclick="clearSurvey()">🗑️ Xóa</button>
+      <button class="btn btn-b btn-sm" onclick="svToValuation()">🏷️ → Định Giá</button>
+      <button class="btn btn-r btn-sm" onclick="clearSurvey()">🗑️ Xóa</button>
     </div>
   </div>
   <div id="svReport" class="hidden"></div>
@@ -897,11 +965,11 @@ select option{background:var(--bg3)}
       <div style="flex:1;min-width:180px">
         <div style="font-weight:800;font-size:.95rem;color:var(--tx)">Trần Thế Vinh</div>
         <div style="font-size:.75rem;color:var(--t2);margin-top:2px">Chuyên gia tư vấn BĐS TP.HCM</div>
-        <div style="font-size:.7rem;color:var(--ac);margin-top:4px">@tranthevinh.bds · #aihockiemtien</div>
+        <div style="font-size:.7rem;color:var(--ac);margin-top:4px">@tranthevinh · #aihockiemtien</div>
       </div>
       <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">
         <a href="https://zalo.me/0792227522" target="_blank" class="btn btn-s btn-xs" style="text-decoration:none">💬 Zalo tác giả</a>
-        <a href="mailto:aihockiemtien@gmail.com" class="btn btn-s btn-xs" style="text-decoration:none">📧 Email tác giả</a>
+        <a href="mailto:tranthevinhbdspro@gmail.com" class="btn btn-s btn-xs" style="text-decoration:none">📧 Email tác giả</a>
       </div>
     </div>
     <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:.75rem;color:var(--t2);line-height:1.7">
@@ -1046,6 +1114,239 @@ select option{background:var(--bg3)}
 </div>
 
 <div id="toast"></div>
+
+<!-- SUGGESTION LIBRARY POPUP -->
+<div class="lib-overlay" id="libOverlay" onclick="if(event.target===this)closeLib()">
+  <div class="lib-sheet">
+    <div class="lib-hd">
+      <h4 id="libTitle">📚 Thư viện gợi ý</h4>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span id="libSelectedCount" style="font-size:.7rem;color:var(--gr)"></span>
+        <button class="lib-close" onclick="closeLib()">✕</button>
+      </div>
+    </div>
+    <div class="lib-body" id="libBody"></div>
+    <div class="lib-foot">
+      <button class="btn btn-p" style="flex:1;justify-content:center" onclick="applyLib()">✅ Áp dụng vào ô</button>
+      <button class="btn btn-s" onclick="clearLibSel()">🗑️ Bỏ chọn</button>
+      <button class="btn btn-r btn-sm" onclick="closeLib()">✕ Đóng</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// SUGGESTION LIBRARY — popup with multi-select chips
+// ============================================================
+const LIB_DATA = {
+  type: {
+    title: '🏠 Loại nhà',
+    sections: [
+      { h: 'Nhà ở', items: ['Nhà phố','Nhà mặt tiền','Nhà hẻm','Nhà phố liền kề','Nhà riêng','Nhà biệt lập'] },
+      { h: 'Căn hộ', items: ['Căn hộ chung cư','Căn hộ mini','Căn hộ studio','Căn hộ duplex','Penthouse','Căn hộ officetel'] },
+      { h: 'Cao cấp', items: ['Biệt thự đơn lập','Biệt thự song lập','Biệt thự liền kề','Villa','Shophouse'] },
+      { h: 'Đất', items: ['Đất nền','Đất thổ cư','Đất nông nghiệp','Lô góc','Đất mặt tiền'] }
+    ],
+    mode: 'single', targetType: 'input'
+  },
+  price: {
+    title: '💰 Mức giá',
+    sections: [
+      { h: 'Dưới 3 tỷ (bình dân)', items: ['800 triệu','1.2 tỷ','1.5 tỷ','2 tỷ','2.5 tỷ','2.8 tỷ'] },
+      { h: '3–7 tỷ (trung cấp)', items: ['3 tỷ','3.5 tỷ','4 tỷ','4.5 tỷ','5 tỷ','5.5 tỷ','6 tỷ','6.5 tỷ','7 tỷ'] },
+      { h: '7–15 tỷ (cao cấp)', items: ['7.5 tỷ','8 tỷ','9 tỷ','10 tỷ','12 tỷ','15 tỷ'] },
+      { h: 'Trên 15 tỷ (luxury)', items: ['18 tỷ','20 tỷ','25 tỷ','30 tỷ','50 tỷ+'] },
+      { h: 'Cho thuê (triệu/tháng)', items: ['5 tr/tháng','8 tr/tháng','10 tr/tháng','12 tr/tháng','15 tr/tháng','20 tr/tháng','25 tr/tháng','30 tr/tháng'] }
+    ],
+    mode: 'single', targetType: 'input'
+  },
+  area: {
+    title: '📐 Diện tích',
+    sections: [
+      { h: 'Nhỏ (dưới 50m²)', items: ['25m²','30m²','35m²','40m²','45m²','50m²'] },
+      { h: 'Vừa (50–80m²)', items: ['55m²','60m²','65m²','70m²','75m²','80m²'] },
+      { h: 'Rộng (80–150m²)', items: ['85m²','90m²','100m²','110m²','120m²','150m²'] },
+      { h: 'Lớn (trên 150m²)', items: ['160m²','180m²','200m²','250m²','300m²'] },
+      { h: 'Kích thước ngang×dài', items: ['4x12m','4x15m','4x18m','4x20m','5x15m','5x18m','5x20m','6x15m','6x18m','6x20m','7x20m','8x20m'] }
+    ],
+    mode: 'single', targetType: 'input'
+  },
+  floors: {
+    title: '🏗️ Số tầng',
+    sections: [
+      { h: 'Số tầng phổ biến', items: ['1 tầng','2 tầng','3 tầng','4 tầng','5 tầng','6 tầng'] },
+      { h: 'Đặc biệt', items: ['Trệt + lửng','Trệt + 1','Trệt + lửng + 1','Trệt + 3 lầu','Trệt + 4 lầu + sân thượng'] }
+    ],
+    mode: 'single', targetType: 'input'
+  },
+  loc: {
+    title: '📍 Khu vực TP.HCM & lân cận',
+    sections: [
+      { h: 'Trung tâm (Q1, Q3, Q4)', items: ['Quận 1','Quận 3','Quận 4','Quận 5','Quận 6','Bình Thạnh','Phú Nhuận'] },
+      { h: 'Phía Đông (Q2, Q9, Thủ Đức)', items: ['Quận 2','TP. Thủ Đức','An Phú','Thảo Điền','Bình An','Phước Long B','Long Bình'] },
+      { h: 'Phía Nam (Q7, Nhà Bè)', items: ['Quận 7','Phú Mỹ Hưng','Tân Phong','Tân Thuận Đông','Nhà Bè','Phước Kiển'] },
+      { h: 'Phía Tây (Q8, Q6, Bình Chánh)', items: ['Quận 8','Quận 6','Bình Chánh','Bình Trị Đông','Tân Tạo'] },
+      { h: 'Phía Bắc (Gò Vấp, Tân Bình, Tân Phú)', items: ['Gò Vấp','Tân Bình','Tân Phú','Quận 10','Quận 11','Quận 12','Hóc Môn'] },
+      { h: 'Các tỉnh lân cận', items: ['Bình Dương','Dĩ An','Thuận An','Thủ Dầu Một','Đồng Nai','Biên Hòa','Long An','Bà Rịa - Vũng Tàu'] }
+    ],
+    mode: 'single', targetType: 'input'
+  },
+  pros: {
+    title: '⭐ Ưu điểm BĐS',
+    sections: [
+      { h: 'Pháp lý', items: ['Sổ hồng riêng','Sổ đỏ chính chủ','Pháp lý sạch 100%','Không tranh chấp','Không thế chấp','Sổ hồng đầy đủ','Chủ tự rút sổ'] },
+      { h: 'Hẻm & Đường', items: ['Hẻm xe hơi thông','Hẻm rộng 5m','Hẻm rộng 6m','Mặt tiền đường lớn','Đường nhựa phẳng','Hẻm thông 2 đầu','Xe tải vào được'] },
+      { h: 'Vị trí tiện ích', items: ['Gần trường học','Gần bệnh viện','Gần chợ','Gần siêu thị','Gần TTTM','Gần công viên','Gần nhà thờ','Gần trạm xe buýt','Gần metro','Cách trung tâm 5km'] },
+      { h: 'Chất lượng nhà', items: ['Nhà mới xây 100%','Nhà được sửa chữa mới','Nội thất đầy đủ','Nội thất cao cấp','Tặng full nội thất','Móng cọc chắc chắn','Vật liệu tốt'] },
+      { h: 'Môi trường sống', items: ['Khu dân trí cao','An ninh 24/7','Camera toàn khu','Không ngập lụt','Xóm văn minh','Yên tĩnh','Gần gia đình','Thuận tiện đi làm'] },
+      { h: 'Tiềm năng đầu tư', items: ['Gần hạ tầng mới','Giá tốt hơn TT','Khu đang phát triển','Cho thuê 15 tr/tháng','Lợi suất 6-8%/năm','Khu thương mại sầm uất'] }
+    ],
+    mode: 'multi', targetType: 'input', separator: ', '
+  },
+  pros_ta: {
+    title: '✅ Ưu điểm (Điền vào ô 5x5)',
+    sections: [
+      { h: 'Pháp lý', items: ['Sổ hồng riêng chính chủ','Pháp lý sạch 100%','Không thế chấp ngân hàng','Chủ tự rút sổ nhanh'] },
+      { h: 'Vị trí', items: ['Hẻm xe hơi thông thoáng','Mặt tiền đường lớn','Gần trường học','Gần bệnh viện','Gần chợ/siêu thị','Gần trạm metro'] },
+      { h: 'Nhà & Nội thất', items: ['Nhà mới xây 100%','Tặng full nội thất cao cấp','Thiết kế hiện đại','Móng cọc chắc chắn','Hướng Nam thoáng mát'] },
+      { h: 'Môi trường', items: ['Khu dân trí cao','An ninh 24/7 camera','Không ngập lụt','Xóm văn minh yên tĩnh','Không có tệ nạn'] },
+      { h: 'Đầu tư', items: ['Cho thuê ngay 15 tr/tháng','Giá thấp hơn thị trường 10%','Khu đang phát triển mạnh','Gần dự án hạ tầng lớn'] }
+    ],
+    mode: 'multi', targetType: 'textarea', separator: '\n'
+  },
+  cons_ta: {
+    title: '❌ Nhược điểm thường gặp',
+    sections: [
+      { h: 'Hẻm & Đường', items: ['Hẻm hơi nhỏ (~2m)','Hẻm cụt (không thông)','Chỉ xe máy vào được','Hay kẹt xe giờ cao điểm'] },
+      { h: 'Tâm linh', items: ['Gần chùa (cách 100m)','Gần miếu nhỏ','Gần nhà thờ','Phía sau là nghĩa trang (xa)'] },
+      { h: 'Nhà', items: ['Nhà cũ xây từ năm...','Cần sơn sửa lại','Thiếu 1 phòng ngủ','Không có gara ô tô','Tầng trệt thấp hơn đường'] },
+      { h: 'Môi trường', items: ['Gần quán karaoke (đóng 10pm)','Gần chợ (đông giờ sáng)','Có quán nhậu gần đó','Khu cho thuê phòng trọ nhiều'] },
+      { h: 'Pháp lý', items: ['Đất ODT (nông thôn)','Nhà chưa có sổ (đang làm)','Đang thế chấp ngân hàng','Một phần diện tích lấn chiếm'] }
+    ],
+    mode: 'multi', targetType: 'textarea', separator: '\n'
+  },
+  diff: {
+    title: '💎 Điểm khác biệt nổi bật',
+    sections: [
+      { h: 'Giá & Tài chính', items: ['Giá thấp hơn TT 10%','Chủ cần bán gấp','Thương lượng được','Hỗ trợ vay 70% NH','Tặng thêm 50 triệu','Không tăng giá 3 tháng'] },
+      { h: 'Pháp lý nhanh', items: ['Sang tên trong 7 ngày','Không vướng thế chấp','Chủ tự rút sổ','Hồ sơ hoàn chỉnh 100%'] },
+      { h: 'Đặc điểm độc đáo', items: ['Lô góc 2 mặt tiền','View sông thoáng','Sân vườn rộng','Có hầm để xe','Thang máy riêng','Hồ bơi','Sân thượng BBQ'] },
+      { h: 'Nội thất & Tặng kèm', items: ['Tặng full nội thất','Tặng máy lạnh 3 phòng','Tặng tủ bếp inox','Tặng rèm cửa cao cấp','Bếp từ Bosch tặng kèm'] },
+      { h: 'Đầu tư sinh lời', items: ['Cho thuê ngay 15 tr/tháng','Khu thương mại phát triển','Gần dự án metro số 2','Đất nền khu quy hoạch','Giá chỉ tăng không giảm'] }
+    ],
+    mode: 'multi', targetType: 'input', separator: ', '
+  },
+  reason: {
+    title: '🔍 Lý do bán (đọc vị chủ)',
+    sections: [
+      { h: 'Tài chính', items: ['Cần tiền gấp','Nợ ngân hàng cần thanh lý','Kinh doanh thua lỗ','Cần vốn mở rộng kinh doanh'] },
+      { h: 'Gia đình', items: ['Chia tài sản thừa kế','Ly hôn chia đôi','Con cái đi nước ngoài','Vợ chồng chuyển vào Nam','Mua nhà mới lớn hơn'] },
+      { h: 'Công việc', items: ['Chuyển công tác','Di cư sang nước ngoài','Về hưu về quê','Chuyển sang căn hộ tiện hơn'] },
+      { h: 'Đầu tư', items: ['Chốt lời đầu tư','Đổi sang kênh đầu tư khác','Bán 1 mua 2 căn nhỏ hơn'] }
+    ],
+    mode: 'single', targetType: 'input'
+  },
+  legal: {
+    title: '📋 Tình trạng pháp lý',
+    sections: [
+      { h: 'Sổ hồng', items: ['Sổ hồng riêng chính chủ','Sổ hồng đầy đủ không thế chấp','Sổ hồng đang thế chấp NH (chủ tự rút)','Sổ hồng chung cần tách'] },
+      { h: 'Sổ đỏ', items: ['Sổ đỏ ODT (đô thị)','Sổ đỏ ONT (nông thôn)','Sổ đỏ đất hỗn hợp'] },
+      { h: 'Chưa có sổ', items: ['Đang làm sổ hồng (3-6 tháng)','Có giấy tờ mua bán hợp lệ','Giấy tờ viết tay (cần công chứng)'] },
+      { h: 'Quy hoạch', items: ['Không dính quy hoạch','Không lộ giới','Có 1 phần lộ giới (đã cập nhật)','Đất nằm ngoài quy hoạch'] }
+    ],
+    mode: 'single', targetType: 'input'
+  }
+};
+
+let _libTarget = '', _libMode = 'single', _libTargetType = 'input', _libSelected = new Set();
+
+function openLib(targetId, libKey) {
+  const cfg = LIB_DATA[libKey];
+  if (!cfg) return;
+  _libTarget = targetId;
+  _libMode = cfg.mode || 'single';
+  _libTargetType = cfg.targetType || 'input';
+  _libSelected = new Set();
+
+  document.getElementById('libTitle').textContent = cfg.title;
+  document.getElementById('libSelectedCount').textContent = '';
+
+  const body = document.getElementById('libBody');
+  body.innerHTML = cfg.sections.map(sec => `
+    <div class="lib-section">
+      <h5>${sec.h}</h5>
+      <div class="lib-chips">
+        ${sec.items.map(item => `<div class="lib-chip" onclick="toggleChip(this,'${item.replace(/'/g,"\\'")}','${_libMode}')">${item}</div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('libOverlay').classList.add('on');
+}
+
+function toggleChip(el, val, mode) {
+  if (mode === 'single') {
+    document.querySelectorAll('.lib-chip').forEach(c => c.classList.remove('selected'));
+    _libSelected.clear();
+    el.classList.add('selected');
+    _libSelected.add(val);
+  } else {
+    if (_libSelected.has(val)) {
+      _libSelected.delete(val);
+      el.classList.remove('selected');
+    } else {
+      _libSelected.add(val);
+      el.classList.add('selected');
+    }
+  }
+  const cnt = _libSelected.size;
+  document.getElementById('libSelectedCount').textContent = cnt > 0 ? `✅ Đã chọn ${cnt}` : '';
+  // Auto apply for single mode
+  if (mode === 'single' && cnt === 1) { applyLib(); }
+}
+
+function applyLib() {
+  if (_libSelected.size === 0) { closeLib(); return; }
+  const el = document.getElementById(_libTarget);
+  if (!el) { closeLib(); return; }
+
+  const cfg = LIB_DATA[Object.keys(LIB_DATA).find(k => LIB_DATA[k] && document.getElementById(_libTarget))];
+  const sep = (Object.values(LIB_DATA).find(c => c.targetType === _libTargetType && c.mode === _libMode) || {}).separator || ', ';
+
+  const newVals = [..._libSelected];
+
+  if (_libTargetType === 'textarea') {
+    const existing = el.value.trim();
+    // Smart numbered list insert
+    const lines = existing ? existing.split('\n').filter(l => l.trim()) : [];
+    newVals.forEach(v => {
+      const nextNum = lines.length + 1;
+      lines.push(`${nextNum}. ${v}`);
+    });
+    el.value = lines.join('\n');
+  } else {
+    // Input: append with separator
+    const existing = el.value.trim();
+    const toAdd = newVals.join(', ');
+    el.value = existing ? existing + ', ' + toAdd : toAdd;
+  }
+
+  el.dispatchEvent(new Event('input'));
+  el.focus();
+  closeLib();
+  toast(`✅ Đã thêm ${_libSelected.size} mục vào ô!`);
+}
+
+function clearLibSel() {
+  _libSelected.clear();
+  document.querySelectorAll('.lib-chip').forEach(c => c.classList.remove('selected'));
+  document.getElementById('libSelectedCount').textContent = '';
+}
+
+function closeLib() {
+  document.getElementById('libOverlay').classList.remove('on');
+}
+</script>
 
 <script>
 // Helper function for persona tab switching (inline since simple)
