@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AUTO PRO CONTENT BĐS v6 — AI Tạo Nội Dung Đa Nền Tảng</title>
+<title>AUTO PRO CONTENT BĐS v7 — AI Tạo Nội Dung Đa Nền Tảng</title>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0d0f14;--bg2:#13161e;--bg3:#1a1e28;--card:#1e2230;--card2:#242838;--border:#2e3347;--ac:#f5a623;--a2:#e8891a;--bl:#4c9cf5;--gr:#3ecf8e;--pk:#f06292;--pu:#9c6ef5;--rd:#ef5350;--tx:#e8eaf0;--t2:#9ca3b8;--t3:#6b7490;--r:12px;--sh:0 8px 32px rgba(0,0,0,.4)}
@@ -329,6 +329,56 @@ select option{background:var(--bg3)}
 .lib-chip.selected{background:rgba(245,166,35,.15);border-color:var(--ac);color:var(--ac);font-weight:700}
 .lib-foot{padding:11px 14px;border-top:1px solid var(--border);display:flex;gap:7px;flex-shrink:0}
 
+/* MORNING CHECKLIST */
+.ck-item{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:11px 13px;display:flex;align-items:flex-start;gap:10px;margin-bottom:7px;cursor:pointer;transition:.2s;user-select:none}
+.ck-item:hover{border-color:rgba(245,166,35,.35)}
+.ck-item.done{background:rgba(62,207,142,.07);border-color:rgba(62,207,142,.4)}
+.ck-item.done .ck-txt{text-decoration:line-through;color:var(--t3)}
+.ck-box{width:20px;height:20px;border-radius:6px;border:2px solid var(--border);background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:800;flex-shrink:0;margin-top:1px;transition:.2s}
+.ck-item.done .ck-box{background:var(--gr);border-color:var(--gr);color:#fff}
+.ck-txt{font-size:.8rem;color:var(--tx);font-weight:600;line-height:1.4}
+.ck-sub{font-size:.68rem;color:var(--t3);margin-top:2px;line-height:1.4}
+.ck-group{margin-bottom:13px}
+.ck-glbl{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--t3);margin-bottom:7px;padding:0 2px;display:flex;align-items:center;gap:6px}
+.ck-glbl::after{content:'';flex:1;height:1px;background:var(--border)}
+.ck-progress{height:8px;background:var(--bg3);border-radius:6px;overflow:hidden;margin-bottom:14px}
+.ck-pbar{height:100%;background:linear-gradient(90deg,var(--ac),var(--gr));border-radius:6px;transition:width .5s ease}
+.ck-streak{background:linear-gradient(135deg,rgba(245,166,35,.12),rgba(62,207,142,.08));border:1px solid rgba(245,166,35,.3);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;margin-bottom:13px}
+
+/* KH LABELS */
+.lbl-hot{background:rgba(239,83,80,.15);border:1.5px solid rgba(239,83,80,.5);color:var(--rd)}
+.lbl-warm{background:rgba(245,166,35,.15);border:1.5px solid rgba(245,166,35,.5);color:var(--ac)}
+.lbl-cold{background:rgba(107,116,144,.15);border:1.5px solid rgba(107,116,144,.4);color:var(--t2)}
+.lbl-done{background:rgba(62,207,142,.15);border:1.5px solid rgba(62,207,142,.5);color:var(--gr)}
+.kh-label{font-size:.65rem;font-weight:800;padding:2px 8px;border-radius:8px;white-space:nowrap;display:inline-flex;align-items:center;gap:3px}
+
+/* INTERACTION TIMELINE */
+.tl-item{display:flex;gap:11px;margin-bottom:0}
+.tl-left{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.tl-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;border:2px solid var(--border);background:var(--card)}
+.tl-line{width:2px;flex:1;background:var(--border);margin:3px 0;min-height:16px}
+.tl-body{flex:1;padding-bottom:14px}
+.tl-meta{font-size:.68rem;color:var(--t3);margin-bottom:3px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.tl-type{font-size:.65rem;font-weight:700;padding:1px 7px;border-radius:6px}
+.tl-note{font-size:.76rem;color:var(--t2);line-height:1.6;background:var(--bg3);border-radius:8px;padding:8px 10px;border-left:2px solid var(--ac)}
+.tl-add{background:var(--card);border:1.5px dashed var(--border);border-radius:10px;padding:11px;text-align:center;cursor:pointer;transition:.2s;font-size:.76rem;color:var(--t3)}
+.tl-add:hover{border-color:var(--ac);color:var(--ac)}
+
+/* CALENDAR */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-head{font-size:.65rem;font-weight:700;color:var(--t3);text-align:center;padding:4px 0}
+.cal-day{aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1px;font-size:.72rem;cursor:pointer;transition:.2s;position:relative;border:1.5px solid transparent}
+.cal-day:hover{border-color:rgba(245,166,35,.4)}
+.cal-day.today{border-color:var(--ac)!important;font-weight:800;color:var(--ac)}
+.cal-day.has-content{background:rgba(62,207,142,.15);border-color:rgba(62,207,142,.4)}
+.cal-day.has-content .cal-dn{color:var(--gr);font-weight:700}
+.cal-day.empty{opacity:.25;cursor:default}
+.cal-day.other-month{opacity:.3}
+.cal-dn{font-size:.72rem;line-height:1}
+.cal-dots{display:flex;gap:2px;justify-content:center;flex-wrap:wrap;padding:0 2px}
+.cal-dot{width:4px;height:4px;border-radius:50%;background:var(--ac)}
+.cal-dot.fb{background:#1877f2}.cal-dot.zalo{background:#0068ff}.cal-dot.tiktok{background:#ff0050}.cal-dot.web{background:var(--gr)}
+
 /* RESPONSIVE */
 @media(max-width:768px){.sb{width:170px}.fg2{grid-template-columns:1fr}.main{padding:13px}.strow{grid-template-columns:1fr 1fr}.fgr{grid-template-columns:1fr 1fr}.elgr{grid-template-columns:repeat(3,1fr)}.abg{grid-template-columns:1fr}.psy-grid{grid-template-columns:1fr}.cmp-cols{grid-template-columns:1fr}}
 @media(max-width:560px){.sb{position:fixed;left:-222px;top:56px;height:calc(100vh - 56px);z-index:150;transition:left .3s;width:218px!important}.sb.mob{left:0;box-shadow:4px 0 20px rgba(0,0,0,.5)}.main{padding:11px}.strow{grid-template-columns:1fr 1fr}.fgr{grid-template-columns:1fr}.psy-grid{grid-template-columns:1fr}}
@@ -338,7 +388,7 @@ select option{background:var(--bg3)}
 
 <!-- HEADER -->
 <div class="hdr">
-  <div class="logo" onclick="nav('home')">🏠 AUTO PRO CONTENT <span class="bdg">BĐS v6</span></div>
+  <div class="logo" onclick="nav('home')">🏠 AUTO PRO CONTENT <span class="bdg">BĐS v7</span></div>
   <div class="hdr-r">
     <div class="tsw">☀️<label class="tgl"><input type="checkbox" id="thm" onchange="document.body.classList.toggle('lm')"><span class="sldr"></span></label>🌙</div>
     <button class="ib" onclick="nav('reminder')" title="Nhắc lịch KH" style="position:relative">⏰<span class="rm-badge" id="rmBadge">0</span></button>
@@ -372,12 +422,16 @@ select option{background:var(--bg3)}
     <div class="ni" onclick="nav('readkh')"><span class="ic">🎭</span><span class="ntxt">Đọc Vị KH</span></div>
     <div class="ni" onclick="nav('guidetour')"><span class="ic">🏡</span><span class="ntxt">Dẫn Xem Nhà</span></div>
     <div class="ni" onclick="nav('salescripts')"><span class="ic">💬</span><span class="ntxt">Câu Chốt Sale</span></div>
+    <div class="ni" onclick="nav('khlabels')"><span class="ic">🎯</span><span class="ntxt">KH Theo Nhãn</span><span class="nbdg" id="rmSideCount" style="background:var(--rd);color:#fff;display:none">0</span></div>
+    <div class="ni" onclick="nav('timeline')"><span class="ic">📋</span><span class="ntxt">Timeline KH</span></div>
   </div>
   <div class="nsec">
     <span class="nlbl">🆕 Tính Năng Mới</span>
     <div class="ni" onclick="nav('reminder')"><span class="ic">⏰</span><span class="ntxt">Nhắc Lịch KH</span><span class="nbdg" id="rmSideCount" style="background:var(--rd);color:#fff;display:none">0</span></div>
     <div class="ni" onclick="nav('dashboard')"><span class="ic">📊</span><span class="ntxt">Dashboard</span><span class="nbdg" style="background:var(--bl);color:#fff">NEW</span></div>
     <div class="ni" onclick="nav('guide')"><span class="ic">❓</span><span class="ntxt">Hướng Dẫn</span><span class="nbdg" style="background:var(--pu);color:#fff">NEW</span></div>
+    <div class="ni" onclick="nav('morning')"><span class="ic">☀️</span><span class="ntxt">Checklist Buổi Sáng</span><span class="nbdg" style="background:var(--ac);color:#000" id="ckBadge">0</span></div>
+    <div class="ni" onclick="nav('calendar')"><span class="ic">📅</span><span class="ntxt">Calendar Đăng Tin</span><span class="nbdg" style="background:var(--gr);color:#000">NEW</span></div>
   </div>
   <div class="nsec">
     <span class="nlbl">🛠️ Công Cụ</span>
@@ -412,7 +466,7 @@ select option{background:var(--bg3)}
       <span style="background:var(--card);border:1px solid var(--border);color:var(--t3);font-size:.68rem;padding:2px 9px;border-radius:17px;font-weight:600">🌐 Website</span>
     </div>
     <h1>AUTO PRO CONTENT BĐS</h1>
-    <p class="sub">Trợ lý AI tạo nội dung tin đăng đa nền tảng — tối ưu chuyển đổi theo tâm lý khách hàng.<br><span style="color:var(--ac);font-weight:700">v6.0 — Thêm: Nhắc Lịch KH · Dashboard · Hướng Dẫn · Survey↔Content Sync</span></p>
+    <p class="sub">Trợ lý AI tạo nội dung tin đăng đa nền tảng — tối ưu chuyển đổi theo tâm lý khách hàng.<br><span style="color:var(--ac);font-weight:700">v7.0 — Thêm: Checklist Buổi Sáng · KH Nhãn Màu · Timeline · Calendar Đăng Tin</span></p>
     <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
       <button class="btn btn-p" onclick="nav('gen')">🚀 Bắt Đầu Tạo Content</button>
       <button class="btn btn-s" onclick="nav('survey')">🔍 Khảo Sát Nhà</button>
@@ -1302,6 +1356,201 @@ select option{background:var(--bg3)}
       💬 Góp ý tính năng mới: <a href="https://zalo.me/0792227522" target="_blank" style="color:var(--ac);font-weight:700">Zalo tác giả →</a>
     </div>
   </div>
+</div>
+
+<!-- ==================== MORNING CHECKLIST ==================== -->
+<div class="pg" id="pg-morning">
+  <div class="ptit"><div><h2>☀️ Checklist Buổi Sáng</h2><p>Kỷ luật hàng ngày · Tự reset lúc 6:00 sáng · Streak ngày liên tiếp</p></div></div>
+
+  <!-- Streak + thời gian -->
+  <div class="ck-streak">
+    <div style="font-size:1.8rem">🔥</div>
+    <div style="flex:1">
+      <div style="font-weight:800;font-size:.88rem;color:var(--ac)" id="ckStreakTxt">Streak: 0 ngày liên tiếp</div>
+      <div style="font-size:.7rem;color:var(--t3);margin-top:2px" id="ckDateTxt"></div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:1.4rem;font-weight:900;color:var(--tx)" id="ckPctTxt">0%</div>
+      <div style="font-size:.65rem;color:var(--t3)">hoàn thành</div>
+    </div>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="ck-progress"><div class="ck-pbar" id="ckPbar" style="width:0%"></div></div>
+
+  <!-- Checklist items -->
+  <div id="ckList"></div>
+
+  <!-- Actions -->
+  <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:4px">
+    <button class="btn btn-p btn-sm" onclick="ckCheckAll()">✅ Hoàn thành tất cả</button>
+    <button class="btn btn-r btn-sm" onclick="ckReset()">🔄 Reset hôm nay</button>
+  </div>
+
+  <!-- Tip -->
+  <div style="margin-top:14px;background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.2);border-radius:10px;padding:11px 14px;font-size:.75rem;color:var(--t2);line-height:1.8">
+    💡 <strong style="color:var(--ac)">Checklist tự reset lúc 6:00 sáng mỗi ngày.</strong> Hoàn thành đủ 80% trong ngày được tính 1 streak. Kỷ luật làm đủ checklist = môi giới chuyên nghiệp!
+  </div>
+</div>
+
+<!-- ==================== KH LABELS (trong CRM page đã có, thêm trang riêng quản lý KH) ==================== -->
+<div class="pg" id="pg-khlabels">
+  <div class="ptit"><div><h2>🎯 Quản Lý KH Theo Nhãn</h2><p>Nóng 🔴 · Ấm 🟡 · Lạnh ⚫ · Đã chốt ✅</p></div></div>
+
+  <!-- Filter tabs -->
+  <div style="display:flex;gap:6px;margin-bottom:13px;flex-wrap:wrap">
+    <div class="pill on" id="klf_all" onclick="filterKHLabel('all',this)">📋 Tất cả</div>
+    <div class="pill" id="klf_hot" onclick="filterKHLabel('hot',this)" style="border-color:rgba(239,83,80,.4);color:var(--rd)">🔴 Nóng</div>
+    <div class="pill" id="klf_warm" onclick="filterKHLabel('warm',this)" style="border-color:rgba(245,166,35,.4);color:var(--ac)">🟡 Ấm</div>
+    <div class="pill" id="klf_cold" onclick="filterKHLabel('cold',this)">⚫ Lạnh</div>
+    <div class="pill" id="klf_done" onclick="filterKHLabel('done',this)" style="border-color:rgba(62,207,142,.4);color:var(--gr)">✅ Đã chốt</div>
+  </div>
+
+  <!-- Add KH form -->
+  <div class="card">
+    <div class="ctit"><span class="dot"></span>➕ Thêm KH mới</div>
+    <div class="fg2">
+      <div class="fg"><label>👤 Tên KH *</label><input type="text" id="khl_name" placeholder="Anh Minh, Chị Lan..."></div>
+      <div class="fg"><label>📞 SĐT</label><input type="text" id="khl_phone" placeholder="0938.xxx.xxx"></div>
+      <div class="fg"><label>🏠 BĐS quan tâm</label><input type="text" id="khl_prop" placeholder="Nhà phố Q7, 6.5 tỷ..."></div>
+      <div class="fg"><label>🎯 Nhãn ban đầu</label>
+        <select id="khl_label" style="font-size:.78rem">
+          <option value="hot">🔴 Nóng — Đang muốn mua ngay</option>
+          <option value="warm" selected>🟡 Ấm — Đang cân nhắc</option>
+          <option value="cold">⚫ Lạnh — Chưa có nhu cầu rõ</option>
+          <option value="done">✅ Đã chốt deal</option>
+        </select>
+      </div>
+      <div class="fg full"><label>📝 Ghi chú</label><input type="text" id="khl_note" placeholder="Ngân sách, yêu cầu đặc biệt, deadline..."></div>
+    </div>
+    <button class="btn btn-p btn-sm" style="margin-top:10px" onclick="addKHLabel()">➕ Thêm KH</button>
+  </div>
+
+  <!-- Stats row -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:13px">
+    <div style="background:rgba(239,83,80,.1);border:1px solid rgba(239,83,80,.3);border-radius:10px;padding:10px;text-align:center">
+      <div style="font-size:1.5rem;font-weight:900;color:var(--rd)" id="klStat_hot">0</div>
+      <div style="font-size:.65rem;color:var(--t3)">🔴 Nóng</div>
+    </div>
+    <div style="background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.3);border-radius:10px;padding:10px;text-align:center">
+      <div style="font-size:1.5rem;font-weight:900;color:var(--ac)" id="klStat_warm">0</div>
+      <div style="font-size:.65rem;color:var(--t3)">🟡 Ấm</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center">
+      <div style="font-size:1.5rem;font-weight:900;color:var(--t2)" id="klStat_cold">0</div>
+      <div style="font-size:.65rem;color:var(--t3)">⚫ Lạnh</div>
+    </div>
+    <div style="background:rgba(62,207,142,.1);border:1px solid rgba(62,207,142,.3);border-radius:10px;padding:10px;text-align:center">
+      <div style="font-size:1.5rem;font-weight:900;color:var(--gr)" id="klStat_done">0</div>
+      <div style="font-size:.65rem;color:var(--t3)">✅ Chốt</div>
+    </div>
+  </div>
+
+  <!-- KH List -->
+  <div id="khLabelList"></div>
+</div>
+
+<!-- ==================== TIMELINE (trang riêng) ==================== -->
+<div class="pg" id="pg-timeline">
+  <div class="ptit"><div><h2>📋 Lịch Sử Tương Tác KH</h2><p>Ghi lại mỗi lần liên hệ · Xem lại chuỗi từ đầu</p></div></div>
+
+  <!-- Chọn KH -->
+  <div class="card">
+    <div class="ctit"><span class="dot"></span>Chọn KH để xem timeline</div>
+    <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap">
+      <select id="tlKHSelect" style="flex:1;min-width:180px;font-size:.78rem" onchange="loadTimeline()">
+        <option value="">-- Chọn KH --</option>
+      </select>
+      <button class="btn btn-s btn-sm" onclick="buildTLSelect()">🔄 Làm mới</button>
+    </div>
+  </div>
+
+  <!-- Add interaction form -->
+  <div class="card" id="tlAddForm" style="display:none">
+    <div class="ctit"><span class="dot"></span>➕ Thêm tương tác mới</div>
+    <div class="fg2">
+      <div class="fg"><label>📌 Loại tương tác</label>
+        <select id="tl_type" style="font-size:.78rem">
+          <option value="📞">📞 Gọi điện</option>
+          <option value="💬">💬 Nhắn Zalo/SMS</option>
+          <option value="🏠">🏠 Dẫn xem nhà</option>
+          <option value="🤝">🤝 Gặp mặt trực tiếp</option>
+          <option value="📧">📧 Gửi email/tài liệu</option>
+          <option value="💰">💰 Đàm phán giá</option>
+          <option value="📋">📋 Ký hợp đồng</option>
+          <option value="✅">✅ Chốt deal</option>
+        </select>
+      </div>
+      <div class="fg"><label>🕐 Thời gian</label><input type="datetime-local" id="tl_time"></div>
+      <div class="fg full"><label>📝 Nội dung / Kết quả</label><textarea id="tl_note" style="min-height:70px" placeholder="VD: KH hỏi thêm về pháp lý. Đã gửi scan sổ hồng. KH sẽ trả lời sau 2 ngày..."></textarea></div>
+    </div>
+    <div style="display:flex;gap:7px;margin-top:9px">
+      <button class="btn btn-p btn-sm" onclick="addInteraction()">➕ Lưu tương tác</button>
+      <button class="btn btn-r btn-sm" onclick="document.getElementById('tlAddForm').style.display='none'">✕</button>
+    </div>
+  </div>
+
+  <!-- Timeline display -->
+  <div id="tlDisplay"></div>
+</div>
+
+<!-- ==================== CALENDAR ==================== -->
+<div class="pg" id="pg-calendar">
+  <div class="ptit"><div><h2>📅 Calendar Đăng Tin</h2><p>Xem ngày nào đã đăng · Bao nhiêu nền tảng · Streak đăng liên tiếp</p></div></div>
+
+  <!-- Month navigation -->
+  <div class="card" style="padding:12px 14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:13px">
+      <button class="btn btn-s btn-sm" onclick="calNav(-1)">← Tháng trước</button>
+      <div style="font-weight:800;font-size:.95rem;color:var(--tx)" id="calTitle">Tháng 5/2026</div>
+      <button class="btn btn-s btn-sm" onclick="calNav(1)">Tháng sau →</button>
+    </div>
+
+    <!-- Day headers -->
+    <div class="cal-grid" style="margin-bottom:5px">
+      <div class="cal-head">CN</div><div class="cal-head">T2</div><div class="cal-head">T3</div>
+      <div class="cal-head">T4</div><div class="cal-head">T5</div><div class="cal-head">T6</div>
+      <div class="cal-head">T7</div>
+    </div>
+
+    <!-- Calendar days -->
+    <div class="cal-grid" id="calDays"></div>
+  </div>
+
+  <!-- Legend -->
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:13px;font-size:.7rem;color:var(--t2)">
+    <div style="display:flex;align-items:center;gap:4px"><div style="width:12px;height:12px;border-radius:3px;background:rgba(62,207,142,.2);border:1px solid rgba(62,207,142,.5)"></div>Có đăng tin</div>
+    <div style="display:flex;align-items:center;gap:4px"><div style="width:12px;height:12px;border-radius:3px;border:1.5px solid var(--ac)"></div>Hôm nay</div>
+    <div style="display:flex;align-items:center;gap:5px">
+      <div class="cal-dot fb"></div>FB
+      <div class="cal-dot zalo"></div>Zalo
+      <div class="cal-dot tiktok"></div>TikTok
+      <div class="cal-dot web"></div>Web
+    </div>
+  </div>
+
+  <!-- Monthly stats -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:13px">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center">
+      <div style="font-size:1.6rem;font-weight:900;color:var(--ac);font-family:'Space Mono',monospace" id="calStatDays">0</div>
+      <div style="font-size:.64rem;color:var(--t3)">Ngày đăng</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center">
+      <div style="font-size:1.6rem;font-weight:900;color:var(--gr);font-family:'Space Mono',monospace" id="calStatPosts">0</div>
+      <div style="font-size:.64rem;color:var(--t3)">Tổng lượt đăng</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center">
+      <div style="font-size:1.6rem;font-weight:900;color:var(--bl);font-family:'Space Mono',monospace" id="calStatStreak">0</div>
+      <div style="font-size:.64rem;color:var(--t3)">Streak ngày</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center">
+      <div style="font-size:1.6rem;font-weight:900;color:var(--pu);font-family:'Space Mono',monospace" id="calStatBest">0</div>
+      <div style="font-size:.64rem;color:var(--t3)">Streak tốt nhất</div>
+    </div>
+  </div>
+
+  <!-- Day detail panel -->
+  <div id="calDayDetail" style="display:none"></div>
 </div>
 
 </div><!-- end main -->

@@ -269,14 +269,15 @@ function saveOutputToLibrary(name,content,type){
 
 // ===================== INIT =====================
 function init(){
-  loadSt();migrateCRM();buildSg();buildPsychCards();buildFrmCards();
+  loadSt();migrateCRM();
+  loadCKState();checkCKReset();loadKHList();
+  buildSg();buildPsychCards();buildFrmCards();
   buildAgents();buildFSEl();buildCRM();buildTpl();buildProf();buildEarn();
   updStats();buildHomeRecent();buildHomeWorkflow();buildHomeFeatures();buildHBModules();
   buildSurveySteps();buildReadKH();buildSaleScripts();
   updGoalHint('goalPills_gen');
-  buildReminders();
-  checkDueReminders();
-  buildDashboard();
+  buildReminders();checkDueReminders();
+  buildDashboard();updCKBadge();
 }
 
 function loadSt(){
@@ -322,17 +323,21 @@ function buildHomeFeatures(){
   const f=[
     {i:'✍️',t:'Tạo Content',d:'1 input → FB, Zalo, TikTok, Web. 5 tâm lý. 7 công thức.',pg:'gen',b:'or',bl:'CORE'},
     {i:'📅',t:'Lịch 7 Ngày',d:'Tự động từ content đã tạo. Phân bổ theo ngày + giờ vàng.',pg:'sch',b:'gr',bl:'SMART'},
-    {i:'🔍',t:'Khảo Sát Nhà',d:'9 bước checklist chuẩn. Tự động sinh báo cáo 5x5.',pg:'survey',b:'gr',bl:'NEW'},
+    {i:'🔍',t:'Khảo Sát Nhà',d:'9 bước checklist chuẩn. Tự động sinh báo cáo 5x5.',pg:'survey',b:'gr',bl:''},
     {i:'🏷️',t:'Định Giá BĐS',d:'Bóc tách giá đất + xây dựng. Kết nối tạo content.',pg:'valuation',b:'',bl:''},
-    {i:'🎭',t:'Đọc Vị KH',d:'10 câu hỏi xác định tâm lý KH. Gợi ý chiến thuật.',pg:'readkh',b:'bl',bl:'NEW'},
-    {i:'🏡',t:'Dẫn Xem Nhà',d:'Kịch bản từng phòng. Tích hợp dữ liệu khảo sát.',pg:'guidetour',b:'bl',bl:'NEW'},
+    {i:'🎭',t:'Đọc Vị KH',d:'10 câu hỏi xác định tâm lý KH. Gợi ý chiến thuật.',pg:'readkh',b:'bl',bl:''},
+    {i:'🏡',t:'Dẫn Xem Nhà',d:'Kịch bản từng phòng. Tích hợp dữ liệu khảo sát.',pg:'guidetour',b:'',bl:''},
     {i:'💬',t:'Câu Chốt Sale',d:'50+ câu chốt theo tình huống. Copy ngay dùng liền.',pg:'salescripts',b:'rd',bl:'HOT'},
     {i:'🎯',t:'Chấm Điểm',d:'6 tiêu chí 1–10. Gợi ý cải thiện cụ thể.',pg:'scr',b:'',bl:''},
     {i:'⚡',t:'A/B Testing',d:'So sánh 2 hook, chọn hook tối ưu.',pg:'ab',b:'',bl:''},
     {i:'🔁',t:'Biến Tấu Content',d:'Chẩn đoán tại sao cũ không viral. Viết lại 3 phiên bản.',pg:'remix',b:'',bl:''},
-    {i:'📊',t:'Dashboard',d:'Biểu đồ content theo tuần/tháng. Thống kê tổng quan.',pg:'dashboard',b:'or',bl:'NEW'},
-    {i:'⏰',t:'Nhắc Lịch KH',d:'Đặt nhắc follow-up cho từng khách. Cảnh báo đúng giờ.',pg:'reminder',b:'gr',bl:'NEW'},
-    {i:'📖',t:'Hướng dẫn',d:'Hướng dẫn sử dụng đầy đủ từng tính năng trong app.',pg:'guide',b:'bl',bl:'NEW'},
+    {i:'📊',t:'Dashboard',d:'Biểu đồ content theo tuần/tháng. Thống kê tổng quan.',pg:'dashboard',b:'or',bl:''},
+    {i:'⏰',t:'Nhắc Lịch KH',d:'Đặt nhắc follow-up cho từng khách. Cảnh báo đúng giờ.',pg:'reminder',b:'gr',bl:''},
+    {i:'☀️',t:'Checklist Buổi Sáng',d:'14 mục kỷ luật mỗi ngày. Streak, auto reset 6:00 sáng.',pg:'morning',b:'or',bl:'NEW'},
+    {i:'🎯',t:'KH Theo Nhãn',d:'Nóng/Ấm/Lạnh/Chốt. Lọc nhanh, quản lý ưu tiên.',pg:'khlabels',b:'rd',bl:'NEW'},
+    {i:'📋',t:'Timeline KH',d:'Ghi lại lịch sử tương tác từng KH. Gọi → Xem nhà → Chốt.',pg:'timeline',b:'bl',bl:'NEW'},
+    {i:'📅',t:'Calendar Đăng Tin',d:'Lịch tháng tô màu ngày đăng. Streak, thống kê.',pg:'calendar',b:'gr',bl:'NEW'},
+    {i:'📖',t:'Hướng dẫn',d:'Hướng dẫn sử dụng đầy đủ từng tính năng trong app.',pg:'guide',b:'',bl:''},
     {i:'📖',t:'Cẩm Nang Bách Thắng',d:'10 Module thực chiến đầy đủ từ Trần Thế Vinh.',pg:'handbook',b:'or',bl:'📖'}
   ];
   el.innerHTML=f.map(x=>`<div class="fc" onclick="nav('${x.pg}')">${x.bl?`<span class="fcb ${x.b}">${x.bl}</span>`:''}<div class="fci">${x.i}</div><div class="fct">${x.t}</div><div class="fcd">${x.d}</div></div>`).join('');
@@ -1335,11 +1340,14 @@ function updStats(){
   if(b)b.textContent=tpl.length;
   if(c)c.textContent=crm.length;
   if(d)d.textContent=reminders.filter(r=>!r.done).length;
-  // Update reminder badge
+  // Reminder badge
   const rmBadge=document.getElementById('rmBadge');
   const dueCount=reminders.filter(r=>!r.done&&new Date(r.datetime)<=new Date()).length;
-  if(rmBadge)rmBadge.textContent=dueCount;
-  if(rmBadge)rmBadge.style.display=dueCount>0?'':'none';
+  if(rmBadge){rmBadge.textContent=dueCount;rmBadge.style.display=dueCount>0?'flex':'none';}
+  // Sidebar badge for KH labels hot count
+  const rmSide=document.getElementById('rmSideCount');
+  if(rmSide){const hotCount=khList.filter(k=>k.label==='hot').length;rmSide.textContent=hotCount;rmSide.style.display=hotCount>0?'':'none';}
+  updCKBadge();
 }
 function buildHomeRecent(){
   const el=document.getElementById('homeRecent');if(!el)return;
@@ -1779,6 +1787,417 @@ function nav(id){
   if(id==='dashboard')buildDashboard();
   if(id==='guide')buildGuide();
   if(id==='reminder')buildReminders();
+  if(id==='morning'){buildMorningChecklist();updCKBadge();}
+  if(id==='calendar')buildCalendar();
+  if(id==='khlabels')buildKHLabels();
+  if(id==='timeline')buildTLSelect();
+}
+
+// ===================== 1. MORNING CHECKLIST =====================
+const CK_ITEMS=[
+  // Nhóm KH & Follow-up
+  {g:'📞 KH & Follow-up',txt:'Xem danh sách nhắc lịch hôm nay',sub:'Ai đến hạn follow-up? Gọi ngay trước 9:00!'},
+  {g:'📞 KH & Follow-up',txt:'Gọi/nhắn KH nóng đang chờ phản hồi',sub:'KH đỏ = ưu tiên số 1 mỗi sáng'},
+  {g:'📞 KH & Follow-up',txt:'Cập nhật nhãn KH nóng/ấm/lạnh',sub:'Review lại sau tương tác hôm qua'},
+  {g:'📞 KH & Follow-up',txt:'Ghi lại tương tác mới vào timeline KH',sub:'Không để quên thông tin quan trọng'},
+  // Nhóm BĐS
+  {g:'🏠 BĐS & Khảo Sát',txt:'Kiểm tra tin mới từ chủ nhà/đồng nghiệp',sub:'Có căn nào mới phù hợp KH đang cần?'},
+  {g:'🏠 BĐS & Khảo Sát',txt:'Xem lịch xem nhà hôm nay — chuẩn bị hồ sơ',sub:'In/lưu sẵn thông tin căn, kịch bản dẫn xem'},
+  {g:'🏠 BĐS & Khảo Sát',txt:'Kiểm tra mã căn còn chờ đăng trong CRM',sub:'Đừng để tin hay mà không đăng'},
+  // Nhóm Content
+  {g:'✍️ Content & Đăng Tin',txt:'Đăng bài theo lịch 7 ngày đã lên kế hoạch',sub:'Giờ vàng: 8:00 sáng và 8:00 tối'},
+  {g:'✍️ Content & Đăng Tin',txt:'Check tương tác bài đăng hôm qua',sub:'Reply comment, inbox — phản hồi trong 1h'},
+  {g:'✍️ Content & Đăng Tin',txt:'Tạo 1 content mới nếu có tin BĐS mới',sub:'Dùng app tạo content < 5 phút'},
+  // Nhóm Phát triển bản thân
+  {g:'📈 Phát Triển & Kỷ Luật',txt:'Đặt 3 ưu tiên công việc quan trọng nhất hôm nay',sub:'Không làm đủ 3 cái này = ngày chưa thành công'},
+  {g:'📈 Phát Triển & Kỷ Luật',txt:'Đọc/nghe 15 phút kiến thức BĐS hoặc sales',sub:'Cẩm nang Bách Thắng, podcast, bài viết chuyên ngành'},
+  {g:'📈 Phát Triển & Kỷ Luật',txt:'Review mục tiêu tháng — đang ở đâu?',sub:'Bao nhiêu deal? Còn bao nhiêu ngày? Cần tăng tốc không?'},
+  {g:'📈 Phát Triển & Kỷ Luật',txt:'Uống đủ nước, ăn sáng, sẵn sàng chiến đấu 💪',sub:'Sức khoẻ là nền tảng của mọi thành công'},
+];
+
+let ckState={};  // {date: {idx: bool}}
+let ckStreak=0;
+
+function getCKDate(){return new Date().toISOString().split('T')[0];}
+
+function loadCKState(){
+  try{const s=localStorage.getItem('bds_ck');if(s){const d=JSON.parse(s);ckState=d.state||{};ckStreak=d.streak||0;}}catch(e){}
+}
+function saveCKState(){
+  try{localStorage.setItem('bds_ck',JSON.stringify({state:ckState,streak:ckStreak,lastSave:new Date().toISOString()}));}catch(e){}
+}
+
+function buildMorningChecklist(){
+  loadCKState();
+  const today=getCKDate();
+  if(!ckState[today])ckState[today]={};
+
+  // Date display
+  const dtEl=document.getElementById('ckDateTxt');
+  if(dtEl){const d=new Date();dtEl.textContent=d.toLocaleDateString('vi-VN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});}
+
+  // Group items
+  const groups={};
+  CK_ITEMS.forEach((item,i)=>{if(!groups[item.g])groups[item.g]=[];groups[item.g].push({...item,idx:i});});
+
+  const el=document.getElementById('ckList');if(!el)return;
+  el.innerHTML=Object.entries(groups).map(([g,items])=>`
+    <div class="ck-group">
+      <div class="ck-glbl">${g}</div>
+      ${items.map(item=>{
+        const done=!!ckState[today][item.idx];
+        return`<div class="ck-item${done?' done':''}" id="cki_${item.idx}" onclick="toggleCK(${item.idx})">
+          <div class="ck-box" id="ckb_${item.idx}">${done?'✓':''}</div>
+          <div style="flex:1">
+            <div class="ck-txt">${item.txt}</div>
+            <div class="ck-sub">${item.sub}</div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`).join('');
+  updCKProgress();
+}
+
+function toggleCK(idx){
+  const today=getCKDate();
+  if(!ckState[today])ckState[today]={};
+  ckState[today][idx]=!ckState[today][idx];
+  const el=document.getElementById('cki_'+idx);
+  const cb=document.getElementById('ckb_'+idx);
+  if(el)el.classList.toggle('done',ckState[today][idx]);
+  if(cb)cb.textContent=ckState[today][idx]?'✓':'';
+  updCKProgress();
+  saveCKState();
+  if(ckState[today][idx])toast('✅ Xong!');
+}
+
+function updCKProgress(){
+  const today=getCKDate();
+  const done=Object.values(ckState[today]||{}).filter(Boolean).length;
+  const total=CK_ITEMS.length;
+  const pct=Math.round(done/total*100);
+  const pb=document.getElementById('ckPbar');if(pb)pb.style.width=pct+'%';
+  const pt=document.getElementById('ckPctTxt');if(pt)pt.textContent=pct+'%';
+  // Update streak if done >= 80%
+  if(pct>=80){
+    const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+    const yStr=yesterday.toISOString().split('T')[0];
+    const yDone=Object.values(ckState[yStr]||{}).filter(Boolean).length;
+    const yPct=Math.round(yDone/total*100);
+    if(yPct>=80||ckStreak===0){}
+    // streak managed in saveCKState
+  }
+  updCKBadge();
+  const sk=document.getElementById('ckStreakTxt');
+  if(sk)sk.textContent=`Streak: ${ckStreak} ngày liên tiếp${ckStreak>=3?' 🔥':''}${ckStreak>=7?' 🏆':''}`;
+}
+
+function updCKBadge(){
+  const today=getCKDate();
+  loadCKState();
+  const done=Object.values(ckState[today]||{}).filter(Boolean).length;
+  const total=CK_ITEMS.length;
+  const bd=document.getElementById('ckBadge');
+  if(bd){bd.textContent=done+'/'+total;bd.style.background=done===total?'var(--gr)':done>0?'var(--ac)':'var(--border)';}
+}
+
+function ckCheckAll(){
+  const today=getCKDate();
+  if(!ckState[today])ckState[today]={};
+  CK_ITEMS.forEach((_,i)=>ckState[today][i]=true);
+  ckStreak++;saveCKState();buildMorningChecklist();toast('🏆 Tuyệt vời! Hoàn thành toàn bộ checklist!');
+}
+
+function ckReset(){
+  if(!confirm('Reset checklist hôm nay?'))return;
+  const today=getCKDate();ckState[today]={};saveCKState();buildMorningChecklist();toast('🔄 Đã reset!');
+}
+
+// Auto-reset check
+function checkCKReset(){
+  const now=new Date();
+  const h=now.getHours();const m=now.getMinutes();
+  if(h===6&&m===0){
+    const today=getCKDate();
+    // Update streak before reset
+    const yesterday=new Date(now);yesterday.setDate(yesterday.getDate()-1);
+    const yStr=yesterday.toISOString().split('T')[0];
+    const yDone=Object.values(ckState[yStr]||{}).filter(Boolean).length;
+    if(Math.round(yDone/CK_ITEMS.length*100)>=80)ckStreak++;
+    else ckStreak=0;
+    saveCKState();
+  }
+  setTimeout(checkCKReset,60000);
+}
+
+// ===================== 2. KH LABELS =====================
+let khList=[];
+
+function loadKHList(){try{const s=localStorage.getItem('bds_khl');if(s)khList=JSON.parse(s);}catch(e){}}
+function saveKHList(){try{localStorage.setItem('bds_khl',JSON.stringify(khList));}catch(e){}}
+
+const KHL_CFG={
+  hot:{e:'🔴',lbl:'Nóng',cls:'lbl-hot',desc:'Đang muốn mua ngay'},
+  warm:{e:'🟡',lbl:'Ấm',cls:'lbl-warm',desc:'Đang cân nhắc'},
+  cold:{e:'⚫',lbl:'Lạnh',cls:'lbl-cold',desc:'Chưa rõ nhu cầu'},
+  done:{e:'✅',lbl:'Đã chốt',cls:'lbl-done',desc:'Deal thành công'}
+};
+
+let khlFilter='all';
+
+function addKHLabel(){
+  const name=V('khl_name'),phone=V('khl_phone'),prop=V('khl_prop'),label=document.getElementById('khl_label')?.value||'warm',note=V('khl_note');
+  if(!name)return toast('⚠️ Nhập tên KH!');
+  loadKHList();
+  khList.unshift({id:Date.now(),name,phone,prop,label,note,created:new Date().toLocaleString('vi-VN'),interactions:[]});
+  saveKHList();buildKHLabels();
+  ['khl_name','khl_phone','khl_prop','khl_note'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  toast(`✅ Đã thêm KH: ${name}`);
+}
+
+function filterKHLabel(f,el){
+  khlFilter=f;
+  document.querySelectorAll('#pg-khlabels .pill').forEach(p=>p.classList.remove('on'));
+  if(el)el.classList.add('on');
+  buildKHLabels();
+}
+
+function buildKHLabels(){
+  loadKHList();
+  // Stats
+  ['hot','warm','cold','done'].forEach(k=>{const el=document.getElementById('klStat_'+k);if(el)el.textContent=khList.filter(x=>x.label===k).length;});
+  const list=khlFilter==='all'?khList:khList.filter(x=>x.label===khlFilter);
+  const el=document.getElementById('khLabelList');if(!el)return;
+  if(!list.length){el.innerHTML=`<div style="text-align:center;padding:28px;color:var(--t3);font-size:.8rem">Chưa có KH nào${khlFilter!=='all'?' trong nhóm này':''}.<br>Thêm KH ở form bên trên!</div>`;return;}
+  el.innerHTML=list.map((kh,i)=>{
+    const cfg=KHL_CFG[kh.label]||KHL_CFG.warm;
+    const oi=khList.indexOf(kh);
+    return`<div style="background:var(--card);border:1px solid var(--border);border-radius:11px;padding:13px 14px;margin-bottom:9px;transition:.2s" onmouseover="this.style.borderColor='rgba(245,166,35,.3)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap">
+        <div style="flex:1;min-width:160px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+            <div style="font-weight:800;font-size:.88rem;color:var(--tx)">${kh.name}</div>
+            <span class="kh-label ${cfg.cls}">${cfg.e} ${cfg.lbl}</span>
+          </div>
+          ${kh.phone?`<div style="font-size:.73rem;color:var(--t2);margin-bottom:3px">📞 ${kh.phone}</div>`:''}
+          ${kh.prop?`<div style="font-size:.73rem;color:var(--t2);margin-bottom:3px">🏠 ${kh.prop}</div>`:''}
+          ${kh.note?`<div style="font-size:.71rem;color:var(--t3);background:var(--bg3);border-radius:6px;padding:4px 8px;margin-top:5px">📝 ${kh.note}</div>`:''}
+          <div style="font-size:.65rem;color:var(--t3);margin-top:5px">🕐 ${kh.created}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">
+          <select onchange="changeKHLabel(${oi},this.value)" style="font-size:.68rem;padding:3px 6px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);color:var(--t2)">
+            ${Object.entries(KHL_CFG).map(([k,c])=>`<option value="${k}" ${kh.label===k?'selected':''}>${c.e} ${c.lbl}</option>`).join('')}
+          </select>
+          <button class="btn btn-s btn-xs" onclick="nav('timeline');setTimeout(()=>{document.getElementById('tlKHSelect').value='${kh.id}';loadTimeline();},100)">📋 Timeline</button>
+          <button class="btn btn-s btn-xs" onclick="cpTxt('${kh.phone||''}')">📋 SĐT</button>
+          <button class="btn btn-r btn-xs" onclick="delKHLabel(${oi})">🗑️</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function changeKHLabel(i,val){
+  loadKHList();khList[i].label=val;saveKHList();buildKHLabels();
+  toast(`✅ Cập nhật: ${KHL_CFG[val].e} ${KHL_CFG[val].lbl}`);
+}
+
+function delKHLabel(i){
+  if(!confirm('Xóa KH này?'))return;
+  loadKHList();khList.splice(i,1);saveKHList();buildKHLabels();toast('🗑️ Đã xóa!');
+}
+
+// ===================== 3. INTERACTION TIMELINE =====================
+function buildTLSelect(){
+  loadKHList();
+  const sel=document.getElementById('tlKHSelect');if(!sel)return;
+  const cur=sel.value;
+  sel.innerHTML='<option value="">-- Chọn KH --</option>'+
+    khList.map(kh=>`<option value="${kh.id}" ${String(kh.id)===String(cur)?'selected':''}>${KHL_CFG[kh.label]?.e||''} ${kh.name}${kh.phone?' ('+kh.phone+')':''}</option>`).join('');
+  if(cur)loadTimeline();
+}
+
+function loadTimeline(){
+  loadKHList();
+  const sel=document.getElementById('tlKHSelect');if(!sel)return;
+  const id=sel.value;
+  const addForm=document.getElementById('tlAddForm');
+  const disp=document.getElementById('tlDisplay');
+  if(!id){if(addForm)addForm.style.display='none';if(disp)disp.innerHTML='';return;}
+  if(addForm)addForm.style.display='block';
+  // Set default datetime to now
+  const tn=document.getElementById('tl_time');
+  if(tn&&!tn.value){const n=new Date();n.setMinutes(n.getMinutes()-n.getTimezoneOffset());tn.value=n.toISOString().slice(0,16);}
+  renderTimeline(id);
+}
+
+function renderTimeline(khId){
+  loadKHList();
+  const kh=khList.find(k=>String(k.id)===String(khId));
+  const el=document.getElementById('tlDisplay');if(!el)return;
+  if(!kh){el.innerHTML='';return;}
+  const cfg=KHL_CFG[kh.label]||KHL_CFG.warm;
+  const items=(kh.interactions||[]).slice().sort((a,b)=>new Date(b.time)-new Date(a.time));
+  const typeColors={'📞':'var(--bl)','💬':'var(--gr)','🏠':'var(--ac)','🤝':'var(--pu)','📧':'var(--t2)','💰':'var(--rd)','📋':'var(--pk)','✅':'var(--gr)'};
+  el.innerHTML=`
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;padding:13px 14px;margin-bottom:11px;display:flex;align-items:center;gap:11px">
+      <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--a2));display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0">👤</div>
+      <div style="flex:1">
+        <div style="font-weight:800;font-size:.9rem;color:var(--tx)">${kh.name}</div>
+        <div style="font-size:.72rem;color:var(--t2);margin-top:2px">${kh.phone||''} ${kh.prop?'· 🏠 '+kh.prop:''}</div>
+      </div>
+      <span class="kh-label ${cfg.cls}">${cfg.e} ${cfg.lbl}</span>
+    </div>
+    ${items.length?`<div style="padding:4px 0">
+      ${items.map((it,i)=>`
+        <div class="tl-item">
+          <div class="tl-left">
+            <div class="tl-dot" style="background:rgba(0,0,0,.05);border-color:${typeColors[it.type]||'var(--border)'}">${it.type}</div>
+            ${i<items.length-1?'<div class="tl-line"></div>':''}
+          </div>
+          <div class="tl-body">
+            <div class="tl-meta">
+              <span style="font-weight:700;color:var(--tx);font-size:.76rem">${it.typeLabel||it.type}</span>
+              <span>·</span>
+              <span>${new Date(it.time).toLocaleString('vi-VN')}</span>
+              <button style="background:none;border:none;color:var(--rd);cursor:pointer;font-size:.65rem;margin-left:4px" onclick="delInteraction('${khId}',${i})">🗑️</button>
+            </div>
+            <div class="tl-note">${it.note||'—'}</div>
+          </div>
+        </div>`).join('')}
+    </div>`
+    :`<div class="tl-add" onclick="document.getElementById('tlAddForm').scrollIntoView({behavior:'smooth'})">+ Thêm tương tác đầu tiên với ${kh.name}</div>`}`;
+}
+
+function addInteraction(){
+  const sel=document.getElementById('tlKHSelect');if(!sel||!sel.value)return toast('⚠️ Chọn KH trước!');
+  const typeEl=document.getElementById('tl_type');
+  const type=typeEl?.value||'📞';
+  const typeLabel=typeEl?.options[typeEl.selectedIndex]?.text||type;
+  const note=V('tl_note');const time=document.getElementById('tl_time')?.value||new Date().toISOString();
+  if(!note)return toast('⚠️ Nhập nội dung tương tác!');
+  loadKHList();
+  const kh=khList.find(k=>String(k.id)===String(sel.value));
+  if(!kh)return;
+  if(!kh.interactions)kh.interactions=[];
+  kh.interactions.push({type,typeLabel,note,time});
+  saveKHList();
+  document.getElementById('tl_note').value='';
+  renderTimeline(sel.value);
+  toast('✅ Đã lưu tương tác!');
+}
+
+function delInteraction(khId,idx){
+  if(!confirm('Xóa tương tác này?'))return;
+  loadKHList();
+  const kh=khList.find(k=>String(k.id)===String(khId));
+  if(!kh||!kh.interactions)return;
+  const sorted=kh.interactions.slice().sort((a,b)=>new Date(b.time)-new Date(a.time));
+  const item=sorted[idx];
+  kh.interactions=kh.interactions.filter(x=>x!==item);
+  saveKHList();renderTimeline(khId);toast('🗑️ Đã xóa!');
+}
+
+// ===================== 4. CALENDAR =====================
+let calYear=new Date().getFullYear();
+let calMonth=new Date().getMonth();
+
+function calNav(dir){calMonth+=dir;if(calMonth>11){calMonth=0;calYear++;}if(calMonth<0){calMonth=11;calYear--;}buildCalendar();}
+
+function buildCalendar(){
+  const now=new Date();
+  const todayStr=now.toISOString().split('T')[0];
+  // Title
+  const tEl=document.getElementById('calTitle');
+  if(tEl)tEl.textContent=`Tháng ${calMonth+1}/${calYear}`;
+  // Build content map from contentLog + crm posted dates
+  const contentMap={};// date -> {count, platforms[]}
+  // From contentLog
+  contentLog.forEach(c=>{
+    if(!contentMap[c.date])contentMap[c.date]={count:0,plts:[]};
+    contentMap[c.date].count++;
+  });
+  // From crm posted times
+  crm.forEach(e=>{
+    if(e.postedTimes){
+      Object.entries(e.postedTimes).forEach(([plt,t])=>{
+        if(!t)return;
+        // Parse date from time string (vi-VN locale)
+        try{
+          // Try to get date from postedTimes string
+          const d=new Date(t.replace(/(\d+)\/(\d+)\/(\d+)/,'$3-$2-$1'));
+          if(!isNaN(d)){
+            const ds=d.toISOString().split('T')[0];
+            if(!contentMap[ds])contentMap[ds]={count:0,plts:[]};
+            if(!contentMap[ds].plts.includes(plt))contentMap[ds].plts.push(plt);
+          }
+        }catch(e2){}
+      });
+    }
+  });
+  // Build calendar grid
+  const firstDay=new Date(calYear,calMonth,1).getDay();// 0=Sun
+  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  const daysInPrev=new Date(calYear,calMonth,0).getDate();
+  const el=document.getElementById('calDays');if(!el)return;
+  let html='';
+  // Prev month days
+  for(let i=firstDay-1;i>=0;i--){
+    html+=`<div class="cal-day other-month"><div class="cal-dn" style="color:var(--t3)">${daysInPrev-i}</div></div>`;
+  }
+  // Current month
+  let monthPosts=0;let streak=0;let maxStreak=0;let curStreak=0;let daysWithContent=0;
+  for(let d=1;d<=daysInMonth;d++){
+    const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday=ds===todayStr;
+    const data=contentMap[ds];
+    if(data){daysWithContent++;monthPosts+=data.count;curStreak++;maxStreak=Math.max(maxStreak,curStreak);}
+    else curStreak=0;
+    if(ds===todayStr)streak=curStreak;
+    const dots=(data?.plts||[]).map(p=>`<div class="cal-dot ${p}"></div>`).join('');
+    const countBadge=data?.count>0?`<div style="font-size:.55rem;color:var(--gr);font-weight:700">${data.count}</div>`:'';
+    html+=`<div class="cal-day${data?' has-content':''}${isToday?' today':''}" onclick="showCalDay('${ds}')">
+      <div class="cal-dn">${d}</div>
+      ${dots?`<div class="cal-dots">${dots}</div>`:''}
+      ${countBadge}
+    </div>`;
+  }
+  // Fill remaining
+  const remaining=(7-((firstDay+daysInMonth)%7))%7;
+  for(let i=1;i<=remaining;i++){
+    html+=`<div class="cal-day other-month"><div class="cal-dn" style="color:var(--t3)">${i}</div></div>`;
+  }
+  el.innerHTML=html;
+  // Stats
+  const s1=document.getElementById('calStatDays');if(s1)s1.textContent=daysWithContent;
+  const s2=document.getElementById('calStatPosts');if(s2)s2.textContent=monthPosts;
+  const s3=document.getElementById('calStatStreak');if(s3)s3.textContent=streak;
+  const s4=document.getElementById('calStatBest');if(s4)s4.textContent=maxStreak;
+}
+
+function showCalDay(ds){
+  const el=document.getElementById('calDayDetail');if(!el)return;
+  const d=new Date(ds);
+  const label=d.toLocaleDateString('vi-VN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  // Find content on this day
+  const logs=contentLog.filter(c=>c.date===ds);
+  const posted=crm.filter(e=>{
+    if(!e.postedTimes)return false;
+    return Object.values(e.postedTimes).some(t=>{
+      if(!t)return false;
+      try{const pd=new Date(t.replace(/(\d+)\/(\d+)\/(\d+)/,'$3-$2-$1'));return pd.toISOString().split('T')[0]===ds;}catch(e2){return false;}
+    });
+  });
+  if(!logs.length&&!posted.length){el.style.display='none';return;}
+  el.style.display='block';
+  el.innerHTML=`<div class="card" style="border-color:rgba(245,166,35,.35)">
+    <div class="ctit"><span class="dot"></span>📅 ${label}</div>
+    ${logs.length?`<div style="margin-bottom:9px"><div style="font-size:.71rem;font-weight:700;color:var(--tx);margin-bottom:6px">✍️ Đã tạo ${logs.length} content</div>
+    ${logs.map(l=>`<div style="font-size:.73rem;color:var(--t2);padding:4px 0;border-bottom:1px solid var(--border)">🏠 ${l.type} ${l.loc} ${l.price}</div>`).join('')}</div>`:''}
+    ${posted.length?`<div><div style="font-size:.71rem;font-weight:700;color:var(--tx);margin-bottom:6px">📌 Đã đăng ${posted.length} tin</div>
+    ${posted.map(e=>{const plts=Object.entries(e.postedTimes||{}).filter(([k,v])=>v).map(([k])=>({fb:'📘',zalo:'💬',tiktok:'🎵',web:'🌐'}[k]||k)).join(' ');return`<div style="font-size:.73rem;color:var(--t2);padding:4px 0;border-bottom:1px solid var(--border)">${plts} ${e.type} ${e.loc} ${e.price} <span style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--ac)">${e.code||''}</span></div>`}).join('')}</div>`:''}
+    <button class="btn btn-r btn-xs" style="margin-top:9px" onclick="document.getElementById('calDayDetail').style.display='none'">✕ Đóng</button>
+  </div>`;
 }
 function toggleSb(){
   const sb=document.getElementById('sb');
