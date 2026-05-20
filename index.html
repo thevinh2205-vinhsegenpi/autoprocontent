@@ -295,6 +295,20 @@ select option{background:var(--bg3)}
 .rm-item-due{animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(239,83,80,.4)}50%{box-shadow:0 0 0 6px rgba(239,83,80,0)}}
 
+/* POST TRACKER */
+.tracker-row{background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;padding:9px 11px;cursor:pointer;transition:.2s;display:flex;flex-direction:column;gap:7px}
+.tracker-row:hover{border-color:rgba(245,166,35,.4)}
+.tracker-row.posted{background:rgba(62,207,142,.08);border-color:rgba(62,207,142,.45)}
+.tr-left{display:flex;align-items:center;gap:9px}
+.tr-cb{width:20px;height:20px;border-radius:6px;border:2px solid var(--border);background:var(--card);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.8rem;transition:.2s;font-weight:700}
+.tracker-row.posted .tr-cb{background:var(--gr);border-color:var(--gr);color:#fff}
+.tr-name{font-size:.78rem;font-weight:700;color:var(--tx)}
+.tr-time{font-size:.65rem;color:var(--t3);margin-top:1px}
+.tracker-row.posted .tr-time{color:var(--gr)}
+.tr-note-wrap{padding-left:29px}
+.tr-note{font-size:.68rem;padding:4px 8px;border-radius:6px;background:var(--card);border-color:var(--border);color:var(--t2)}
+.tr-note:focus{border-color:var(--ac)}
+
 /* SUGGESTION POPUP LIBRARY */
 .lib-btn{display:inline-flex;align-items:center;gap:3px;background:var(--bg3);border:1px solid var(--border);color:var(--t3);font-size:.6rem;padding:1px 6px;border-radius:10px;cursor:pointer;transition:.15s;margin-top:3px;vertical-align:middle}
 .lib-btn:hover{border-color:var(--ac);color:var(--ac);background:rgba(245,166,35,.08)}
@@ -427,6 +441,16 @@ select option{background:var(--bg3)}
     <div class="cbi dim" onclick="nav('sch')">📅 Lịch 7 Ngày</div><span class="cbar-arr">→</span>
     <div class="cbi dim" onclick="nav('scr')">🎯 Chấm Điểm</div>
   </div>
+
+  <!-- Mã căn -->
+  <div id="genCodeBar" style="display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 13px;margin-bottom:10px;flex-wrap:wrap">
+    <span style="font-size:.7rem;color:var(--t3);flex-shrink:0">🔢 Mã căn:</span>
+    <input type="text" id="gen_code" placeholder="Nhập hoặc sinh tự động khi lưu CRM..." style="flex:1;min-width:160px;font-family:'Space Mono',monospace;font-size:.75rem;font-weight:700;color:var(--ac);background:var(--bg3);border:1px solid var(--border);padding:4px 9px;border-radius:7px">
+    <button class="btn btn-s btn-xs" onclick="syncCodeFields('gen')" title="Đồng bộ mã căn sang Khảo Sát & Định Giá">🔄 Đồng bộ</button>
+    <button class="btn btn-xs" style="background:rgba(245,166,35,.12);color:var(--ac);border:1px solid rgba(245,166,35,.3)" onclick="cpTxt(document.getElementById('gen_code').value)" title="Copy mã căn">📋</button>
+    <span id="genCodeStatus" style="font-size:.65rem;color:var(--t3)"></span>
+  </div>
+
   <div class="card">
     <div class="ctit"><span class="dot"></span>Thông tin BĐS</div>
     <div class="fg2">
@@ -527,6 +551,91 @@ select option{background:var(--bg3)}
       <div class="ptab" onclick="showPlt(this,'web')">🌐 Website</div>
     </div>
     <div id="pltContent"></div>
+
+    <!-- POST TRACKER -->
+    <div id="postTracker" style="margin-top:10px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;flex-wrap:wrap;gap:6px">
+        <div style="font-size:.81rem;font-weight:700;color:var(--tx);display:flex;align-items:center;gap:7px">
+          📌 Quản lý đăng tin
+          <span id="trackerProgress" style="font-size:.67rem;font-weight:600;color:var(--t3);background:var(--bg3);border-radius:10px;padding:2px 8px">0/4 nền tảng</span>
+        </div>
+        <button class="btn btn-r btn-xs" onclick="resetTracker()" title="Reset tất cả">🔄 Reset</button>
+      </div>
+      <div id="trackerGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+
+        <!-- FB -->
+        <div class="tracker-row" id="tr_fb" onclick="togglePosted('fb')">
+          <div class="tr-left">
+            <div class="tr-cb" id="cb_fb"></div>
+            <div>
+              <div class="tr-name">📘 Facebook</div>
+              <div class="tr-time" id="tt_fb">Chưa đăng</div>
+            </div>
+          </div>
+          <div class="tr-note-wrap">
+            <input type="text" id="tn_fb" class="tr-note" placeholder="Link bài đăng..." onclick="event.stopPropagation()" onchange="saveTrackerNote('fb',this.value)">
+          </div>
+        </div>
+
+        <!-- Zalo -->
+        <div class="tracker-row" id="tr_zalo" onclick="togglePosted('zalo')">
+          <div class="tr-left">
+            <div class="tr-cb" id="cb_zalo"></div>
+            <div>
+              <div class="tr-name">💬 Zalo</div>
+              <div class="tr-time" id="tt_zalo">Chưa đăng</div>
+            </div>
+          </div>
+          <div class="tr-note-wrap">
+            <input type="text" id="tn_zalo" class="tr-note" placeholder="Link / ghi chú..." onclick="event.stopPropagation()" onchange="saveTrackerNote('zalo',this.value)">
+          </div>
+        </div>
+
+        <!-- TikTok -->
+        <div class="tracker-row" id="tr_tiktok" onclick="togglePosted('tiktok')">
+          <div class="tr-left">
+            <div class="tr-cb" id="cb_tiktok"></div>
+            <div>
+              <div class="tr-name">🎵 TikTok</div>
+              <div class="tr-time" id="tt_tiktok">Chưa đăng</div>
+            </div>
+          </div>
+          <div class="tr-note-wrap">
+            <input type="text" id="tn_tiktok" class="tr-note" placeholder="Link video..." onclick="event.stopPropagation()" onchange="saveTrackerNote('tiktok',this.value)">
+          </div>
+        </div>
+
+        <!-- Website -->
+        <div class="tracker-row" id="tr_web" onclick="togglePosted('web')">
+          <div class="tr-left">
+            <div class="tr-cb" id="cb_web"></div>
+            <div>
+              <div class="tr-name">🌐 Website</div>
+              <div class="tr-time" id="tt_web">Chưa đăng</div>
+            </div>
+          </div>
+          <div class="tr-note-wrap">
+            <input type="text" id="tn_web" class="tr-note" placeholder="URL bài đăng..." onclick="event.stopPropagation()" onchange="saveTrackerNote('web',this.value)">
+          </div>
+        </div>
+
+      </div>
+      <!-- Progress bar -->
+      <div style="margin-top:11px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <span style="font-size:.67rem;color:var(--t3)">Tiến độ đăng tin</span>
+          <span id="trackerPct" style="font-size:.67rem;font-weight:700;color:var(--ac)">0%</span>
+        </div>
+        <div style="height:6px;background:var(--bg3);border-radius:4px;overflow:hidden">
+          <div id="trackerBar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--ac),var(--gr));border-radius:4px;transition:width .4s ease"></div>
+        </div>
+      </div>
+      <!-- All done banner -->
+      <div id="trackerDone" style="display:none;margin-top:10px;background:linear-gradient(135deg,rgba(62,207,142,.15),rgba(245,166,35,.08));border:1px solid rgba(62,207,142,.4);border-radius:9px;padding:9px 13px;font-size:.78rem;font-weight:700;color:var(--gr);text-align:center">
+        🎉 Đã đăng đủ 4 nền tảng! Content này phủ sóng toàn diện rồi!
+      </div>
+    </div>
+
     <div class="exrow">
       <button class="btn btn-g btn-sm" onclick="expTxt()">📄 Xuất .txt</button>
       <button class="btn btn-b btn-sm" onclick="goSch()">📅 → Lịch</button>
@@ -663,6 +772,14 @@ select option{background:var(--bg3)}
 <!-- SURVEY (ENHANCED v6 — with full sync badge) -->
 <div class="pg" id="pg-survey">
   <div class="ptit"><div><h2>🔍 Khảo Sát Nhà Thông Minh</h2><p>9 bước chuẩn · Checklist tích hợp · Tự động sinh báo cáo 5x5 → Content</p></div></div>
+
+  <!-- Mã căn -->
+  <div style="display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 13px;margin-bottom:10px;flex-wrap:wrap">
+    <span style="font-size:.7rem;color:var(--t3);flex-shrink:0">🔢 Mã căn:</span>
+    <input type="text" id="sv_code" placeholder="Nhập mã hoặc để trống — tự sinh khi lưu CRM..." style="flex:1;min-width:160px;font-family:'Space Mono',monospace;font-size:.75rem;font-weight:700;color:var(--ac);background:var(--bg3);border:1px solid var(--border);padding:4px 9px;border-radius:7px">
+    <button class="btn btn-s btn-xs" onclick="syncCodeFields('survey')" title="Đồng bộ mã căn sang Tạo Content & Định Giá">🔄 Đồng bộ</button>
+    <button class="btn btn-xs" style="background:rgba(245,166,35,.12);color:var(--ac);border:1px solid rgba(245,166,35,.3)" onclick="cpTxt(document.getElementById('sv_code').value)">📋</button>
+  </div>
   <div style="background:linear-gradient(135deg,rgba(62,207,142,.12),rgba(245,166,35,.08));border:1px solid rgba(62,207,142,.35);border-radius:11px;padding:11px 14px;margin-bottom:13px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
     <div style="font-size:1.4rem">🔄</div>
     <div style="flex:1;min-width:200px"><div style="font-weight:700;font-size:.83rem;color:var(--gr)">Đồng bộ thông minh → Tạo Content</div><div style="font-size:.72rem;color:var(--t2);margin-top:2px">Khảo sát xong → bấm "✍️ → Tạo Content" → toàn bộ trường tự động điền đầy đủ &amp; thông minh</div></div>
@@ -735,6 +852,14 @@ select option{background:var(--bg3)}
 <!-- VALUATION -->
 <div class="pg" id="pg-valuation">
   <div class="ptit"><div><h2>🏷️ Định Giá Bất Động Sản</h2><p>Bóc tách giá đất + giá xây dựng · Công thức Thuật Giả Kim</p></div></div>
+
+  <!-- Mã căn -->
+  <div style="display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 13px;margin-bottom:10px;flex-wrap:wrap">
+    <span style="font-size:.7rem;color:var(--t3);flex-shrink:0">🔢 Mã căn:</span>
+    <input type="text" id="val_code" placeholder="Nhập mã hoặc để trống — tự sinh khi lưu CRM..." style="flex:1;min-width:160px;font-family:'Space Mono',monospace;font-size:.75rem;font-weight:700;color:var(--ac);background:var(--bg3);border:1px solid var(--border);padding:4px 9px;border-radius:7px">
+    <button class="btn btn-s btn-xs" onclick="syncCodeFields('val')" title="Đồng bộ mã căn sang Tạo Content & Khảo Sát">🔄 Đồng bộ</button>
+    <button class="btn btn-xs" style="background:rgba(245,166,35,.12);color:var(--ac);border:1px solid rgba(245,166,35,.3)" onclick="cpTxt(document.getElementById('val_code').value)">📋</button>
+  </div>
   <div style="background:linear-gradient(135deg,rgba(62,207,142,.1),rgba(76,156,245,.07));border:1px solid rgba(62,207,142,.3);border-radius:11px;padding:13px 15px;margin-bottom:13px"><div style="font-weight:800;font-size:.88rem;color:var(--gr);margin-bottom:4px">📐 Công thức Giả Kim</div><div style="font-size:.77rem;color:var(--t2);line-height:1.7">Giá BĐS = <strong style="color:var(--ac)">Giá Đất</strong> + <strong style="color:var(--bl)">Giá Xây Dựng</strong> → Biết đơn giá đất thực để xác định BĐS "giá hời" hay không</div></div>
   <div class="card">
     <div class="ctit"><span class="dot"></span>Thông tin BĐS</div>
@@ -884,8 +1009,82 @@ select option{background:var(--bg3)}
 
 <!-- CRM -->
 <div class="pg" id="pg-crm">
-  <div class="ptit"><div><h2>🗄️ Mini CRM</h2><p>Lịch sử các tin đã tạo</p></div><button class="btn btn-r btn-sm" onclick="clearAllCRM()">🗑️ Xóa tất cả</button></div>
-  <div class="card" style="overflow-x:auto"><table class="crmt"><thead><tr><th>#</th><th>Loại nhà</th><th>Khu vực</th><th>Giá</th><th>Pbản</th><th>Thời gian</th><th>Thao tác</th></tr></thead><tbody id="crmBody"></tbody></table></div>
+  <div class="ptit">
+    <div><h2>🗄️ Mini CRM</h2><p>Quản lý tin BĐS · Tìm kiếm · Lọc · Mã căn</p></div>
+    <button class="btn btn-r btn-sm" onclick="clearAllCRM()">🗑️ Xóa tất cả</button>
+  </div>
+
+  <!-- Search + Filter bar -->
+  <div class="card" style="padding:13px 14px;margin-bottom:11px">
+    <!-- Search -->
+    <div style="display:flex;gap:7px;margin-bottom:11px">
+      <div style="position:relative;flex:1">
+        <span style="position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:.85rem">🔍</span>
+        <input type="text" id="crmSearch" placeholder="Tìm mã căn, loại nhà, khu vực, giá..." style="padding-left:30px;width:100%" oninput="filterCRM()">
+      </div>
+      <button class="btn btn-s btn-sm" onclick="clearCRMFilter()">✕ Xóa lọc</button>
+    </div>
+
+    <!-- Filter pills -->
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px;align-items:center">
+      <span style="font-size:.67rem;color:var(--t3);font-weight:600">Lọc nhanh:</span>
+      <!-- Type -->
+      <select id="crmFType" onchange="filterCRM()" style="font-size:.7rem;padding:3px 7px;border-radius:7px;background:var(--bg3);border:1px solid var(--border);color:var(--t2);height:26px">
+        <option value="">🏠 Tất cả loại</option>
+        <option value="Nhà phố">Nhà phố</option>
+        <option value="Căn hộ">Căn hộ</option>
+        <option value="Biệt thự">Biệt thự</option>
+        <option value="Đất nền">Đất nền</option>
+        <option value="Shophouse">Shophouse</option>
+      </select>
+      <!-- Status -->
+      <select id="crmFStatus" onchange="filterCRM()" style="font-size:.7rem;padding:3px 7px;border-radius:7px;background:var(--bg3);border:1px solid var(--border);color:var(--t2);height:26px">
+        <option value="">📌 Tất cả trạng thái</option>
+        <option value="new">🆕 Chưa đăng nền tảng nào</option>
+        <option value="partial">⏳ Đang đăng dở</option>
+        <option value="full">✅ Đủ 4 nền tảng</option>
+      </select>
+      <!-- Sort -->
+      <select id="crmFSort" onchange="filterCRM()" style="font-size:.7rem;padding:3px 7px;border-radius:7px;background:var(--bg3);border:1px solid var(--border);color:var(--t2);height:26px">
+        <option value="newest">🕐 Mới nhất</option>
+        <option value="oldest">🕐 Cũ nhất</option>
+        <option value="code">🔢 Theo mã căn</option>
+      </select>
+    </div>
+
+    <!-- Stats summary -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap" id="crmFilterStats">
+      <span style="font-size:.68rem;color:var(--t3);background:var(--bg3);border-radius:6px;padding:2px 8px" id="crmStatTotal">Tổng: 0</span>
+      <span style="font-size:.68rem;color:var(--gr);background:rgba(62,207,142,.1);border-radius:6px;padding:2px 8px" id="crmStatFull">✅ Đủ 4: 0</span>
+      <span style="font-size:.68rem;color:var(--ac);background:rgba(245,166,35,.1);border-radius:6px;padding:2px 8px" id="crmStatPartial">⏳ Dở: 0</span>
+      <span style="font-size:.68rem;color:var(--t3);background:var(--bg3);border-radius:6px;padding:2px 8px" id="crmStatNew">🆕 Chưa: 0</span>
+    </div>
+  </div>
+
+  <!-- CRM Table -->
+  <div class="card" style="overflow-x:auto;padding:0">
+    <table class="crmt">
+      <thead>
+        <tr>
+          <th style="width:90px">Mã căn</th>
+          <th>Loại nhà</th>
+          <th>Khu vực</th>
+          <th>Giá</th>
+          <th>Đã đăng</th>
+          <th>Ngày lưu</th>
+          <th style="width:100px">Thao tác</th>
+        </tr>
+      </thead>
+      <tbody id="crmBody"></tbody>
+    </table>
+  </div>
+
+  <!-- Empty state -->
+  <div id="crmEmpty" style="display:none;text-align:center;padding:32px;color:var(--t3)">
+    <div style="font-size:2.5rem;margin-bottom:10px">🔍</div>
+    <div style="font-size:.85rem">Không tìm thấy kết quả phù hợp.</div>
+    <div style="font-size:.75rem;margin-top:5px"><span style="cursor:pointer;color:var(--ac)" onclick="clearCRMFilter()">Xóa bộ lọc →</span></div>
+  </div>
 </div>
 
 <!-- AGENTS -->
@@ -1114,6 +1313,20 @@ select option{background:var(--bg3)}
 </div>
 
 <div id="toast"></div>
+
+<!-- CRM DETAIL MODAL -->
+<div class="modal-ov" id="crmDetailModal" onclick="if(event.target===this)this.classList.remove('on')">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-hd">
+      <div>
+        <h3 id="crmDetailTitle">Chi tiết tin BĐS</h3>
+        <div id="crmDetailCode" style="font-size:.67rem;color:var(--ac);font-family:'Space Mono',monospace;margin-top:2px"></div>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('crmDetailModal').classList.remove('on')">✕</button>
+    </div>
+    <div id="crmDetailBody" style="padding:4px 0"></div>
+  </div>
+</div>
 
 <!-- SUGGESTION LIBRARY POPUP -->
 <div class="lib-overlay" id="libOverlay" onclick="if(event.target===this)closeLib()">

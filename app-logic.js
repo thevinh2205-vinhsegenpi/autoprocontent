@@ -147,6 +147,119 @@ selEl='Kim',selPsy='Si',selFrm='AIDA',
 schedProp='',svData={},rkAnswers=[],
 saleScripts=[...DEFAULT_SCRIPTS],curSaleCat='Chốt deal';
 
+// ===================== POST TRACKER =====================
+// State: per content-session, keyed by content ID (timestamp)
+let trackerState = {fb:false,zalo:false,tiktok:false,web:false};
+let trackerNotes = {fb:'',zalo:'',web:'',tiktok:''};
+let trackerTimes = {fb:'',zalo:'',tiktok:'',web:''};
+let trackerId = 0; // ties tracker to current content
+
+const PLT_LABELS = {fb:'📘 Facebook',zalo:'💬 Zalo',tiktok:'🎵 TikTok',web:'🌐 Website'};
+
+function resetTracker(){
+  trackerState={fb:false,zalo:false,tiktok:false,web:false};
+  trackerNotes={fb:'',zalo:'',tiktok:'',web:''};
+  trackerTimes={fb:'',zalo:'',tiktok:'',web:''};
+  renderTracker();
+  toast('🔄 Đã reset trạng thái đăng!');
+}
+
+function togglePosted(plt){
+  trackerState[plt]=!trackerState[plt];
+  if(trackerState[plt]){
+    trackerTimes[plt]=new Date().toLocaleString('vi-VN');
+    toast(`✅ Đánh dấu đã đăng ${PLT_LABELS[plt]}!`);
+  } else {
+    trackerTimes[plt]='';
+  }
+  renderTracker();
+  // Auto-save posted status into CRM if content exists
+  saveTrackerToCRM();
+}
+
+function saveTrackerNote(plt,val){
+  trackerNotes[plt]=val;
+  saveTrackerToCRM();
+}
+
+function renderTracker(){
+  const plts=['fb','zalo','tiktok','web'];
+  let doneCount=0;
+  plts.forEach(p=>{
+    const row=document.getElementById('tr_'+p);
+    const cb=document.getElementById('cb_'+p);
+    const tt=document.getElementById('tt_'+p);
+    const tn=document.getElementById('tn_'+p);
+    if(!row)return;
+    if(trackerState[p]){
+      row.classList.add('posted');
+      if(cb)cb.textContent='✓';
+      if(tt)tt.textContent='✅ Đã đăng lúc '+trackerTimes[p];
+      doneCount++;
+    } else {
+      row.classList.remove('posted');
+      if(cb)cb.textContent='';
+      if(tt)tt.textContent='Chưa đăng';
+    }
+    if(tn)tn.value=trackerNotes[p]||'';
+  });
+  // Update progress
+  const pct=Math.round(doneCount/4*100);
+  const prog=document.getElementById('trackerProgress');
+  const bar=document.getElementById('trackerBar');
+  const pctEl=document.getElementById('trackerPct');
+  const done=document.getElementById('trackerDone');
+  if(prog)prog.textContent=doneCount+'/4 nền tảng';
+  if(bar)bar.style.width=pct+'%';
+  if(pctEl)pctEl.textContent=pct+'%';
+  if(done)done.style.display=doneCount===4?'block':'none';
+}
+
+function saveTrackerToCRM(){
+  // Attach posted status to most recent CRM entry if IDs match
+  if(crm.length&&trackerId&&crm[0].id===trackerId){
+    crm[0].posted=JSON.parse(JSON.stringify(trackerState));
+    crm[0].postedTimes=JSON.parse(JSON.stringify(trackerTimes));
+    crm[0].postedNotes=JSON.parse(JSON.stringify(trackerNotes));
+    saveSt();
+    updStats();
+  }
+}
+
+// ===================== MÃ CĂN — SYNC 3 CHIỀU =====================
+
+// Đồng bộ mã căn giữa 3 form: gen ↔ survey ↔ valuation
+function syncCodeFields(source){
+  const ids={gen:'gen_code',survey:'sv_code',val:'val_code'};
+  const src=document.getElementById(ids[source]);
+  if(!src)return;
+  const code=src.value.trim();
+  if(!code)return toast('⚠️ Ô mã căn đang trống!');
+  Object.entries(ids).forEach(([k,id])=>{
+    if(k===source)return;
+    const el=document.getElementById(id);
+    if(el)el.value=code;
+  });
+  // Update status label in gen
+  const st=document.getElementById('genCodeStatus');
+  if(st)st.textContent=`✅ Đã đồng bộ lúc ${new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})}`;
+  toast(`🔄 Đã đồng bộ mã căn "${code}" sang tất cả form!`);
+}
+
+// Lấy mã căn hiện tại từ form nào đang có
+function getActiveCode(){
+  return (document.getElementById('gen_code')?.value||document.getElementById('sv_code')?.value||document.getElementById('val_code')?.value||'').trim();
+}
+
+// Điền mã căn vào tất cả form
+function fillCodeAll(code){
+  ['gen_code','sv_code','val_code'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value=code;
+  });
+  const st=document.getElementById('genCodeStatus');
+  if(st&&code)st.textContent=`📌 Mã: ${code}`;
+}
+
 // ===================== SAVE OUTPUT HELPER =====================
 function saveOutputToLibrary(name,content,type){
   if(!content||content.length<5)return toast('⚠️ Không có nội dung để lưu!');
@@ -156,7 +269,7 @@ function saveOutputToLibrary(name,content,type){
 
 // ===================== INIT =====================
 function init(){
-  loadSt();buildSg();buildPsychCards();buildFrmCards();
+  loadSt();migrateCRM();buildSg();buildPsychCards();buildFrmCards();
   buildAgents();buildFSEl();buildCRM();buildTpl();buildProf();buildEarn();
   updStats();buildHomeRecent();buildHomeWorkflow();buildHomeFeatures();buildHBModules();
   buildSurveySteps();buildReadKH();buildSaleScripts();
@@ -313,6 +426,10 @@ async function doGenerate(){
   VS=plist.map(p=>buildVer(d,p,auto?autoFrm(p):frm,gs));VI=0;schedProp=`${d.type} ${d.loc} ${d.price}`;
   // Log content for dashboard
   logContentCreated(d);
+  // Reset post tracker for new content
+  trackerState={fb:false,zalo:false,tiktok:false,web:false};
+  trackerNotes={fb:'',zalo:'',tiktok:'',web:''};
+  trackerTimes={fb:'',zalo:'',tiktok:'',web:''};
   renderOut(auto,gs,v5);
 }
 
@@ -350,6 +467,7 @@ function renderOut(auto,gs,v5){
   if(v5){vr.classList.remove('hidden');const lb=['💰 THAM','🔥 SÂN','🤔 SI','👑 NGẠO','🔍 NGHI NGỜ'];document.getElementById('vTabs').innerHTML=VS.map((x,i)=>`<div class="vtab${i===0?' on':''}" data-v="${i}" onclick="sVer(this,${i})">${lb[i]}</div>`).join('');}
   else vr.classList.add('hidden');
   renderPlt();
+  renderTracker();
 }
 function sVer(el,i){document.querySelectorAll('.vtab').forEach(t=>t.classList.remove('on'));el.classList.add('on');VI=i;renderPlt();}
 function showPlt(el,p){document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('on'));el.classList.add('on');PLT=p;renderPlt();}
@@ -362,7 +480,12 @@ function renderPlt(){
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function cpEl(id){const el=document.getElementById(id);if(!el)return;cpTxt(el.textContent||el.innerText);}
 function cpTxt(t){navigator.clipboard.writeText(t).then(()=>toast('✅ Đã sao chép!')).catch(()=>{const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');document.body.removeChild(a);toast('✅ Đã sao chép!');});}
-function clearGen(){['i_type','i_price','i_area','i_loc','i_pros','i_diff'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});document.getElementById('outArea').classList.remove('on');VS=[];}
+function clearGen(){
+  ['i_type','i_price','i_area','i_loc','i_pros','i_diff'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  const gc=document.getElementById('gen_code');if(gc)gc.value='';
+  const gs=document.getElementById('genCodeStatus');if(gs)gs.textContent='';
+  document.getElementById('outArea').classList.remove('on');VS=[];
+}
 function goSch(){if(schedProp)document.getElementById('sch_prop').value=schedProp;nav('sch');}
 function goScr(){if(VS.length)document.getElementById('scrTxt').value=VS[VI][PLT]||VS[VI].fb||'';nav('scr');}
 function autoFillSch(){if(schedProp){document.getElementById('sch_prop').value=schedProp;toast('✅ Đã lấy từ content!');}else document.getElementById('schNoContent').classList.remove('hidden');}
@@ -465,13 +588,22 @@ function tgCB(el,item){el.classList.toggle('checked');if(el.classList.contains('
 
 function doSurveyReport(){
   const addr=V('sv_addr'),price=V('sv_price'),area=V('sv_area'),floors=V('sv_floors'),w=V('sv_w'),d=V('sv_d'),pros=V('sv_pros'),cons=V('sv_cons'),reason=V('sv_reason'),legal=V('sv_legal');
+  const code=(document.getElementById('sv_code')?.value||'').trim();
   if(!addr)return toast('⚠️ Nhập địa chỉ BĐS!');
-  svData={addr,price,area,floors,w,d,pros,cons,reason,legal,checkedItems:svData.checkedItems||[]};
+  svData={addr,price,area,floors,w,d,pros,cons,reason,legal,code,checkedItems:svData.checkedItems||[]};
+  // Nếu chưa có mã, sinh tạm từ địa chỉ để hiển thị
+  const displayCode=code||`KS-${addr.replace(/[^a-zA-Z0-9]/g,'').substring(0,6).toUpperCase()}-${Date.now().toString().slice(-4)}`;
   const pArr=pros.split('\n').filter(x=>x.trim());
   const cArr=cons.split('\n').filter(x=>x.trim());
   const checked=svData.checkedItems||[];
   document.getElementById('svReport').innerHTML=`
     <div class="sec">📊 Báo cáo 5x5 — ${addr}</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:11px;flex-wrap:wrap">
+      <span style="font-family:'Space Mono',monospace;font-size:.75rem;font-weight:700;color:var(--ac);background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.3);border-radius:7px;padding:3px 10px">🔢 ${displayCode}</span>
+      ${price?`<span style="font-size:.73rem;color:var(--t2);background:var(--bg3);border-radius:7px;padding:3px 9px">💰 ${price}</span>`:''}
+      ${area?`<span style="font-size:.73rem;color:var(--t2);background:var(--bg3);border-radius:7px;padding:3px 9px">📐 ${area}m²</span>`:''}
+      ${floors?`<span style="font-size:.73rem;color:var(--t2);background:var(--bg3);border-radius:7px;padding:3px 9px">🏗️ ${floors} tầng</span>`:''}
+    </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:12px">
       <div class="card" style="border-color:rgba(62,207,142,.3)">
         <div class="ctit" style="margin-bottom:8px"><span style="color:var(--gr)">✅</span>5 Ưu Điểm</div>
@@ -492,7 +624,7 @@ function doSurveyReport(){
     </div>`;
   document.getElementById('svReport').classList.remove('hidden');
 }
-function buildSvTxt(){const d=svData;return`BÁO CÁO KHẢO SÁT NHÀ\n${'='.repeat(40)}\nĐịa chỉ: ${d.addr}\nGiá: ${d.price} | DT: ${d.area}m² | ${d.floors} tầng (${d.w}x${d.d}m)\n\n✅ 5 ƯU ĐIỂM:\n${d.pros}\n\n❌ 5 NHƯỢC ĐIỂM:\n${d.cons}\n\nLý do bán: ${d.reason}\nPháp lý: ${d.legal}\n${'='.repeat(40)}`;}
+function buildSvTxt(){const d=svData;return`BÁO CÁO KHẢO SÁT NHÀ\n${'='.repeat(40)}\nMã căn: ${d.code||'—'}\nĐịa chỉ: ${d.addr}\nGiá: ${d.price} | DT: ${d.area}m² | ${d.floors} tầng (${d.w}x${d.d}m)\n\n✅ 5 ƯU ĐIỂM:\n${d.pros}\n\n❌ 5 NHƯỢC ĐIỂM:\n${d.cons}\n\nLý do bán: ${d.reason}\nPháp lý: ${d.legal}\n${'='.repeat(40)}`;}
 
 // =========================================================
 // SURVEY → CONTENT SYNC (ENHANCED v6)
@@ -600,6 +732,9 @@ function svToContent(){
   if(buyerPill){buyerPill.classList.add('on');pst.buyer=buyerType;}
 
   nav('gen');
+  // Đồng bộ mã căn từ Khảo Sát → Tạo Content & Định Giá
+  const svCode=(document.getElementById('sv_code')?.value||'').trim();
+  if(svCode)fillCodeAll(svCode);
   toast('✅ Đã đồng bộ toàn bộ dữ liệu Khảo Sát → Tạo Content!');
 }
 
@@ -616,12 +751,15 @@ function svToValuation(){
     document.getElementById('val_reason').value=svData.reason||'';
     document.getElementById('val_legal').value=svData.legal||'';
   }
+  // Đồng bộ mã căn Khảo Sát → Định Giá
+  const svCode2=(document.getElementById('sv_code')?.value||'').trim();
+  if(svCode2)fillCodeAll(svCode2);
   nav('valuation');
   toast('✅ Đã điền vào form Định Giá!');
 }
 
 function clearSurvey(){
-  ['sv_addr','sv_price','sv_area','sv_floors','sv_w','sv_d','sv_pros','sv_cons','sv_reason','sv_legal'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  ['sv_addr','sv_price','sv_area','sv_floors','sv_w','sv_d','sv_pros','sv_cons','sv_reason','sv_legal','sv_code'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   SURVEY_STEPS.forEach((s,i)=>{s.items.forEach((it,j)=>{const cb=document.getElementById(`cb_${i}_${j}`);if(cb){cb.classList.remove('checked');cb.textContent='';}});const n=document.getElementById('svn_'+i);if(n)n.value='';});
   document.getElementById('svReport').classList.add('hidden');
   svData={};
@@ -642,6 +780,9 @@ function autoFillVal(){
     document.getElementById('val_cons').value=svData.cons||'';
     document.getElementById('val_reason').value=svData.reason||'';
     document.getElementById('val_legal').value=svData.legal||'';
+    // Đồng bộ mã căn
+    const svCode=(document.getElementById('sv_code')?.value||svData.code||'').trim();
+    if(svCode)fillCodeAll(svCode);
     toast('✅ Đã lấy từ khảo sát!');
   }else toast('⚠️ Chưa có dữ liệu khảo sát!');
 }
@@ -657,7 +798,7 @@ async function doValuation(){
   document.getElementById('valOut').innerHTML=`<div class="sec" style="margin-top:0">📊 Kết quả định giá</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px"><div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center"><div style="font-size:.66rem;color:var(--t3);margin-bottom:3px">💰 Giá rao</div><div style="font-weight:900;font-size:1.2rem;color:var(--ac);font-family:'Space Mono',monospace">${total}tỷ</div></div><div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center"><div style="font-size:.66rem;color:var(--t3);margin-bottom:3px">🏗️ Xây dựng</div><div style="font-weight:900;font-size:1.2rem;color:var(--bl);font-family:'Space Mono',monospace">${buildCost.toFixed(2)}tỷ</div></div><div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center"><div style="font-size:.66rem;color:var(--t3);margin-bottom:3px">🌍 Giá đất</div><div style="font-weight:900;font-size:1.2rem;color:var(--gr);font-family:'Space Mono',monospace">${landVal.toFixed(2)}tỷ</div></div></div><div class="card" style="border-color:rgba(62,207,142,.3);margin-bottom:11px"><div class="ctit"><span class="dot" style="background:var(--gr)"></span>📐 Bóc tách Thuật Giả Kim</div><div style="display:grid;gap:7px;font-size:.78rem"><div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg3);border-radius:8px"><span style="color:var(--t2)">Giá xây dựng (${quality}tr/m²×${w}×${dv}×${floors}t)</span><strong style="color:var(--bl)">${buildCost.toFixed(3)} tỷ</strong></div><div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg3);border-radius:8px"><span style="color:var(--t2)">Giá đất = ${total} − ${buildCost.toFixed(3)}</span><strong style="color:var(--gr)">${landVal.toFixed(3)} tỷ</strong></div><div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg3);border-radius:8px"><span style="color:var(--t2)">Đơn giá đất (${landVal.toFixed(3)}tỷ ÷ ${area}m²)</span><strong style="color:var(--ac);font-family:'Space Mono',monospace">${landUnit.toFixed(0)} tr/m²</strong></div>${market?`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 8px;background:${isGood?'rgba(62,207,142,.12)':'rgba(239,83,80,.1)'};border-radius:8px;border:1px solid ${isGood?'rgba(62,207,142,.3)':'rgba(239,83,80,.3)'}"><span style="font-weight:700;color:var(--tx)">📊 Kết luận so với TT ${market}tr/m²</span><strong style="color:${isGood?'var(--gr)':'var(--rd)'}">${isGood?`🟢 GIÁ HỜI − ${diffPct}%`:`🔴 CAO HƠN +${diffPct}%`}</strong></div>`:''}</div></div>${pArr.length||cArr.length?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px"><div class="card" style="border-color:rgba(62,207,142,.3)"><div class="ctit" style="margin-bottom:8px"><span style="color:var(--gr)">✅</span>Ưu Điểm</div>${pArr.map(p=>`<div style="font-size:.75rem;color:var(--t2);margin-bottom:4px;display:flex;gap:5px"><span style="color:var(--gr)">●</span>${p}</div>`).join('')}</div><div class="card" style="border-color:rgba(239,83,80,.3)"><div class="ctit" style="margin-bottom:8px"><span style="color:var(--rd)">❌</span>Nhược Điểm</div>${cArr.map(c=>`<div style="font-size:.75rem;color:var(--t2);margin-bottom:4px;display:flex;gap:5px"><span style="color:var(--rd)">●</span>${c}</div>`).join('')}</div></div>`:''}<div style="display:flex;gap:7px;flex-wrap:wrap"><button class="btn btn-g btn-sm" onclick="cpTxt(${JSON.stringify(rptTxt)})">📋 Copy báo cáo</button><button class="btn btn-b btn-sm" onclick="dlTxt(${JSON.stringify(rptTxt)},'dinh-gia-bds.txt')">📄 Xuất .txt</button><button class="btn btn-p btn-sm" onclick="valToContent()">✍️ → Tạo Content</button><button class="btn btn-b btn-sm" onclick="saveOutputToLibrary('🏷️ Định giá: '+(V('val_addr')||'BĐS'),${JSON.stringify(rptTxt)},'valuation')">💾 Lưu</button><button class="btn btn-r btn-sm" onclick="clearValuation()">🗑️ Xóa</button></div>`;
   document.getElementById('valOut').classList.remove('hidden');
 }
-function clearValuation(){['val_addr','val_total','val_area','val_floors','val_w','val_d','val_market','val_pros','val_cons','val_reason','val_legal'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});document.getElementById('valOut').classList.add('hidden');toast('🗑️ Đã xóa!');}
+function clearValuation(){['val_addr','val_total','val_area','val_floors','val_w','val_d','val_market','val_pros','val_cons','val_reason','val_legal','val_code'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});document.getElementById('valOut').classList.add('hidden');toast('🗑️ Đã xóa!');}
 function valToContent(){
   const total=V('val_total'),area=V('val_area'),addr=V('val_addr'),pros=V('val_pros'),cons=V('val_cons'),reason=V('val_reason'),legal=V('val_legal'),market=V('val_market');
   document.getElementById('i_price').value=total?total+' tỷ':'';
@@ -676,6 +817,9 @@ function valToContent(){
   }
   if(reason&&reason.toLowerCase().match(/gấp|nợ|chia/))diffArr.push('Chủ cần bán gấp — thương lượng được');
   document.getElementById('i_diff').value=diffArr.filter((v,i,a)=>a.indexOf(v)===i).join(', ');
+  // Đồng bộ mã căn Định Giá → Tạo Content & Khảo Sát
+  const valCode=(document.getElementById('val_code')?.value||'').trim();
+  if(valCode)fillCodeAll(valCode);
   nav('gen');
   toast('✅ Đã đồng bộ Định Giá → Tạo Content!');
 }
@@ -901,28 +1045,229 @@ async function doFS(){
 }
 
 // ===================== CRM =====================
+// ===================== CRM — MÃ CĂN + BỘ LỌC + TÌM KIẾM =====================
+
+// Generate property code: TYPE-DISTRICT-YYYYMMDD-XXXX
+function genPropCode(type,loc,id){
+  const typeMap={'Nhà phố':'NP','Căn hộ':'CH','Biệt thự':'BT','Nhà mặt tiền':'MT','Shophouse':'SH','Liền kề':'LK','Đất nền':'DN','Penthouse':'PH','Nhà riêng':'NR','Villa':'VL'};
+  const locMap={'Quận 1':'Q1','Quận 2':'Q2','Quận 3':'Q3','Quận 4':'Q4','Quận 5':'Q5','Quận 6':'Q6','Quận 7':'Q7','Quận 8':'Q8','Quận 9':'Q9','Quận 10':'Q10','Quận 11':'Q11','Quận 12':'Q12','Bình Thạnh':'BTH','Tân Bình':'TB','Gò Vấp':'GV','Phú Nhuận':'PN','Tân Phú':'TPH','Bình Chánh':'BC','Nhà Bè':'NB','Hóc Môn':'HM','Thủ Đức':'TDU','TP. Thủ Đức':'TDU','Bình Dương':'BDU','Đồng Nai':'DNI'};
+  const tc=typeMap[Object.keys(typeMap).find(k=>type.toLowerCase().includes(k.toLowerCase()))||'']||type.substring(0,2).toUpperCase();
+  const lc=locMap[Object.keys(locMap).find(k=>loc.includes(k))||'']||(loc.replace(/[^A-Za-z0-9]/g,'').substring(0,3).toUpperCase()||'KV');
+  const d=new Date(id);
+  const ds=`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+  const seq=String(id).slice(-4);
+  return`${tc}-${lc}-${ds}-${seq}`;
+}
+
 function saveCRM(){
   if(!VS.length)return toast('⚠️ Chưa có content!');
   const d=gfd();
-  crm.unshift({id:Date.now(),type:d.type,loc:d.loc,price:d.price,area:d.area,pros:d.pros,time:new Date().toLocaleString('vi-VN'),vs:VS});
-  saveSt();buildCRM();updStats();buildHomeRecent();toast('💾 Đã lưu CRM!');
+  const id=Date.now();
+  // Ưu tiên mã căn đã nhập trong form, nếu không thì tự sinh
+  const existingCode=(document.getElementById('gen_code')?.value||'').trim();
+  const code=existingCode||genPropCode(d.type,d.loc,id);
+  trackerId=id;
+  crm.unshift({id,code,type:d.type,loc:d.loc,price:d.price,area:d.area,pros:d.pros,time:new Date().toLocaleString('vi-VN'),vs:VS,posted:{fb:false,zalo:false,tiktok:false,web:false},postedTimes:{},postedNotes:{},note:''});
+  saveSt();buildCRM();updStats();buildHomeRecent();
+  // Điền lại mã căn vào tất cả 3 form
+  fillCodeAll(code);
+  toast(`💾 Đã lưu CRM! Mã căn: ${code}`);
 }
+
+// Filter state
+let crmFilterState={q:'',type:'',status:'',sort:'newest'};
+
+function filterCRM(){
+  crmFilterState.q=(document.getElementById('crmSearch')?.value||'').toLowerCase().trim();
+  crmFilterState.type=document.getElementById('crmFType')?.value||'';
+  crmFilterState.status=document.getElementById('crmFStatus')?.value||'';
+  crmFilterState.sort=document.getElementById('crmFSort')?.value||'newest';
+  buildCRM();
+}
+
+function clearCRMFilter(){
+  crmFilterState={q:'',type:'',status:'',sort:'newest'};
+  const si=document.getElementById('crmSearch');if(si)si.value='';
+  const ft=document.getElementById('crmFType');if(ft)ft.value='';
+  const fs=document.getElementById('crmFStatus');if(fs)fs.value='';
+  const fso=document.getElementById('crmFSort');if(fso)fso.value='newest';
+  buildCRM();
+}
+
 function buildCRM(){
   const b=document.getElementById('crmBody');if(!b)return;
-  if(!crm.length){b.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--t3);padding:24px">Chưa có dữ liệu. Tạo content và bấm "Lưu CRM" để lưu.</td></tr>';return;}
-  b.innerHTML=crm.map((e,i)=>`<tr><td>${i+1}</td><td><strong style="color:var(--tx)">${e.type}</strong></td><td>${e.loc}</td><td style="color:var(--ac);font-weight:700">${e.price}</td><td style="color:var(--t3)">${e.vs?e.vs.length:1}v</td><td style="color:var(--t3);font-size:.7rem">${e.time}</td><td><div style="display:flex;gap:4px"><button class="btn btn-xs btn-s" onclick="loadCRM(${i})">📂</button><button class="btn btn-xs btn-r" onclick="delCRM(${i})">🗑️</button></div></td></tr>`).join('');
+
+  // Apply filter + search
+  let list=[...crm.map((e,i)=>({...e,_oi:i}))];
+
+  // Search
+  if(crmFilterState.q){
+    const q=crmFilterState.q;
+    list=list.filter(e=>(e.code||'').toLowerCase().includes(q)||(e.type||'').toLowerCase().includes(q)||(e.loc||'').toLowerCase().includes(q)||(e.price||'').toLowerCase().includes(q)||(e.pros||'').toLowerCase().includes(q)||(e.note||'').toLowerCase().includes(q));
+  }
+  // Type filter
+  if(crmFilterState.type) list=list.filter(e=>(e.type||'').includes(crmFilterState.type));
+  // Status filter
+  if(crmFilterState.status){
+    list=list.filter(e=>{
+      const cnt=Object.values(e.posted||{}).filter(Boolean).length;
+      if(crmFilterState.status==='new')return cnt===0;
+      if(crmFilterState.status==='partial')return cnt>0&&cnt<4;
+      if(crmFilterState.status==='full')return cnt===4;
+      return true;
+    });
+  }
+  // Sort
+  if(crmFilterState.sort==='oldest')list.sort((a,b)=>a.id-b.id);
+  else if(crmFilterState.sort==='code')list.sort((a,b)=>(a.code||'').localeCompare(b.code||''));
+  else list.sort((a,b)=>b.id-a.id);
+
+  // Update stats
+  const fullCnt=crm.filter(e=>Object.values(e.posted||{}).filter(Boolean).length===4).length;
+  const partCnt=crm.filter(e=>{const c=Object.values(e.posted||{}).filter(Boolean).length;return c>0&&c<4;}).length;
+  const newCnt=crm.filter(e=>Object.values(e.posted||{}).filter(Boolean).length===0).length;
+  const st=document.getElementById('crmStatTotal');if(st)st.textContent=`Tổng: ${crm.length}`;
+  const sf=document.getElementById('crmStatFull');if(sf)sf.textContent=`✅ Đủ 4: ${fullCnt}`;
+  const sp=document.getElementById('crmStatPartial');if(sp)sp.textContent=`⏳ Dở: ${partCnt}`;
+  const sn=document.getElementById('crmStatNew');if(sn)sn.textContent=`🆕 Chưa: ${newCnt}`;
+
+  // Empty state
+  const em=document.getElementById('crmEmpty');
+  if(!crm.length){b.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--t3);padding:28px;font-size:.79rem">Chưa có dữ liệu.<br>Tạo content và bấm "Lưu CRM" để lưu.</td></tr>';if(em)em.style.display='none';}
+  else if(!list.length){b.innerHTML='';if(em)em.style.display='block';}
+  else{
+    if(em)em.style.display='none';
+    b.innerHTML=list.map((e,ri)=>{
+      const p=e.posted||{};
+      const chips=['fb','zalo','tiktok','web'].map(k=>{
+        const lbl={fb:'FB',zalo:'ZL',tiktok:'TT',web:'WB'}[k];
+        return p[k]
+          ?`<span style="font-size:.55rem;padding:1px 5px;border-radius:5px;background:rgba(62,207,142,.18);color:var(--gr);font-weight:700">${lbl}</span>`
+          :`<span style="font-size:.55rem;padding:1px 5px;border-radius:5px;background:var(--bg3);color:var(--t3)">${lbl}</span>`;
+      }).join('');
+      const postedCount=Object.values(p).filter(Boolean).length;
+      const statusDot=postedCount===4?'var(--gr)':postedCount>0?'var(--ac)':'var(--border)';
+      const oi=e._oi; // original index in crm[]
+      // Highlight search match
+      const q=crmFilterState.q;
+      const hl=s=>q&&s&&s.toLowerCase().includes(q)?`<mark style="background:rgba(245,166,35,.35);border-radius:2px">${s}</mark>`:s;
+      return`<tr>
+        <td>
+          <div style="font-family:'Space Mono',monospace;font-size:.67rem;font-weight:700;color:var(--ac);white-space:nowrap">${hl(e.code||'—')}</div>
+          <div style="width:6px;height:6px;border-radius:50%;background:${statusDot};display:inline-block;margin-top:3px" title="${postedCount}/4 nền tảng"></div>
+        </td>
+        <td><strong style="color:var(--tx);font-size:.77rem">${hl(e.type)}</strong></td>
+        <td style="font-size:.75rem">${hl(e.loc)}</td>
+        <td style="color:var(--ac);font-weight:700;font-size:.76rem;white-space:nowrap">${hl(e.price)}</td>
+        <td>
+          <div style="display:flex;gap:3px;flex-wrap:wrap">${chips}</div>
+          <div style="font-size:.58rem;color:var(--t3);margin-top:2px">${postedCount}/4</div>
+        </td>
+        <td style="color:var(--t3);font-size:.68rem;white-space:nowrap">${e.time}</td>
+        <td>
+          <div style="display:flex;gap:4px;flex-wrap:wrap">
+            <button class="btn btn-xs btn-s" onclick="loadCRM(${oi})" title="Load content">📂</button>
+            <button class="btn btn-xs btn-b" onclick="openCRMDetail(${oi})" title="Xem chi tiết">🔍</button>
+            <button class="btn btn-xs btn-r" onclick="delCRM(${oi})" title="Xóa">🗑️</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  }
   const bd=document.getElementById('crmbdg');if(bd)bd.textContent=crm.length;
 }
+
+function openCRMDetail(i){
+  const e=crm[i];if(!e)return;
+  const p=e.posted||{};
+  const plt=[{k:'fb',ic:'📘',nm:'Facebook'},{k:'zalo',ic:'💬',nm:'Zalo'},{k:'tiktok',ic:'🎵',nm:'TikTok'},{k:'web',ic:'🌐',nm:'Website'}];
+  document.getElementById('crmDetailTitle').textContent=`${e.type} — ${e.loc}`;
+  document.getElementById('crmDetailCode').textContent=`Mã căn: ${e.code||'—'}`;
+  document.getElementById('crmDetailBody').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:13px">
+      <div style="background:var(--bg3);border-radius:8px;padding:9px"><div style="font-size:.63rem;color:var(--t3);margin-bottom:2px">Loại nhà</div><div style="font-weight:700;font-size:.82rem">${e.type}</div></div>
+      <div style="background:var(--bg3);border-radius:8px;padding:9px"><div style="font-size:.63rem;color:var(--t3);margin-bottom:2px">Giá</div><div style="font-weight:700;font-size:.82rem;color:var(--ac)">${e.price}</div></div>
+      <div style="background:var(--bg3);border-radius:8px;padding:9px"><div style="font-size:.63rem;color:var(--t3);margin-bottom:2px">Khu vực</div><div style="font-weight:700;font-size:.82rem">${e.loc}</div></div>
+      <div style="background:var(--bg3);border-radius:8px;padding:9px"><div style="font-size:.63rem;color:var(--t3);margin-bottom:2px">Diện tích</div><div style="font-weight:700;font-size:.82rem">${e.area||'—'}</div></div>
+    </div>
+    <div style="margin-bottom:12px">
+      <div style="font-size:.71rem;font-weight:700;color:var(--tx);margin-bottom:5px">🔢 Mã căn</div>
+      <div style="display:flex;gap:7px;align-items:center">
+        <input type="text" id="crmDetailCodeEdit" value="${e.code||''}" style="font-family:'Space Mono',monospace;font-size:.82rem;font-weight:700;color:var(--ac);flex:1;padding:5px 10px">
+        <button class="btn btn-s btn-xs" onclick="saveCRMCode(${i})">💾 Lưu mã</button>
+        <button class="btn btn-xs" style="background:rgba(245,166,35,.12);color:var(--ac);border:1px solid rgba(245,166,35,.3)" onclick="cpTxt(document.getElementById('crmDetailCodeEdit').value)">📋</button>
+      </div>
+    </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        ${plt.map(pl=>`<div style="background:${p[pl.k]?'rgba(62,207,142,.1)':'var(--bg3)'};border:1px solid ${p[pl.k]?'rgba(62,207,142,.4)':'var(--border)'};border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:7px">
+          <span>${pl.ic}</span>
+          <div style="flex:1">
+            <div style="font-size:.73rem;font-weight:600;color:var(--tx)">${pl.nm}</div>
+            <div style="font-size:.63rem;color:${p[pl.k]?'var(--gr)':'var(--t3)'}">${p[pl.k]?'✅ Đã đăng '+(e.postedTimes?.[pl.k]||''):'Chưa đăng'}</div>
+            ${(e.postedNotes?.[pl.k])?`<div style="font-size:.62rem;color:var(--bl);margin-top:2px">🔗 ${e.postedNotes[pl.k]}</div>`:''}
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+    ${e.pros?`<div style="margin-bottom:10px"><div style="font-size:.71rem;font-weight:700;color:var(--tx);margin-bottom:5px">⭐ Điểm mạnh</div><div style="font-size:.76rem;color:var(--t2);background:var(--bg3);border-radius:8px;padding:9px;line-height:1.7">${e.pros}</div></div>`:''}
+    <div style="margin-bottom:10px">
+      <div style="font-size:.71rem;font-weight:700;color:var(--tx);margin-bottom:5px">📝 Ghi chú nội bộ</div>
+      <textarea id="crmDetailNote" style="min-height:60px;font-size:.76rem" placeholder="Ghi chú: tình trạng, phản hồi KH, lý do chưa đăng...">${e.note||''}</textarea>
+    </div>
+    <div style="font-size:.67rem;color:var(--t3);margin-bottom:12px">🕐 Lưu lúc: ${e.time}</div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap">
+      <button class="btn btn-p btn-sm" onclick="saveCRMNote(${i})">💾 Lưu ghi chú</button>
+      <button class="btn btn-s btn-sm" onclick="loadCRM(${i});document.getElementById('crmDetailModal').classList.remove('on')">📂 Load content</button>
+      <button class="btn btn-s btn-sm" onclick="cpTxt('${e.code||''}')">📋 Copy mã căn</button>
+      <button class="btn btn-r btn-sm" onclick="delCRM(${i});document.getElementById('crmDetailModal').classList.remove('on')">🗑️ Xóa</button>
+    </div>`;
+  document.getElementById('crmDetailModal').classList.add('on');
+}
+
+function saveCRMNote(i){
+  const n=document.getElementById('crmDetailNote')?.value||'';
+  crm[i].note=n;saveSt();buildCRM();toast('💾 Đã lưu ghi chú!');
+}
+
+function saveCRMCode(i){
+  const newCode=(document.getElementById('crmDetailCodeEdit')?.value||'').trim();
+  if(!newCode)return toast('⚠️ Mã căn không được để trống!');
+  crm[i].code=newCode;saveSt();buildCRM();
+  // Cập nhật header modal
+  const dc=document.getElementById('crmDetailCode');if(dc)dc.textContent=`Mã căn: ${newCode}`;
+  toast(`✅ Đã cập nhật mã căn: ${newCode}`);
+}
+
 function loadCRM(i){
   const e=crm[i];
   ['type','price','area','loc','pros'].forEach(k=>{const el=document.getElementById('i_'+k);if(el)el.value=e[k]||'';});
   VS=e.vs||[];VI=0;
+  trackerId=e.id||0;
+  trackerState=e.posted?JSON.parse(JSON.stringify(e.posted)):{fb:false,zalo:false,tiktok:false,web:false};
+  trackerTimes=e.postedTimes?JSON.parse(JSON.stringify(e.postedTimes)):{fb:'',zalo:'',tiktok:'',web:''};
+  trackerNotes=e.postedNotes?JSON.parse(JSON.stringify(e.postedNotes)):{fb:'',zalo:'',tiktok:'',web:''};
+  // Khôi phục mã căn vào tất cả 3 form
+  if(e.code)fillCodeAll(e.code);
   nav('gen');
-  if(VS.length){document.getElementById('outArea').classList.add('on');document.getElementById('vTabsRow').classList.toggle('hidden',VS.length<=1);if(VS.length>1){const lb=['💰 THAM','🔥 SÂN','🤔 SI','👑 NGẠO','🔍 NGHI NGỜ'];document.getElementById('vTabs').innerHTML=VS.map((x,j)=>`<div class="vtab${j===0?' on':''}" data-v="${j}" onclick="sVer(this,${j})">${lb[j]||'V'+(j+1)}</div>`).join('');}renderPlt();}
-  toast('📂 Đã load!');
+  if(VS.length){
+    document.getElementById('outArea').classList.add('on');
+    document.getElementById('vTabsRow').classList.toggle('hidden',VS.length<=1);
+    if(VS.length>1){
+      const lb=['💰 THAM','🔥 SÂN','🤔 SI','👑 NGẠO','🔍 NGHI NGỜ'];
+      document.getElementById('vTabs').innerHTML=VS.map((x,j)=>`<div class="vtab${j===0?' on':''}" data-v="${j}" onclick="sVer(this,${j})">${lb[j]||'V'+(j+1)}</div>`).join('');
+    }
+    renderPlt();renderTracker();
+  }
+  toast(`📂 Đã load! Mã căn: ${e.code||'—'}`);
 }
-function delCRM(i){if(!confirm('Xóa?'))return;crm.splice(i,1);saveSt();buildCRM();updStats();buildHomeRecent();toast('🗑️ Đã xóa!');}
+
+function delCRM(i){if(!confirm('Xóa tin này?'))return;crm.splice(i,1);saveSt();buildCRM();updStats();buildHomeRecent();toast('🗑️ Đã xóa!');}
 function clearAllCRM(){if(!confirm('Xóa toàn bộ CRM?'))return;crm=[];saveSt();buildCRM();updStats();buildHomeRecent();toast('🗑️ Đã xóa toàn bộ!');}
+
+// Migrate old CRM entries (add code if missing)
+function migrateCRM(){
+  crm.forEach(e=>{if(!e.code)e.code=genPropCode(e.type||'NP',e.loc||'KV',e.id||Date.now());if(!e.note)e.note='';});
+}
 
 // ===================== TEMPLATES =====================
 function saveTpl(){
@@ -1215,6 +1560,29 @@ function buildDashboard(){
         <button class="btn btn-s btn-xs" style="margin-top:8px;width:100%;justify-content:center" onclick="nav('reminder')">Xem lịch →</button>
       </div>
     </div>
+
+    <!-- Posted platform stats -->
+    ${(()=>{
+      const ps={fb:0,zalo:0,tiktok:0,web:0};
+      crm.forEach(e=>{if(e.posted){['fb','zalo','tiktok','web'].forEach(k=>{if(e.posted[k])ps[k]++;});}});
+      const total=Object.values(ps).reduce((a,b)=>a+b,0);
+      if(!crm.length)return'';
+      const plInfo=[{k:'fb',ic:'📘',nm:'Facebook'},{k:'zalo',ic:'💬',nm:'Zalo'},{k:'tiktok',ic:'🎵',nm:'TikTok'},{k:'web',ic:'🌐',nm:'Website'}];
+      return`<div class="card" style="margin-bottom:12px">
+        <div class="ctit"><span class="dot"></span>📌 Thống kê đăng tin theo nền tảng</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:9px">
+          ${plInfo.map(p=>`<div style="background:${ps[p.k]>0?'rgba(62,207,142,.1)':'var(--bg3)'};border:1px solid ${ps[p.k]>0?'rgba(62,207,142,.35)':'var(--border)'};border-radius:9px;padding:10px 7px;text-align:center">
+            <div style="font-size:1.3rem">${p.ic}</div>
+            <div style="font-weight:900;font-size:1.2rem;color:${ps[p.k]>0?'var(--gr)':'var(--t3)'};font-family:'Space Mono',monospace">${ps[p.k]}</div>
+            <div style="font-size:.62rem;color:var(--t3)">${p.nm}</div>
+          </div>`).join('')}
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;font-size:.72rem;color:var(--t2)">
+          <span>Tổng lượt đăng: <strong style="color:var(--ac)">${total}</strong></span>
+          <span>Tỷ lệ phủ sóng: <strong style="color:var(--gr)">${crm.length?Math.round(total/crm.length/4*100):0}%</strong></span>
+        </div>
+      </div>`;
+    })()}
 
     ${topTypes.length?`<div class="card">
       <div class="ctit"><span class="dot"></span>🏠 Loại nhà hay đăng nhất</div>
