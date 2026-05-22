@@ -329,6 +329,40 @@ select option{background:var(--bg3)}
 .lib-chip.selected{background:rgba(245,166,35,.15);border-color:var(--ac);color:var(--ac);font-weight:700}
 .lib-foot{padding:11px 14px;border-top:1px solid var(--border);display:flex;gap:7px;flex-shrink:0}
 
+/* CHIẾN THUẬT 6 CĂN */
+.sc-slot{background:var(--card);border:1.5px solid var(--border);border-radius:11px;padding:13px 14px;margin-bottom:9px;transition:.2s}
+.sc-slot:hover{border-color:rgba(245,166,35,.35)}
+.sc-slot.filled{border-color:rgba(62,207,142,.4);background:rgba(62,207,142,.04)}
+.sc-slot-head{display:flex;align-items:center;gap:9px;margin-bottom:0}
+.sc-num{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--a2));color:#000;font-weight:800;font-size:.78rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sc-slot.filled .sc-num{background:linear-gradient(135deg,var(--gr),#2da870)}
+.sc-slot-title{font-weight:700;font-size:.82rem;color:var(--tx);flex:1}
+.sc-slot-badge{font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:8px}
+.sc-body{margin-top:11px;padding-top:11px;border-top:1px solid var(--border)}
+.sc-toggle{cursor:pointer;color:var(--t3);font-size:.72rem;background:none;border:none;padding:0;display:flex;align-items:center;gap:4px}
+.sc-toggle:hover{color:var(--ac)}
+.psy-select-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:10px}
+.psy-sel{border:1.5px solid var(--border);border-radius:8px;padding:7px 5px;text-align:center;cursor:pointer;transition:.2s;font-size:.67rem;color:var(--t2)}
+.psy-sel:hover{border-color:rgba(245,166,35,.4)}
+.psy-sel.on{font-weight:700}
+.psy-sel[data-p="Tham"].on{background:rgba(245,166,35,.15);border-color:var(--ac);color:var(--ac)}
+.psy-sel[data-p="Sân"].on{background:rgba(239,83,80,.12);border-color:var(--rd);color:var(--rd)}
+.psy-sel[data-p="Si"].on{background:rgba(76,156,245,.12);border-color:var(--bl);color:var(--bl)}
+.psy-sel[data-p="Nghi ngờ"].on{background:rgba(62,207,142,.12);border-color:var(--gr);color:var(--gr)}
+.psy-sel[data-p="Ngạo mạn"].on{background:rgba(156,110,245,.12);border-color:var(--pu);color:var(--pu)}
+.sc30-table{width:100%;border-collapse:collapse;font-size:.72rem}
+.sc30-table th{background:var(--card2);color:var(--t3);font-weight:600;padding:6px 9px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+.sc30-table td{padding:7px 9px;border-bottom:1px solid var(--border);vertical-align:middle}
+.sc30-table tr:hover td{background:var(--card2)}
+.sc30-table tr.done-row td{opacity:.5;text-decoration:line-through}
+.sc-can-badge{font-size:.6rem;padding:2px 7px;border-radius:7px;font-weight:700;white-space:nowrap}
+.sc-psy-badge{font-size:.6rem;padding:2px 7px;border-radius:7px;font-weight:700;white-space:nowrap}
+.sc-day-num{font-family:'Space Mono',monospace;font-weight:700;color:var(--ac);font-size:.75rem}
+.sc-plt-chips{display:flex;gap:3px;flex-wrap:wrap}
+.sc-plt-chip{font-size:.58rem;padding:1px 5px;border-radius:4px;background:var(--bg3);color:var(--t3)}
+.sc-plt-chip.done{background:rgba(62,207,142,.15);color:var(--gr)}
+.sc-week-sep{background:linear-gradient(135deg,rgba(245,166,35,.08),rgba(62,207,142,.05));font-size:.67rem;font-weight:700;color:var(--ac);padding:5px 9px;border-bottom:1px solid var(--border)}
+
 /* MORNING CHECKLIST */
 .ck-item{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:11px 13px;display:flex;align-items:flex-start;gap:10px;margin-bottom:7px;cursor:pointer;transition:.2s;user-select:none}
 .ck-item:hover{border-color:rgba(245,166,35,.35)}
@@ -427,6 +461,7 @@ select option{background:var(--bg3)}
   </div>
   <div class="nsec">
     <span class="nlbl">🆕 Tính Năng Mới</span>
+    <div class="ni on" onclick="nav('sixcan')" style="border-left:2px solid var(--rd)"><span class="ic">🏘️</span><span class="ntxt">Chiến Thuật 6 Căn</span><span class="nbdg" style="background:var(--rd);color:#fff">HOT</span></div>
     <div class="ni" onclick="nav('reminder')"><span class="ic">⏰</span><span class="ntxt">Nhắc Lịch KH</span><span class="nbdg" id="rmSideCount" style="background:var(--rd);color:#fff;display:none">0</span></div>
     <div class="ni" onclick="nav('dashboard')"><span class="ic">📊</span><span class="ntxt">Dashboard</span><span class="nbdg" style="background:var(--bl);color:#fff">NEW</span></div>
     <div class="ni" onclick="nav('guide')"><span class="ic">❓</span><span class="ntxt">Hướng Dẫn</span><span class="nbdg" style="background:var(--pu);color:#fff">NEW</span></div>
@@ -441,7 +476,7 @@ select option{background:var(--bg3)}
   </div>
   <div class="nsec">
     <span class="nlbl">📚 Kiến Thức</span>
-    <div class="ni" onclick="nav('handbook')"><span class="ic">📖</span><span class="ntxt">Cẩm Nang Bách Thắng</span></div>
+    <div class="ni" onclick="nav('handbook')"><span class="ic">📚</span><span class="ntxt">Thư Viện Kiến Thức</span><span class="nbdg" style="background:var(--ac);color:#000">3</span></div>
   </div>
   <div class="nsec">
     <span class="nlbl">⚙️ Quản Lý</span>
@@ -466,9 +501,10 @@ select option{background:var(--bg3)}
       <span style="background:var(--card);border:1px solid var(--border);color:var(--t3);font-size:.68rem;padding:2px 9px;border-radius:17px;font-weight:600">🌐 Website</span>
     </div>
     <h1>AUTO PRO CONTENT BĐS</h1>
-    <p class="sub">Trợ lý AI tạo nội dung tin đăng đa nền tảng — tối ưu chuyển đổi theo tâm lý khách hàng.<br><span style="color:var(--ac);font-weight:700">v7.0 — Thêm: Checklist Buổi Sáng · KH Nhãn Màu · Timeline · Calendar Đăng Tin</span></p>
+    <p class="sub">Trợ lý AI tạo nội dung tin đăng đa nền tảng — tối ưu chuyển đổi theo tâm lý khách hàng.<br><span style="color:var(--ac);font-weight:700">v7.0 🔥 Mới: Chiến Thuật 6 Căn · 30 Content · Lịch 30 Ngày Tự Động</span></p>
     <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
-      <button class="btn btn-p" onclick="nav('gen')">🚀 Bắt Đầu Tạo Content</button>
+      <button class="btn btn-p" onclick="nav('sixcan')">🏘️ Chiến Thuật 6 Căn</button>
+      <button class="btn btn-s" onclick="nav('gen')">✍️ Tạo Content</button>
       <button class="btn btn-s" onclick="nav('survey')">🔍 Khảo Sát Nhà</button>
       <button class="btn btn-s" onclick="nav('guide')">❓ Hướng Dẫn</button>
     </div>
@@ -479,8 +515,26 @@ select option{background:var(--bg3)}
     <div class="stc"><div class="stnum">4</div><div class="stlbl">Nền tảng</div></div>
     <div class="stc"><div class="stnum" id="stReminders">0</div><div class="stlbl">Nhắc lịch</div></div>
   </div>
-  <div class="sec" style="margin-top:0">🔗 QUY TRÌNH LIÊN KẾT</div>
+  <div class="sec">🏠 WORKFLOW MỚI v7</div>
   <div style="display:flex;align-items:center;gap:0;margin-bottom:13px;overflow-x:auto;padding-bottom:3px" id="wfRow"></div>
+  <div class="sec">📚 THƯ VIỆN KIẾN THỨC — TRẦN THẾ VINH</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px">
+    <div onclick="nav('handbook');setTimeout(()=>switchHBBook(0),150)" style="background:linear-gradient(135deg,rgba(245,166,35,.12),rgba(245,166,35,.03));border:1px solid rgba(245,166,35,.35);border-radius:11px;padding:13px;cursor:pointer;transition:.2s;text-align:center" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+      <div style="font-size:1.8rem;margin-bottom:6px">🏆</div>
+      <div style="font-weight:800;font-size:.78rem;color:var(--ac);margin-bottom:3px">Cẩm Nang Bách Thắng</div>
+      <div style="font-size:.65rem;color:var(--t3)">10 Module thực chiến</div>
+    </div>
+    <div onclick="nav('handbook');setTimeout(()=>switchHBBook(1),150)" style="background:linear-gradient(135deg,rgba(239,83,80,.1),rgba(239,83,80,.03));border:1px solid rgba(239,83,80,.3);border-radius:11px;padding:13px;cursor:pointer;transition:.2s;text-align:center" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+      <div style="font-size:1.8rem;margin-bottom:6px">🧠</div>
+      <div style="font-weight:800;font-size:.78rem;color:var(--rd);margin-bottom:3px">Ma Trận Tâm Lý KH</div>
+      <div style="font-size:.65rem;color:var(--t3)">Chốt deal theo tâm lý</div>
+    </div>
+    <div onclick="nav('handbook');setTimeout(()=>switchHBBook(2),150)" style="background:linear-gradient(135deg,rgba(76,156,245,.1),rgba(76,156,245,.03));border:1px solid rgba(76,156,245,.3);border-radius:11px;padding:13px;cursor:pointer;transition:.2s;text-align:center" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+      <div style="font-size:1.8rem;margin-bottom:6px">🔓</div>
+      <div style="font-weight:800;font-size:.78rem;color:var(--bl);margin-bottom:3px">Phá Khoá Tâm Lý</div>
+      <div style="font-size:.65rem;color:var(--t3)">Định hướng nhà cho KH</div>
+    </div>
+  </div>
   <div class="sec">🛠️ TẤT CẢ TÍNH NĂNG</div>
   <div class="fgr" id="featureGrid"></div>
   <div class="sec">📋 TIN GẦN ĐÂY</div>
@@ -1039,20 +1093,133 @@ select option{background:var(--bg3)}
 
 <!-- HANDBOOK -->
 <div class="pg" id="pg-handbook">
-  <div class="ptit"><div><h2>📖 Cẩm Nang Bách Thắng — Môi Giới Thực Chiến</h2><p>Phiên bản đầy đủ · 10 Module thực chiến · Trần Thế Vinh · #aihockiemtien</p></div></div>
-  <div style="background:linear-gradient(135deg,rgba(245,166,35,.12),rgba(76,156,245,.08));border:1px solid rgba(245,166,35,.35);border-radius:11px;padding:13px 15px;margin-bottom:13px;display:flex;align-items:center;gap:11px;flex-wrap:wrap">
-    <div style="font-size:1.9rem;flex-shrink:0">🏆</div>
-    <div style="flex:1;min-width:180px"><div style="font-weight:800;font-size:.9rem;color:var(--ac)">Flip Book tương tác — Đầy đủ 10 Module</div><div style="font-size:.74rem;color:var(--t2);margin-top:2px">"Khảo sát không phải là đi xem một căn nhà — Khảo sát là quá trình đào bới để tìm ra MỘT LÝ DO khiến khách hàng khao khát nó."</div></div>
-    <a href="https://heyzine.com/flip-book/e755ec9c04.html#page/1" target="_blank" class="btn btn-p btn-sm" style="flex-shrink:0">🔗 Mở toàn màn hình</a>
-  </div>
-  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px" id="hbModules"></div>
-  <div style="background:var(--bg3);border:1px solid var(--border);border-radius:11px;overflow:hidden">
-    <div style="padding:8px 13px;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-      <div style="font-size:.75rem;font-weight:600;color:var(--tx)">📖 Cẩm Nang Bách Thắng — Trần Thế Vinh</div>
-      <a href="https://heyzine.com/flip-book/e755ec9c04.html#page/1" target="_blank" class="btn btn-s btn-xs">⛶ Full screen</a>
+  <div class="ptit"><div><h2>📚 Thư Viện Kiến Thức Thực Chiến</h2><p>3 tài liệu đỉnh cao · Trần Thế Vinh · #aihockiemtien</p></div></div>
+
+  <!-- 3 book selector cards -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">
+
+    <div id="hbcard_0" onclick="switchHBBook(0)" style="background:linear-gradient(135deg,rgba(245,166,35,.15),rgba(245,166,35,.05));border:2px solid var(--ac);border-radius:12px;padding:13px;cursor:pointer;transition:.2s">
+      <div style="font-size:1.6rem;margin-bottom:6px">🏆</div>
+      <div style="font-weight:800;font-size:.8rem;color:var(--ac);margin-bottom:4px">Cẩm Nang Bách Thắng</div>
+      <div style="font-size:.68rem;color:var(--t2);line-height:1.5">10 Module môi giới thực chiến đầy đủ</div>
+      <div style="font-size:.62rem;color:var(--ac);margin-top:5px;font-weight:700">📖 Đang xem</div>
     </div>
-    <iframe src="https://heyzine.com/flip-book/e755ec9c04.html#page/1" style="width:100%;height:80vh;border:none;display:block" allowfullscreen loading="lazy" title="Cẩm Nang Bách Thắng"></iframe>
+
+    <div id="hbcard_1" onclick="switchHBBook(1)" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px;cursor:pointer;transition:.2s" onmouseover="this.style.borderColor='rgba(239,83,80,.4)'" onmouseout="if(hbActive!==1)this.style.borderColor='var(--border)'">
+      <div style="font-size:1.6rem;margin-bottom:6px">🧠</div>
+      <div style="font-weight:800;font-size:.8rem;color:var(--tx);margin-bottom:4px">Chốt Nhà Theo Ma Trận Tâm Lý</div>
+      <div style="font-size:.68rem;color:var(--t2);line-height:1.5">Chiến thuật tâm lý chốt deal thực chiến</div>
+      <div style="font-size:.62rem;color:var(--t3);margin-top:5px">👆 Bấm để xem</div>
+    </div>
+
+    <div id="hbcard_2" onclick="switchHBBook(2)" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px;cursor:pointer;transition:.2s" onmouseover="this.style.borderColor='rgba(76,156,245,.4)'" onmouseout="if(hbActive!==2)this.style.borderColor='var(--border)'">
+      <div style="font-size:1.6rem;margin-bottom:6px">🔓</div>
+      <div style="font-weight:800;font-size:.8rem;color:var(--tx);margin-bottom:4px">Định Hướng Nhà — Phá Khoá Tâm Lý</div>
+      <div style="font-size:.68rem;color:var(--t2);line-height:1.5">Chiến thuật định hướng & phá khoá KH</div>
+      <div style="font-size:.62rem;color:var(--t3);margin-top:5px">👆 Bấm để xem</div>
+    </div>
+
   </div>
+
+  <!-- Book 0: Cẩm Nang Bách Thắng -->
+  <div id="hbbook_0">
+    <div style="background:linear-gradient(135deg,rgba(245,166,35,.12),rgba(76,156,245,.08));border:1px solid rgba(245,166,35,.35);border-radius:11px;padding:12px 15px;margin-bottom:12px;display:flex;align-items:center;gap:11px;flex-wrap:wrap">
+      <div style="flex:1;min-width:180px">
+        <div style="font-weight:800;font-size:.88rem;color:var(--ac)">🏆 Cẩm Nang Bách Thắng — 10 Module Thực Chiến</div>
+        <div style="font-size:.73rem;color:var(--t2);margin-top:3px">"Khảo sát không phải đi xem nhà — mà là đào bới tìm ra MỘT LÝ DO khiến khách khao khát."</div>
+      </div>
+      <a href="https://heyzine.com/flip-book/e755ec9c04.html#page/1" target="_blank" class="btn btn-p btn-sm">🔗 Toàn màn hình</a>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px" id="hbModules"></div>
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:11px;overflow:hidden">
+      <div style="padding:8px 13px;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:.74rem;font-weight:600;color:var(--tx)">📖 Cẩm Nang Bách Thắng · Trần Thế Vinh</div>
+        <a href="https://heyzine.com/flip-book/e755ec9c04.html#page/1" target="_blank" class="btn btn-s btn-xs">⛶ Fullscreen</a>
+      </div>
+      <iframe src="https://heyzine.com/flip-book/e755ec9c04.html#page/1" style="width:100%;height:80vh;border:none;display:block" allowfullscreen loading="lazy" title="Cẩm Nang Bách Thắng"></iframe>
+    </div>
+  </div>
+
+  <!-- Book 1: Ma Trận Tâm Lý -->
+  <div id="hbbook_1" style="display:none">
+    <div style="background:linear-gradient(135deg,rgba(239,83,80,.12),rgba(245,166,35,.07));border:1px solid rgba(239,83,80,.35);border-radius:11px;padding:12px 15px;margin-bottom:12px;display:flex;align-items:center;gap:11px;flex-wrap:wrap">
+      <div style="font-size:1.8rem;flex-shrink:0">🧠</div>
+      <div style="flex:1;min-width:180px">
+        <div style="font-weight:800;font-size:.88rem;color:var(--rd)">Chốt Nhà Theo Ma Trận Tâm Lý Khách Hàng</div>
+        <div style="font-size:.73rem;color:var(--t2);margin-top:3px">Chiến thuật phân tích và tác động tâm lý KH để chốt deal hiệu quả trong mọi tình huống.</div>
+      </div>
+      <a href="https://heyzine.com/flip-book/4684a30c2f.html" target="_blank" class="btn btn-sm" style="background:linear-gradient(135deg,var(--rd),#c62828);color:#fff;flex-shrink:0">🔗 Toàn màn hình</a>
+    </div>
+    <!-- Key insights -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:12px">
+      <div style="background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.3);border-radius:9px;padding:10px;text-align:center">
+        <div style="font-size:1.3rem">💰</div><div style="font-size:.72rem;font-weight:700;color:var(--ac);margin-top:3px">Tâm lý THAM</div>
+        <div style="font-size:.65rem;color:var(--t3)">Khai thác cơ hội & deal hời</div>
+      </div>
+      <div style="background:rgba(239,83,80,.1);border:1px solid rgba(239,83,80,.3);border-radius:9px;padding:10px;text-align:center">
+        <div style="font-size:1.3rem">🔥</div><div style="font-size:.72rem;font-weight:700;color:var(--rd);margin-top:3px">Tâm lý SÂN</div>
+        <div style="font-size:.65rem;color:var(--t3)">Khai thác cái tôi & hơn người</div>
+      </div>
+      <div style="background:rgba(76,156,245,.1);border:1px solid rgba(76,156,245,.3);border-radius:9px;padding:10px;text-align:center">
+        <div style="font-size:1.3rem">🤔</div><div style="font-size:.72rem;font-weight:700;color:var(--bl);margin-top:3px">Tâm lý SI</div>
+        <div style="font-size:.65rem;color:var(--t3)">Đánh vào cảm xúc gia đình</div>
+      </div>
+      <div style="background:rgba(62,207,142,.1);border:1px solid rgba(62,207,142,.3);border-radius:9px;padding:10px;text-align:center">
+        <div style="font-size:1.3rem">🔍</div><div style="font-size:.72rem;font-weight:700;color:var(--gr);margin-top:3px">Nghi Ngờ</div>
+        <div style="font-size:.65rem;color:var(--t3)">Xây dựng niềm tin & bằng chứng</div>
+      </div>
+      <div style="background:rgba(156,110,245,.1);border:1px solid rgba(156,110,245,.3);border-radius:9px;padding:10px;text-align:center">
+        <div style="font-size:1.3rem">👑</div><div style="font-size:.72rem;font-weight:700;color:var(--pu);margin-top:3px">Ngạo Mạn</div>
+        <div style="font-size:.65rem;color:var(--t3)">Khai thác vị thế & đẳng cấp</div>
+      </div>
+    </div>
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:11px;overflow:hidden">
+      <div style="padding:8px 13px;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:.74rem;font-weight:600;color:var(--tx)">🧠 Chốt Nhà Theo Ma Trận Tâm Lý · Trần Thế Vinh</div>
+        <a href="https://heyzine.com/flip-book/4684a30c2f.html" target="_blank" class="btn btn-s btn-xs">⛶ Fullscreen</a>
+      </div>
+      <iframe src="https://heyzine.com/flip-book/4684a30c2f.html" style="width:100%;height:80vh;border:none;display:block" allowfullscreen loading="lazy" title="Chốt Nhà Theo Ma Trận Tâm Lý"></iframe>
+    </div>
+  </div>
+
+  <!-- Book 2: Định Hướng Nhà / Phá Khoá -->
+  <div id="hbbook_2" style="display:none">
+    <div style="background:linear-gradient(135deg,rgba(76,156,245,.12),rgba(62,207,142,.07));border:1px solid rgba(76,156,245,.35);border-radius:11px;padding:12px 15px;margin-bottom:12px;display:flex;align-items:center;gap:11px;flex-wrap:wrap">
+      <div style="font-size:1.8rem;flex-shrink:0">🔓</div>
+      <div style="flex:1;min-width:180px">
+        <div style="font-weight:800;font-size:.88rem;color:var(--bl)">Định Hướng Nhà Cho Khách — Chiến Thuật Phá Khoá Tâm Lý</div>
+        <div style="font-size:.73rem;color:var(--t2);margin-top:3px">Hướng dẫn từng bước định hướng lại nhu cầu và phá vỡ rào cản tâm lý để dẫn KH đến quyết định mua.</div>
+      </div>
+      <a href="https://heyzine.com/flip-book/268c575e09.html" target="_blank" class="btn btn-sm" style="background:linear-gradient(135deg,var(--bl),#1565c0);color:#fff;flex-shrink:0">🔗 Toàn màn hình</a>
+    </div>
+    <!-- Key concepts -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-bottom:12px">
+      <div style="background:rgba(76,156,245,.1);border:1px solid rgba(76,156,245,.3);border-radius:9px;padding:10px;display:flex;gap:8px;align-items:flex-start">
+        <div style="font-size:1.2rem;flex-shrink:0">🏠</div>
+        <div><div style="font-size:.72rem;font-weight:700;color:var(--bl)">Định Hướng Lại Nhà</div><div style="font-size:.65rem;color:var(--t3);margin-top:2px">KH xem chưa ưng → tìm căn phù hợp hơn theo đúng insight</div></div>
+      </div>
+      <div style="background:rgba(62,207,142,.1);border:1px solid rgba(62,207,142,.3);border-radius:9px;padding:10px;display:flex;gap:8px;align-items:flex-start">
+        <div style="font-size:1.2rem;flex-shrink:0">🔓</div>
+        <div><div style="font-size:.72rem;font-weight:700;color:var(--gr)">Phá Khoá Tâm Lý</div><div style="font-size:.65rem;color:var(--t3);margin-top:2px">Xác định rào cản thật → dùng đúng chìa khoá tâm lý để mở</div></div>
+      </div>
+      <div style="background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.3);border-radius:9px;padding:10px;display:flex;gap:8px;align-items:flex-start">
+        <div style="font-size:1.2rem;flex-shrink:0">💬</div>
+        <div><div style="font-size:.72rem;font-weight:700;color:var(--ac)">Thẻ Khách Hàng</div><div style="font-size:.65rem;color:var(--t3);margin-top:2px">Lưu insight KH → chăm sóc đúng nhu cầu thực</div></div>
+      </div>
+      <div style="background:rgba(156,110,245,.1);border:1px solid rgba(156,110,245,.3);border-radius:9px;padding:10px;display:flex;gap:8px;align-items:flex-start">
+        <div style="font-size:1.2rem;flex-shrink:0">🎯</div>
+        <div><div style="font-size:.72rem;font-weight:700;color:var(--pu)">Chốt Trong Tuần</div><div style="font-size:.65rem;color:var(--t3);margin-top:2px">Quy trình từ xem nhà → cọc → ký HĐ trong 7 ngày</div></div>
+      </div>
+    </div>
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:11px;overflow:hidden">
+      <div style="padding:8px 13px;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:.74rem;font-weight:600;color:var(--tx)">🔓 Định Hướng Nhà — Phá Khoá Tâm Lý · Trần Thế Vinh</div>
+        <a href="https://heyzine.com/flip-book/268c575e09.html" target="_blank" class="btn btn-s btn-xs">⛶ Fullscreen</a>
+      </div>
+      <iframe src="https://heyzine.com/flip-book/268c575e09.html" style="width:100%;height:80vh;border:none;display:block" allowfullscreen loading="lazy" title="Định Hướng Nhà Phá Khoá Tâm Lý"></iframe>
+    </div>
+  </div>
+
 </div>
 
 <!-- TEMPLATES -->
@@ -1355,6 +1522,161 @@ select option{background:var(--bg3)}
     <div style="margin-top:13px;text-align:center;font-size:.73rem;color:var(--t3)">
       💬 Góp ý tính năng mới: <a href="https://zalo.me/0792227522" target="_blank" style="color:var(--ac);font-weight:700">Zalo tác giả →</a>
     </div>
+  </div>
+</div>
+
+<!-- ==================== CHIẾN THUẬT 6 CĂN ==================== -->
+<div class="pg" id="pg-sixcan">
+  <div class="ptit">
+    <div>
+      <h2>🏘️ Chiến Thuật 6 Căn — 30 Góc Nhìn Tâm Lý</h2>
+      <p>6 BĐS thật · cùng khu · bán kính 1.5km → 30 content tâm lý → phân bổ lịch 30 ngày</p>
+    </div>
+  </div>
+
+  <!-- Intro banner -->
+  <div style="background:linear-gradient(135deg,rgba(239,83,80,.1),rgba(245,166,35,.08));border:1px solid rgba(239,83,80,.35);border-radius:12px;padding:13px 15px;margin-bottom:14px">
+    <div style="font-weight:800;font-size:.92rem;color:var(--rd);margin-bottom:5px">🔥 Tư duy cốt lõi — Trần Thế Vinh</div>
+    <div style="font-size:.76rem;color:var(--t2);line-height:1.8">
+      <strong style="color:var(--tx)">1 căn nhà thật × 5 tâm lý KH = 5 góc tiếp cận.</strong>
+      6 căn × 5 tâm lý = <strong style="color:var(--ac)">30 content thật, 30 lý do khác nhau</strong> để KH gọi cho bạn.<br>
+      Khách thích đầu tư → quan tâm giá · Khách có gia đình → quan tâm cảm xúc · Khách kỹ tính → quan tâm pháp lý.
+    </div>
+  </div>
+
+  <!-- Step tabs -->
+  <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap">
+    <div class="pill on" id="sctab1" onclick="switchSCTab(1,this)">① Nhập 6 BĐS</div>
+    <div class="pill" id="sctab2" onclick="switchSCTab(2,this)">② Chọn cài đặt</div>
+    <div class="pill" id="sctab3" onclick="switchSCTab(3,this)">③ Lịch 30 ngày</div>
+    <div class="pill" id="sctab4" onclick="switchSCTab(4,this)">④ Xem content</div>
+  </div>
+
+  <!-- TAB 1: Nhập 6 BĐS -->
+  <div id="scpg1">
+    <div style="background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.2);border-radius:9px;padding:10px 13px;margin-bottom:12px;font-size:.75rem;color:var(--t2);line-height:1.7">
+      📌 <strong style="color:var(--ac)">Tiêu chí chọn 6 căn:</strong> Cùng loại nhà · Cùng phân khúc giá · Cùng phường hoặc phường liền kề · Bán kính &le;1.5km · Thông số kỹ thuật tương tự (DT, số tầng...)
+    </div>
+
+    <div id="scSlots"></div>
+
+    <div style="display:flex;gap:7px;margin-top:4px;flex-wrap:wrap">
+      <button class="btn btn-p btn-sm" onclick="validateAndNextSC()">✅ Xác nhận 6 căn → Tiếp theo</button>
+      <button class="btn btn-s btn-sm" onclick="scAutoFromCRM()">📂 Gợi ý từ CRM</button>
+      <button class="btn btn-r btn-sm" onclick="clearSixCan()">🗑️ Xóa tất cả</button>
+    </div>
+  </div>
+
+  <!-- TAB 2: Cài đặt -->
+  <div id="scpg2" style="display:none">
+    <div class="card">
+      <div class="ctit"><span class="dot"></span>⚙️ Cài đặt chiến dịch</div>
+      <div class="fg2">
+        <div class="fg">
+          <label>📅 Ngày bắt đầu chiến dịch</label>
+          <input type="date" id="sc_startdate">
+        </div>
+        <div class="fg">
+          <label>🎯 Mục tiêu chính</label>
+          <select id="sc_goal">
+            <option value="Chốt nhanh">⚡ Chốt nhanh trong tuần</option>
+            <option value="Thu lead">📩 Thu thập lead KH</option>
+            <option value="Tăng tương tác">💬 Tăng tương tác khu vực</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>📱 Nền tảng ưu tiên</label>
+          <div class="pgr" style="margin-top:4px" id="scPltPills">
+            <div class="pill on" data-v="fb" onclick="toggleSCPlt(this)">📘 FB</div>
+            <div class="pill on" data-v="zalo" onclick="toggleSCPlt(this)">💬 Zalo</div>
+            <div class="pill on" data-v="tiktok" onclick="toggleSCPlt(this)">🎵 TikTok</div>
+            <div class="pill" data-v="web" onclick="toggleSCPlt(this)">🌐 Web</div>
+          </div>
+        </div>
+        <div class="fg">
+          <label>🔄 Kiểu phân bổ lịch</label>
+          <select id="sc_dist">
+            <option value="smart">🧠 Thông minh — không lặp căn liên tiếp</option>
+            <option value="bycan">🏠 Theo căn — đẩy từng căn 5 ngày liên tiếp</option>
+            <option value="bypsy">🧠 Theo tâm lý — 6 ngày cùng tâm lý rồi chuyển</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:11px">
+        <label style="display:block;margin-bottom:6px;font-size:.74rem">🧠 Chọn 5 tâm lý KH sẽ triển khai (mặc định tất cả)</label>
+        <div class="psy-select-grid" id="scPsyGrid"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:7px;margin-top:4px">
+      <button class="btn btn-p btn-sm" onclick="generateSC30()">🚀 Tạo lịch 30 content</button>
+      <button class="btn btn-s btn-sm" onclick="switchSCTab(1,document.getElementById('sctab1'))">← Quay lại</button>
+    </div>
+  </div>
+
+  <!-- TAB 3: Lịch 30 ngày -->
+  <div id="scpg3" style="display:none">
+    <div id="scCalHeader" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;flex-wrap:wrap;gap:7px">
+      <div>
+        <div style="font-weight:800;font-size:.9rem;color:var(--tx)" id="scCampaignTitle">Chiến dịch —</div>
+        <div style="font-size:.71rem;color:var(--t3)" id="scCampaignSub"></div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-g btn-sm" onclick="expSC30()">📄 Xuất .txt</button>
+        <button class="btn btn-b btn-sm" onclick="switchSCTab(4,document.getElementById('sctab4'))">✍️ Xem content</button>
+        <button class="btn btn-r btn-sm" onclick="clearSC30()">🗑️</button>
+      </div>
+    </div>
+
+    <!-- Stats row -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px" id="scStats"></div>
+
+    <!-- 30-day table -->
+    <div class="card" style="padding:0;overflow-x:auto">
+      <table class="sc30-table" id="sc30Table">
+        <thead>
+          <tr>
+            <th>Ngày</th>
+            <th>Thứ</th>
+            <th>Căn nhà</th>
+            <th>Tâm lý KH</th>
+            <th>Nền tảng</th>
+            <th>Giờ đăng</th>
+            <th>Trạng thái</th>
+          </tr>
+        </thead>
+        <tbody id="sc30Body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 4: Xem content -->
+  <div id="scpg4" style="display:none">
+    <div style="display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+      <div class="fg" style="flex:1;min-width:160px">
+        <select id="sc_viewCan" onchange="renderSCContent()" style="font-size:.77rem">
+          <option value="">-- Chọn căn --</option>
+        </select>
+      </div>
+      <div class="fg" style="flex:1;min-width:140px">
+        <select id="sc_viewPsy" onchange="renderSCContent()" style="font-size:.77rem">
+          <option value="">-- Chọn tâm lý --</option>
+          <option value="Tham">💰 Tham</option>
+          <option value="Sân">🔥 Sân</option>
+          <option value="Si">🤔 Si</option>
+          <option value="Nghi ngờ">🔍 Nghi ngờ</option>
+          <option value="Ngạo mạn">👑 Ngạo mạn</option>
+        </select>
+      </div>
+      <div class="fg" style="flex:1;min-width:120px">
+        <select id="sc_viewPlt" onchange="renderSCContent()" style="font-size:.77rem">
+          <option value="fb">📘 Facebook</option>
+          <option value="zalo">💬 Zalo</option>
+          <option value="tiktok">🎵 TikTok</option>
+          <option value="web">🌐 Website</option>
+        </select>
+      </div>
+    </div>
+    <div id="scContentOut"></div>
   </div>
 </div>
 

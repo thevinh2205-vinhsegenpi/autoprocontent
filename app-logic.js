@@ -308,21 +308,23 @@ function saveSt(){
 function buildHomeWorkflow(){
   const el=document.getElementById('wfRow');if(!el)return;
   const steps=[
-    {i:'🔍',t:'Khảo Sát',d:'Thu thập dữ liệu',pg:'survey'},
-    {i:'🏷️',t:'Định Giá',d:'Bóc tách giá đất',pg:'valuation'},
+    {i:'🏘️',t:'6 Căn',d:'Chọn BĐS',pg:'sixcan'},
+    {i:'🔍',t:'Khảo Sát',d:'Thu dữ liệu',pg:'survey'},
+    {i:'🏷️',t:'Định Giá',d:'Bóc tách',pg:'valuation'},
     {i:'✍️',t:'Tạo Content',d:'4 nền tảng',pg:'gen'},
-    {i:'📅',t:'Lịch 7 Ngày',d:'Auto từ content',pg:'sch'},
+    {i:'📅',t:'Lịch 30 Ngày',d:'Auto phân bổ',pg:'sixcan'},
     {i:'🎯',t:'Chấm Điểm',d:'Tối ưu',pg:'scr'},
     {i:'🗄️',t:'Lưu CRM',d:'Quản lý',pg:'crm'}
   ];
-  el.innerHTML=steps.map((s,i)=>`<div onclick="nav('${s.pg}')" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 11px;text-align:center;flex:1;min-width:85px;cursor:pointer;transition:.2s" onmouseover="this.style.borderColor='rgba(245,166,35,.4)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:1.2rem;margin-bottom:3px">${s.i}</div><div style="font-weight:700;font-size:.68rem;color:var(--tx)">${s.t}</div><div style="font-size:.61rem;color:var(--t3)">${s.d}</div></div>${i<steps.length-1?'<div style="color:var(--t3);padding:0 3px;flex-shrink:0">→</div>':''}`).join('');
+  el.innerHTML=steps.map((s,i)=>`<div onclick="nav('${s.pg}')" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 11px;text-align:center;flex:1;min-width:80px;cursor:pointer;transition:.2s" onmouseover="this.style.borderColor='rgba(245,166,35,.4)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:1.2rem;margin-bottom:3px">${s.i}</div><div style="font-weight:700;font-size:.68rem;color:var(--tx)">${s.t}</div><div style="font-size:.61rem;color:var(--t3)">${s.d}</div></div>${i<steps.length-1?'<div style="color:var(--t3);padding:0 3px;flex-shrink:0">→</div>':''}`).join('');
 }
 
 function buildHomeFeatures(){
   const el=document.getElementById('featureGrid');if(!el)return;
   const f=[
+    {i:'🏘️',t:'Chiến Thuật 6 Căn',d:'6 BĐS thật × 5 tâm lý = 30 content. Lịch 30 ngày. Bao phủ khu vực.',pg:'sixcan',b:'rd',bl:'🔥HOT'},
     {i:'✍️',t:'Tạo Content',d:'1 input → FB, Zalo, TikTok, Web. 5 tâm lý. 7 công thức.',pg:'gen',b:'or',bl:'CORE'},
-    {i:'📅',t:'Lịch 7 Ngày',d:'Tự động từ content đã tạo. Phân bổ theo ngày + giờ vàng.',pg:'sch',b:'gr',bl:'SMART'},
+    {i:'📅',t:'Lịch 7 Ngày',d:'Tự động từ content đã tạo. Phân bổ theo ngày + giờ vàng.',pg:'sch',b:'gr',bl:''},
     {i:'🔍',t:'Khảo Sát Nhà',d:'9 bước checklist chuẩn. Tự động sinh báo cáo 5x5.',pg:'survey',b:'gr',bl:''},
     {i:'🏷️',t:'Định Giá BĐS',d:'Bóc tách giá đất + xây dựng. Kết nối tạo content.',pg:'valuation',b:'',bl:''},
     {i:'🎭',t:'Đọc Vị KH',d:'10 câu hỏi xác định tâm lý KH. Gợi ý chiến thuật.',pg:'readkh',b:'bl',bl:''},
@@ -333,12 +335,12 @@ function buildHomeFeatures(){
     {i:'🔁',t:'Biến Tấu Content',d:'Chẩn đoán tại sao cũ không viral. Viết lại 3 phiên bản.',pg:'remix',b:'',bl:''},
     {i:'📊',t:'Dashboard',d:'Biểu đồ content theo tuần/tháng. Thống kê tổng quan.',pg:'dashboard',b:'or',bl:''},
     {i:'⏰',t:'Nhắc Lịch KH',d:'Đặt nhắc follow-up cho từng khách. Cảnh báo đúng giờ.',pg:'reminder',b:'gr',bl:''},
-    {i:'☀️',t:'Checklist Buổi Sáng',d:'14 mục kỷ luật mỗi ngày. Streak, auto reset 6:00 sáng.',pg:'morning',b:'or',bl:'NEW'},
-    {i:'🎯',t:'KH Theo Nhãn',d:'Nóng/Ấm/Lạnh/Chốt. Lọc nhanh, quản lý ưu tiên.',pg:'khlabels',b:'rd',bl:'NEW'},
-    {i:'📋',t:'Timeline KH',d:'Ghi lại lịch sử tương tác từng KH. Gọi → Xem nhà → Chốt.',pg:'timeline',b:'bl',bl:'NEW'},
-    {i:'📅',t:'Calendar Đăng Tin',d:'Lịch tháng tô màu ngày đăng. Streak, thống kê.',pg:'calendar',b:'gr',bl:'NEW'},
-    {i:'📖',t:'Hướng dẫn',d:'Hướng dẫn sử dụng đầy đủ từng tính năng trong app.',pg:'guide',b:'',bl:''},
-    {i:'📖',t:'Cẩm Nang Bách Thắng',d:'10 Module thực chiến đầy đủ từ Trần Thế Vinh.',pg:'handbook',b:'or',bl:'📖'}
+    {i:'☀️',t:'Checklist Buổi Sáng',d:'14 mục kỷ luật mỗi ngày. Streak, auto reset 6:00 sáng.',pg:'morning',b:'or',bl:''},
+    {i:'🎯',t:'KH Theo Nhãn',d:'Nóng/Ấm/Lạnh/Chốt. Lọc nhanh, quản lý ưu tiên.',pg:'khlabels',b:'rd',bl:''},
+    {i:'📋',t:'Timeline KH',d:'Ghi lại lịch sử tương tác từng KH.',pg:'timeline',b:'bl',bl:''},
+    {i:'📅',t:'Calendar Đăng Tin',d:'Lịch tháng tô màu ngày đăng. Streak, thống kê.',pg:'calendar',b:'gr',bl:''},
+    {i:'📖',t:'Hướng dẫn',d:'Hướng dẫn sử dụng đầy đủ từng tính năng.',pg:'guide',b:'',bl:''},
+    {i:'📚',t:'Thư Viện Kiến Thức',d:'3 ebook thực chiến: Cẩm Nang Bách Thắng · Ma Trận Tâm Lý · Phá Khoá KH.',pg:'handbook',b:'or',bl:'📚'}
   ];
   el.innerHTML=f.map(x=>`<div class="fc" onclick="nav('${x.pg}')">${x.bl?`<span class="fcb ${x.b}">${x.bl}</span>`:''}<div class="fci">${x.i}</div><div class="fct">${x.t}</div><div class="fcd">${x.d}</div></div>`).join('');
 }
@@ -1320,6 +1322,40 @@ function buildProf(){
   el.innerHTML=userHtml+authHtml;
 }
 
+// ===================== HANDBOOK — 3 EBOOKS =====================
+let hbActive=0;
+
+function buildHBExtra(){
+  buildHBModules();
+  // Ensure correct book is shown
+  switchHBBook(hbActive);
+}
+
+function switchHBBook(n){
+  hbActive=n;
+  [0,1,2].forEach(i=>{
+    const book=document.getElementById('hbbook_'+i);
+    if(book)book.style.display=i===n?'block':'none';
+    const card=document.getElementById('hbcard_'+i);
+    if(!card)return;
+    if(i===n){
+      const colors=['rgba(245,166,35,.15)','rgba(239,83,80,.12)','rgba(76,156,245,.12)'];
+      const borders=['var(--ac)','var(--rd)','var(--bl)'];
+      const labels=['📖 Đang xem','📖 Đang xem','📖 Đang xem'];
+      const labelColors=['var(--ac)','var(--rd)','var(--bl)'];
+      card.style.background=`linear-gradient(135deg,${colors[i]},transparent)`;
+      card.style.border=`2px solid ${borders[i]}`;
+      const badge=card.querySelector('div:last-child');
+      if(badge){badge.textContent=labels[i];badge.style.color=labelColors[i];}
+    } else {
+      card.style.background='var(--card)';
+      card.style.border='1px solid var(--border)';
+      const badge=card.querySelector('div:last-child');
+      if(badge){badge.textContent='👆 Bấm để xem';badge.style.color='var(--t3)';}
+    }
+  });
+}
+
 // ===================== AGENTS =====================
 function buildAgents(){
   const g=document.getElementById('agGrid');if(!g)return;
@@ -1613,6 +1649,18 @@ function buildGuide(){
   const el=document.getElementById('guideContent');if(!el)return;
   const guides=[
     {
+      icon:'🏘️',title:'Chiến Thuật 6 Căn — 30 Content Tự Động',color:'var(--rd)',
+      steps:[
+        'Vào <strong>Chiến Thuật 6 Căn</strong> → Bước ① Nhập 6 BĐS cùng khu, bán kính &le;1.5km',
+        'Mỗi căn điền: địa chỉ, loại nhà, giá, DT, điểm mạnh · Bấm <strong>"💾 Lưu căn"</strong>',
+        'Bấm <strong>"📂 Gợi ý từ CRM"</strong> để tự điền từ dữ liệu đã lưu — nhanh hơn 3x',
+        'Bước ② Cài đặt: ngày bắt đầu, mục tiêu, nền tảng, kiểu phân bổ',
+        'Bước ③ Bấm <strong>"🚀 Tạo lịch 30 content"</strong> → Bảng 30 ngày hiện ra đầy đủ',
+        'Tick ✓ đã đăng từng nền tảng ngay trên bảng · Bấm <strong>"✍️ Content"</strong> để xem & copy'
+      ],
+      tip:'💡 Mẹo: 6 căn × 5 tâm lý = 30 content thật. KH tìm nhà khu đó → thấy tên bạn khắp nơi!'
+    },
+    {
       icon:'🔍',title:'Khảo Sát Nhà → Tạo Content',color:'var(--gr)',
       steps:[
         'Vào <strong>Khảo Sát Nhà</strong> — điền đầy đủ địa chỉ, giá, diện tích, số tầng',
@@ -1721,15 +1769,48 @@ function buildGuide(){
       </div>
     </div>`).join('');
 
-  // Suggestions section
+  // 3-ebook library section
   el.innerHTML+=`
-    <div class="card" style="border-color:rgba(156,110,245,.35);background:linear-gradient(135deg,rgba(156,110,245,.08),rgba(76,156,245,.05))">
+    <div class="card" style="margin-top:4px;border-color:rgba(245,166,35,.35);background:linear-gradient(135deg,rgba(245,166,35,.07),rgba(76,156,245,.04))">
+      <div class="ctit"><span class="dot"></span>📚 Thư Viện 3 Ebook Thực Chiến — Trần Thế Vinh</div>
+      <div style="display:grid;gap:9px">
+        <div style="background:linear-gradient(135deg,rgba(245,166,35,.1),rgba(245,166,35,.03));border:1px solid rgba(245,166,35,.3);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:11px;flex-wrap:wrap">
+          <div style="font-size:1.6rem;flex-shrink:0">🏆</div>
+          <div style="flex:1;min-width:160px">
+            <div style="font-weight:800;font-size:.85rem;color:var(--ac)">Cẩm Nang Bách Thắng</div>
+            <div style="font-size:.72rem;color:var(--t2);margin-top:2px">10 Module môi giới thực chiến đầy đủ — từ tư duy đến chốt deal</div>
+          </div>
+          <button class="btn btn-p btn-sm" onclick="nav('handbook');setTimeout(()=>switchHBBook(0),100)">📖 Đọc ngay</button>
+        </div>
+        <div style="background:linear-gradient(135deg,rgba(239,83,80,.1),rgba(239,83,80,.03));border:1px solid rgba(239,83,80,.3);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:11px;flex-wrap:wrap">
+          <div style="font-size:1.6rem;flex-shrink:0">🧠</div>
+          <div style="flex:1;min-width:160px">
+            <div style="font-weight:800;font-size:.85rem;color:var(--rd)">Chốt Nhà Theo Ma Trận Tâm Lý KH</div>
+            <div style="font-size:.72rem;color:var(--t2);margin-top:2px">Chiến thuật phân tích và tác động tâm lý — 5 loại KH, 5 cách chốt khác nhau</div>
+          </div>
+          <button class="btn btn-sm" style="background:linear-gradient(135deg,var(--rd),#c62828);color:#fff" onclick="nav('handbook');setTimeout(()=>switchHBBook(1),100)">📖 Đọc ngay</button>
+        </div>
+        <div style="background:linear-gradient(135deg,rgba(76,156,245,.1),rgba(76,156,245,.03));border:1px solid rgba(76,156,245,.3);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:11px;flex-wrap:wrap">
+          <div style="font-size:1.6rem;flex-shrink:0">🔓</div>
+          <div style="flex:1;min-width:160px">
+            <div style="font-weight:800;font-size:.85rem;color:var(--bl)">Định Hướng Nhà — Phá Khoá Tâm Lý KH</div>
+            <div style="font-size:.72rem;color:var(--t2);margin-top:2px">Định hướng lại nhu cầu KH và phá vỡ rào cản để chốt trong tuần</div>
+          </div>
+          <button class="btn btn-sm" style="background:linear-gradient(135deg,var(--bl),#1565c0);color:#fff" onclick="nav('handbook');setTimeout(()=>switchHBBook(2),100)">📖 Đọc ngay</button>
+        </div>
+      </div>
+    </div>`;
+
+  // Tips section
+  el.innerHTML+=`
+    <div class="card" style="margin-top:9px;border-color:rgba(156,110,245,.35);background:linear-gradient(135deg,rgba(156,110,245,.08),rgba(76,156,245,.05))">
       <div class="ctit"><span class="dot" style="background:var(--pu)"></span>💡 Gợi Ý Tính Năng & Tip Hay</div>
       <div style="display:grid;gap:8px">
         ${[
-          {t:'Quy trình tối ưu',d:'Khảo Sát → Định Giá → Tạo Content → Lịch 7 Ngày → Chấm Điểm → Đặt Nhắc Follow-up',c:'var(--ac)'},
+          {t:'Quy trình v7 tối ưu',d:'🏘️ 6 Căn → 🔍 Khảo Sát → 🏷️ Định Giá → ✍️ Tạo Content → 📅 Lịch 30 Ngày → 🎯 Chấm Điểm → 🗄️ CRM',c:'var(--rd)'},
           {t:'Content 5x mỗi ngày',d:'Dùng chế độ "5 phiên bản" để có content cho 5 tâm lý KH chỉ trong 1 lần bấm',c:'var(--gr)'},
-          {t:'Follow-up = Vàng',d:'80% giao dịch được chốt sau lần follow-up thứ 3-7. Đặt nhắc lịch ngay!',c:'var(--rd)'},
+          {t:'Follow-up = Vàng',d:'80% giao dịch được chốt sau lần follow-up thứ 3-7. Đặt nhắc lịch ngay!',c:'var(--ac)'},
+          {t:'6 Căn = Bao Phủ Khu Vực',d:'1 người làm việc = sức mạnh 6 người. KH tìm nhà khu đó → thấy tên bạn khắp nơi',c:'var(--rd)'},
           {t:'A/B Test Hook',d:'Luôn test 2 phiên bản hook trước khi đăng — tăng tỷ lệ dừng lại 40-60%',c:'var(--bl)'},
           {t:'Backup thường xuyên',d:'Bấm 💾 Backup JSON trên thanh header để lưu toàn bộ dữ liệu về máy',c:'var(--pu)'},
           {t:'Hồ sơ cá nhân quan trọng',d:'Điền đầy đủ Hồ Sơ → Tên + SĐT tự động gắn vào MỌI content bạn tạo',c:'var(--ac)'}
@@ -1764,12 +1845,12 @@ function doExportAll(){
   dlTxt(t,'export-bds.txt');toast('📤 Đã xuất!');
 }
 function doBackup(){
-  const d={crm,tpl,prof,reminders,contentLog,v:6,t:new Date().toISOString()};
-  dlTxt(JSON.stringify(d,null,2),'backup-bds-'+Date.now()+'.json');toast('💾 Đã backup!');
+  const d={crm,tpl,prof,reminders,contentLog,sc6:sc6Data,v:7,t:new Date().toISOString()};
+  dlTxt(JSON.stringify(d,null,2),'backup-bds-v7-'+Date.now()+'.json');toast('💾 Đã backup!');
 }
 function doRestore(){
   const inp=document.createElement('input');inp.type='file';inp.accept='.json';
-  inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.crm)crm=d.crm;if(d.tpl)tpl=d.tpl;if(d.reminders)reminders=d.reminders;if(d.contentLog)contentLog=d.contentLog;if(d.prof){prof=d.prof;loadProfInp();if(prof.avatar)showAv(prof.avatar);}saveSt();buildCRM();buildTpl();buildProf();buildEarn();buildReminders();buildDashboard();updStats();buildHomeRecent();toast('🔄 Đã restore!');}catch(x){toast('❌ File không hợp lệ!');}};r.readAsText(f);};
+  inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.crm)crm=d.crm;if(d.tpl)tpl=d.tpl;if(d.reminders)reminders=d.reminders;if(d.contentLog)contentLog=d.contentLog;if(d.sc6)sc6Data=d.sc6;if(d.prof){prof=d.prof;loadProfInp();if(prof.avatar)showAv(prof.avatar);}saveSt();saveSC();buildCRM();buildTpl();buildProf();buildEarn();buildReminders();buildDashboard();updStats();buildHomeRecent();toast('🔄 Đã restore!');}catch(x){toast('❌ File không hợp lệ!');}};r.readAsText(f);};
   inp.click();
 }
 function dlTxt(c,fn){const b=new Blob([c],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=fn;a.click();}
@@ -1779,7 +1860,7 @@ function nav(id){
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   const pg=document.getElementById('pg-'+id);if(pg)pg.classList.add('on');
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
-  const mp={home:'🏠',gen:'✍️',sch:'📅',scr:'🎯',ab:'⚡',remix:'🔁',survey:'🔍',valuation:'🏷️',readkh:'🎭',guidetour:'🏡',salescripts:'💬',tools:'🔧',cmp:'📊',fs:'🔮',handbook:'📖',tpl:'📌',crm:'🗄️',ag:'🤖',earn:'💰',charity:'❤️',prof:'👤',reminder:'⏰',dashboard:'📊',guide:'❓'};
+  const mp={home:'🏠',gen:'✍️',sch:'📅',scr:'🎯',ab:'⚡',remix:'🔁',survey:'🔍',valuation:'🏷️',readkh:'🎭',guidetour:'🏡',salescripts:'💬',tools:'🔧',cmp:'📊',fs:'🔮',handbook:'📚',tpl:'📌',crm:'🗄️',ag:'🤖',earn:'💰',charity:'❤️',prof:'👤',reminder:'⏰',dashboard:'📊',guide:'❓',sixcan:'🏘️',morning:'☀️',calendar:'📅',khlabels:'🎯',timeline:'📋'};
   document.querySelectorAll('.ni').forEach(n=>{const ic=n.querySelector('.ic');if(ic&&ic.textContent.trim()===mp[id])n.classList.add('on');});
   const sb=document.getElementById('sb');if(sb&&sb.classList.contains('mob'))sb.classList.remove('mob');
   window.scrollTo&&window.scrollTo(0,0);
@@ -1791,9 +1872,527 @@ function nav(id){
   if(id==='calendar')buildCalendar();
   if(id==='khlabels')buildKHLabels();
   if(id==='timeline')buildTLSelect();
+  if(id==='sixcan')initSixCan();
+  if(id==='handbook')buildHBExtra();
 }
 
-// ===================== 1. MORNING CHECKLIST =====================
+// ===================== CHIẾN THUẬT 6 CĂN =====================
+// State
+let sc6Data = {
+  slots: Array.from({length:6},(_,i)=>({id:i+1,addr:'',type:'',price:'',area:'',floors:'',pros:'',code:'',filled:false})),
+  settings: {startDate:'',goal:'Chốt nhanh',platforms:['fb','zalo','tiktok'],dist:'smart',psyList:['Tham','Sân','Si','Nghi ngờ','Ngạo mạn']},
+  schedule: [],  // 30 items
+  posted: {}     // {dayIdx_plt: bool}
+};
+
+const SC_PSY_CFG = {
+  'Tham':  {e:'💰',c:'var(--ac)', bg:'rgba(245,166,35,.15)',  border:'rgba(245,166,35,.5)',
+    keywords:['Giá tốt nhất khu vực','Chủ cần bán gấp','Mức tài chính hiếm','Khả năng tăng giá','Giữ tiền tốt hơn gửi bank','Cơ hội mua hời'],
+    angle:'Tạo cảm giác "mua hời" — nhấn giá, tiềm năng sinh lời, khan hiếm'},
+  'Sân':   {e:'🔥',c:'var(--rd)', bg:'rgba(239,83,80,.12)',   border:'rgba(239,83,80,.45)',
+    keywords:['Đẹp hơn nhà cùng phân khúc','Hẻm rộng hơn','Thiết kế nổi bật','Vị trí tốt hơn khu vực'],
+    angle:'Tạo cảm giác "chọn thông minh hơn người khác"'},
+  'Si':    {e:'🤔',c:'var(--bl)', bg:'rgba(76,156,245,.12)',  border:'rgba(76,156,245,.45)',
+    keywords:['Tổ ấm gia đình trẻ','Không gian sống bình yên','Gần trường học','Đi làm thuận tiện','An cư lâu dài'],
+    angle:'Đánh vào cảm xúc — hình dung cuộc sống tương lai'},
+  'Nghi ngờ':{e:'🔍',c:'var(--gr)',bg:'rgba(62,207,142,.12)', border:'rgba(62,207,142,.45)',
+    keywords:['Nhà thật 100%','Video quay thực tế','Sổ hồng chính chủ','Thông tin minh bạch','Không đăng giá ảo'],
+    angle:'Xây dựng niềm tin — chứng minh bằng bằng chứng thực'},
+  'Ngạo mạn':{e:'👑',c:'var(--pu)',bg:'rgba(156,110,245,.12)',border:'rgba(156,110,245,.45)',
+    keywords:['Nhà có gu riêng','Không gian riêng tư','Khu dân cư chất lượng','Phong cách sống khác biệt'],
+    angle:'Tạo cảm giác vị thế và đẳng cấp'}
+};
+
+const SC_DAYS_VN = ['CN','T2','T3','T4','T5','T6','T7'];
+const SC_GOLDEN_HOURS = {
+  T2:'8:00 & 20:00', T3:'19:00–21:00', T4:'12:00 & 20:00',
+  T5:'8:00 & 17:00', T6:'12:00–22:00', T7:'9:00–21:00', CN:'10:00–20:00'
+};
+const SC_PLT_LABELS = {fb:'📘 FB',zalo:'💬 Zalo',tiktok:'🎵 TikTok',web:'🌐 Web'};
+const SC_PLT_PRIORITY = {T2:'fb',T3:'tiktok',T4:'fb',T5:'zalo',T6:'fb',T7:'fb',CN:'zalo'};
+
+// ── Load / Save ──
+function loadSC(){try{const s=localStorage.getItem('bds_sc6');if(s)sc6Data=JSON.parse(s);}catch(e){}}
+function saveSC(){try{localStorage.setItem('bds_sc6',JSON.stringify(sc6Data));}catch(e){}}
+
+// ── Init ──
+function initSixCan(){
+  loadSC();
+  buildSCSlots();
+  buildSCPsyGrid();
+  // Set default start date to today
+  const sd=document.getElementById('sc_startdate');
+  if(sd&&!sc6Data.settings.startDate){
+    const t=new Date();t.setMinutes(t.getMinutes()-t.getTimezoneOffset());
+    sd.value=t.toISOString().split('T')[0];
+  } else if(sd){sd.value=sc6Data.settings.startDate;}
+  // Restore platform pills
+  document.querySelectorAll('#scPltPills .pill').forEach(p=>{
+    const v=p.dataset.v;
+    p.classList.toggle('on',sc6Data.settings.platforms.includes(v));
+  });
+  // Restore goal
+  const sg=document.getElementById('sc_goal');if(sg)sg.value=sc6Data.settings.goal||'Chốt nhanh';
+  // Restore dist
+  const sd2=document.getElementById('sc_dist');if(sd2)sd2.value=sc6Data.settings.dist||'smart';
+  // If schedule exists, show tab 3
+  if(sc6Data.schedule.length){
+    switchSCTab(3,document.getElementById('sctab3'));
+    renderSC30Table();
+    renderSCStats();
+    buildSCCanSelect();
+  }
+}
+
+// ── Slots builder ──
+function buildSCSlots(){
+  const el=document.getElementById('scSlots');if(!el)return;
+  el.innerHTML=sc6Data.slots.map((slot,i)=>{
+    const filled=slot.filled;
+    return`<div class="sc-slot${filled?' filled':''}" id="scslot_${i}">
+      <div class="sc-slot-head">
+        <div class="sc-num">${i+1}</div>
+        <div class="sc-slot-title">${filled?`<span style="color:var(--ac);font-family:'Space Mono',monospace;font-size:.68rem">${slot.code||''}</span> ${slot.type} — ${slot.addr.substring(0,35)}${slot.addr.length>35?'...':''}`:'<span style="color:var(--t3)">Chưa nhập thông tin căn nhà</span>'}</div>
+        <span class="sc-slot-badge ${filled?'':''}\" style="background:${filled?'rgba(62,207,142,.15)':'var(--bg3)'};color:${filled?'var(--gr)':'var(--t3)'}">${filled?'✅ Đã nhập':'⬜ Trống'}</span>
+        <button class="btn btn-s btn-xs" style="margin-left:6px" onclick="toggleSCSlot(${i})">${filled?'✏️ Sửa':'➕ Nhập'}</button>
+      </div>
+      <div class="sc-body" id="scbody_${i}" style="display:${filled?'none':'block'}">
+        <div class="fg2" style="margin-top:4px">
+          <div class="fg"><label>🏠 Địa chỉ <span style="font-size:.62rem;color:var(--t3)">(tên đường, phường)</span></label>
+            <input type="text" id="sc_addr_${i}" value="${slot.addr||''}" placeholder="VD: 47/3 Phan Văn Trị, P.11, Bình Thạnh" oninput="scSlotChange(${i})">
+          </div>
+          <div class="fg"><label>🔢 Mã căn <span class="lib-btn" onclick="scAutoCode(${i})">⚡ Tự sinh</span></label>
+            <input type="text" id="sc_code_${i}" value="${slot.code||''}" placeholder="VD: NP-BTH-20260516-xxxx" style="font-family:'Space Mono',monospace;font-size:.72rem;color:var(--ac)" oninput="scSlotChange(${i})">
+          </div>
+          <div class="fg"><label>🏡 Loại nhà <span class="lib-btn" onclick="openLib('sc_type_${i}','type')">➕</span></label>
+            <input type="text" id="sc_type_${i}" value="${slot.type||''}" placeholder="Nhà phố, căn hộ..." oninput="scSlotChange(${i})">
+          </div>
+          <div class="fg"><label>💰 Giá <span class="lib-btn" onclick="openLib('sc_price_${i}','price')">➕</span></label>
+            <input type="text" id="sc_price_${i}" value="${slot.price||''}" placeholder="5.5 tỷ..." oninput="scSlotChange(${i})">
+          </div>
+          <div class="fg"><label>📐 Diện tích</label>
+            <input type="text" id="sc_area_${i}" value="${slot.area||''}" placeholder="80m²" oninput="scSlotChange(${i})">
+          </div>
+          <div class="fg"><label>🏗️ Số tầng</label>
+            <input type="text" id="sc_floors_${i}" value="${slot.floors||''}" placeholder="3 tầng" oninput="scSlotChange(${i})">
+          </div>
+          <div class="fg full"><label>⭐ Điểm mạnh nổi bật <span class="lib-btn" onclick="openLib('sc_pros_${i}','pros')">➕ Thư viện</span></label>
+            <input type="text" id="sc_pros_${i}" value="${slot.pros||''}" placeholder="Sổ hồng, hẻm xe hơi, gần trường..." oninput="scSlotChange(${i})">
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:8px">
+          <button class="btn btn-g btn-sm" onclick="saveSCSlot(${i})">💾 Lưu căn ${i+1}</button>
+          <button class="btn btn-r btn-xs" onclick="clearSCSlot(${i})">🗑️</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  // Update progress
+  const filled=sc6Data.slots.filter(s=>s.filled).length;
+  const prog=document.getElementById('scProgress');
+  if(!prog){
+    const p=document.createElement('div');p.id='scProgress';
+    p.style.cssText='font-size:.74rem;color:var(--t2);margin-bottom:10px;display:flex;align-items:center;gap:8px';
+    document.getElementById('scSlots').before(p);
+  }
+  const pp=document.getElementById('scProgress');
+  if(pp){
+    const pct=Math.round(filled/6*100);
+    pp.innerHTML=`<div style="flex:1;height:6px;background:var(--bg3);border-radius:4px;overflow:hidden"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--ac),var(--gr));border-radius:4px;transition:.4s"></div></div><span style="font-weight:700;color:${filled===6?'var(--gr)':'var(--t2)'}">${filled}/6 căn ${filled===6?'✅ Đủ rồi!':''}</span>`;
+  }
+}
+
+function toggleSCSlot(i){
+  const body=document.getElementById('scbody_'+i);
+  if(body)body.style.display=body.style.display==='none'?'block':'none';
+}
+
+function scSlotChange(i){
+  const get=id=>(document.getElementById(id)?.value||'').trim();
+  sc6Data.slots[i].addr=get(`sc_addr_${i}`);
+  sc6Data.slots[i].code=get(`sc_code_${i}`);
+  sc6Data.slots[i].type=get(`sc_type_${i}`);
+  sc6Data.slots[i].price=get(`sc_price_${i}`);
+  sc6Data.slots[i].area=get(`sc_area_${i}`);
+  sc6Data.slots[i].floors=get(`sc_floors_${i}`);
+  sc6Data.slots[i].pros=get(`sc_pros_${i}`);
+}
+
+function saveSCSlot(i){
+  scSlotChange(i);
+  const s=sc6Data.slots[i];
+  if(!s.addr&&!s.type)return toast('⚠️ Nhập ít nhất địa chỉ hoặc loại nhà!');
+  if(!s.code)s.code=genPropCode(s.type||'NP',s.addr||'KV',Date.now());
+  s.filled=true;
+  saveSC();buildSCSlots();
+  // Close slot after save
+  setTimeout(()=>{const b=document.getElementById('scbody_'+i);if(b)b.style.display='none';},100);
+  toast(`✅ Đã lưu Căn ${i+1}!`);
+}
+
+function clearSCSlot(i){
+  sc6Data.slots[i]={id:i+1,addr:'',type:'',price:'',area:'',floors:'',pros:'',code:'',filled:false};
+  saveSC();buildSCSlots();toast('🗑️ Đã xóa căn '+(i+1));
+}
+
+function scAutoCode(i){
+  const type=(document.getElementById(`sc_type_${i}`)?.value||'NP').trim();
+  const addr=(document.getElementById(`sc_addr_${i}`)?.value||'KV').trim();
+  const code=genPropCode(type,addr,Date.now());
+  const el=document.getElementById(`sc_code_${i}`);
+  if(el){el.value=code;scSlotChange(i);}
+}
+
+// ── Psy grid ──
+function buildSCPsyGrid(){
+  const el=document.getElementById('scPsyGrid');if(!el)return;
+  const all=['Tham','Sân','Si','Nghi ngờ','Ngạo mạn'];
+  el.innerHTML=all.map(p=>{
+    const cfg=SC_PSY_CFG[p];
+    const on=sc6Data.settings.psyList.includes(p);
+    return`<div class="psy-sel${on?' on':''}" data-p="${p}" onclick="toggleSCPsy(this,'${p}')" style="${on?`background:${cfg.bg};border-color:${cfg.border};color:${cfg.c}`:''}">
+      <div style="font-size:1.1rem">${cfg.e}</div>
+      <div style="font-weight:700;font-size:.68rem;margin-top:2px">${p}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleSCPsy(el,p){
+  const idx=sc6Data.settings.psyList.indexOf(p);
+  if(idx>=0){
+    if(sc6Data.settings.psyList.length<=1)return toast('⚠️ Cần ít nhất 1 tâm lý!');
+    sc6Data.settings.psyList.splice(idx,1);
+    el.classList.remove('on');
+    el.style.background='';el.style.borderColor='';el.style.color='';
+  } else {
+    sc6Data.settings.psyList.push(p);
+    const cfg=SC_PSY_CFG[p];
+    el.classList.add('on');
+    el.style.background=cfg.bg;el.style.borderColor=cfg.border;el.style.color=cfg.c;
+  }
+}
+
+function toggleSCPlt(el){
+  const v=el.dataset.v;
+  el.classList.toggle('on');
+  const active=[...document.querySelectorAll('#scPltPills .pill.on')].map(p=>p.dataset.v);
+  if(active.length===0){el.classList.add('on');return;}
+  sc6Data.settings.platforms=active;
+}
+
+// ── Validate & move to settings ──
+function validateAndNextSC(){
+  const filled=sc6Data.slots.filter(s=>s.filled);
+  if(filled.length<2)return toast('⚠️ Cần nhập ít nhất 2 căn để tạo chiến dịch!');
+  if(filled.length<6){
+    if(!confirm(`Hiện có ${filled.length}/6 căn. Tiếp tục với ${filled.length} căn?`))return;
+  }
+  switchSCTab(2,document.getElementById('sctab2'));
+}
+
+// ── Generate 30-day schedule ──
+function generateSC30(){
+  // Save settings
+  const sd=document.getElementById('sc_startdate')?.value;
+  if(!sd)return toast('⚠️ Chọn ngày bắt đầu!');
+  sc6Data.settings.startDate=sd;
+  sc6Data.settings.goal=document.getElementById('sc_goal')?.value||'Chốt nhanh';
+  sc6Data.settings.dist=document.getElementById('sc_dist')?.value||'smart';
+  sc6Data.settings.platforms=[...document.querySelectorAll('#scPltPills .pill.on')].map(p=>p.dataset.v);
+  if(!sc6Data.settings.platforms.length)return toast('⚠️ Chọn ít nhất 1 nền tảng!');
+  const filledSlots=sc6Data.slots.filter(s=>s.filled);
+  const psyList=sc6Data.settings.psyList;
+  const nCan=filledSlots.length;
+  const nPsy=psyList.length;
+  const dist=sc6Data.settings.dist;
+  // Build all combos: nCan × nPsy
+  let combos=[];
+  filledSlots.forEach((slot,ci)=>{
+    psyList.forEach((psy,pi)=>{
+      combos.push({slotIdx:sc6Data.slots.indexOf(slot),canNum:ci+1,psy,slot});
+    });
+  });
+  // Distribute into 30 days
+  const totalDays=30;
+  let schedule=[];
+  if(dist==='smart'){
+    // Shuffle: no same can on consecutive days, cycle through combos
+    let remaining=[...combos];let lastCan=-1;
+    for(let d=0;d<totalDays;d++){
+      if(!remaining.length)remaining=[...combos];
+      // Prefer different can from last
+      let pick=remaining.find(c=>c.canNum!==lastCan)||remaining[0];
+      remaining.splice(remaining.indexOf(pick),1);
+      schedule.push({day:d+1,...pick});
+      lastCan=pick.canNum;
+    }
+  } else if(dist==='bycan'){
+    // 5 days per can, cycle through psy
+    let d=0;
+    filledSlots.forEach((slot,ci)=>{
+      for(let j=0;j<5&&d<totalDays;j++,d++){
+        const psy=psyList[j%nPsy];
+        schedule.push({day:d+1,slotIdx:sc6Data.slots.indexOf(slot),canNum:ci+1,psy,slot});
+      }
+    });
+    // fill remaining
+    let i=0;while(schedule.length<totalDays){const c=combos[i%combos.length];schedule.push({day:schedule.length+1,...c});i++;}
+  } else {// bypsy
+    let d=0;
+    psyList.forEach((psy,pi)=>{
+      for(let j=0;j<6&&d<totalDays;j++,d++){
+        const slot=filledSlots[j%nCan];
+        schedule.push({day:d+1,slotIdx:sc6Data.slots.indexOf(slot),canNum:j%nCan+1,psy,slot});
+      }
+    });
+    let i=0;while(schedule.length<totalDays){const c=combos[i%combos.length];schedule.push({day:schedule.length+1,...c});i++;}
+  }
+  // Attach dates, weekday, platform, time
+  const startD=new Date(sd);
+  schedule=schedule.map((item,i)=>{
+    const d=new Date(startD);d.setDate(d.getDate()+i);
+    const wd=SC_DAYS_VN[d.getDay()];
+    const plts=sc6Data.settings.platforms;
+    // Rotate platforms smartly
+    const mainPlt=plts[i%plts.length];
+    const extraPlt=plts[(i+1)%plts.length];
+    const time=SC_GOLDEN_HOURS[wd]||'8:00 & 20:00';
+    return{...item,date:d.toLocaleDateString('vi-VN'),dateISO:d.toISOString().split('T')[0],wd,mainPlt,extraPlt,time};
+  });
+  sc6Data.schedule=schedule;
+  sc6Data.posted={};
+  saveSC();
+  switchSCTab(3,document.getElementById('sctab3'));
+  renderSC30Table();
+  renderSCStats();
+  buildSCCanSelect();
+  toast('🎉 Đã tạo lịch 30 ngày!');
+}
+
+// ── Render 30-day table ──
+function renderSC30Table(){
+  const body=document.getElementById('sc30Body');if(!body)return;
+  const title=document.getElementById('scCampaignTitle');
+  const sub=document.getElementById('scCampaignSub');
+  const filled=sc6Data.slots.filter(s=>s.filled);
+  if(title)title.textContent=`Chiến dịch ${filled.length} căn — ${sc6Data.settings.goal}`;
+  if(sub)sub.textContent=`Bắt đầu: ${sc6Data.settings.startDate} · ${sc6Data.schedule.length} content · ${sc6Data.settings.platforms.map(p=>SC_PLT_LABELS[p]).join(' ')}`;
+  let html='';let curWeek=-1;
+  sc6Data.schedule.forEach((item,idx)=>{
+    const weekNum=Math.floor(idx/7)+1;
+    if(weekNum!==curWeek){
+      curWeek=weekNum;
+      html+=`<tr><td colspan="7" class="sc-week-sep">📅 Tuần ${weekNum} — ${item.date}${weekNum<4?' đến '+sc6Data.schedule[Math.min(idx+6,29)]?.date:''}</td></tr>`;
+    }
+    const cfg=SC_PSY_CFG[item.psy]||SC_PSY_CFG['Si'];
+    const slot=sc6Data.slots[item.slotIdx]||{};
+    const postedKey=`${idx}_${item.mainPlt}`;
+    const isDone=sc6Data.posted[postedKey];
+    const plts=sc6Data.settings.platforms;
+    const pltChips=plts.map(p=>{const k=`${idx}_${p}`;const d=sc6Data.posted[k];return`<span class="sc-plt-chip${d?' done':''}" onclick="toggleSCPosted(${idx},'${p}',this)" style="cursor:pointer" title="Click để đánh dấu đã đăng ${SC_PLT_LABELS[p]}">${SC_PLT_LABELS[p]}${d?' ✓':''}</span>`;}).join('');
+    html+=`<tr class="${isDone?'done-row':''}">
+      <td><div class="sc-day-num">N${item.day}</div><div style="font-size:.62rem;color:var(--t3)">${item.date}</div></td>
+      <td><span style="font-weight:700;color:var(--t2);font-size:.72rem">${item.wd}</span></td>
+      <td>
+        <div style="font-size:.7rem;font-weight:700;color:var(--tx)">Căn ${item.canNum}</div>
+        <div style="font-size:.65rem;color:var(--t3)">${slot.addr?.substring(0,28)||'—'}</div>
+        <div style="font-size:.6rem;color:var(--ac);font-family:'Space Mono',monospace">${slot.code||''}</div>
+      </td>
+      <td><span class="sc-psy-badge" style="background:${cfg.bg};color:${cfg.c};border:1px solid ${cfg.border}">${cfg.e} ${item.psy}</span></td>
+      <td><div class="sc-plt-chips">${pltChips}</div></td>
+      <td><div style="font-size:.68rem;color:var(--gr);font-weight:600">🕐 ${item.time}</div></td>
+      <td><button class="btn btn-s btn-xs" onclick="previewSCDay(${idx})">✍️ Content</button></td>
+    </tr>`;
+  });
+  body.innerHTML=html;
+}
+
+function toggleSCPosted(dayIdx,plt,el){
+  const key=`${dayIdx}_${plt}`;
+  sc6Data.posted[key]=!sc6Data.posted[key];
+  el.classList.toggle('done',sc6Data.posted[key]);
+  el.textContent=SC_PLT_LABELS[plt]+(sc6Data.posted[key]?' ✓':'');
+  saveSC();renderSCStats();
+}
+
+// ── Stats ──
+function renderSCStats(){
+  const el=document.getElementById('scStats');if(!el)return;
+  const total=sc6Data.schedule.length;
+  const plts=sc6Data.settings.platforms;
+  const totalSlots=total*plts.length;
+  const posted=Object.values(sc6Data.posted).filter(Boolean).length;
+  const pct=totalSlots?Math.round(posted/totalSlots*100):0;
+  const canCounts={};
+  sc6Data.schedule.forEach(item=>{canCounts[item.canNum]=(canCounts[item.canNum]||0)+1;});
+  const psyCounts={};
+  sc6Data.schedule.forEach(item=>{psyCounts[item.psy]=(psyCounts[item.psy]||0)+1;});
+  const topPsy=Object.entries(psyCounts).sort((a,b)=>b[1]-a[1])[0]?.[0]||'—';
+  const cfg=SC_PSY_CFG[topPsy]||{e:'—'};
+  el.innerHTML=[
+    {n:total,l:'Content lịch',c:'var(--ac)'},
+    {n:posted,l:'Đã đăng',c:'var(--gr)'},
+    {n:pct+'%',l:'Tiến độ',c:'var(--bl)'},
+    {n:cfg.e+' '+topPsy,l:'Tâm lý nhiều nhất',c:'var(--pu)'}
+  ].map(s=>`<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px;text-align:center"><div style="font-size:1.3rem;font-weight:900;color:${s.c};font-family:'Space Mono',monospace;line-height:1.2">${s.n}</div><div style="font-size:.63rem;color:var(--t3);margin-top:3px">${s.l}</div></div>`).join('');
+}
+
+// ── Preview single day content ──
+function previewSCDay(dayIdx){
+  const item=sc6Data.schedule[dayIdx];if(!item)return;
+  const slot=sc6Data.slots[item.slotIdx]||{};
+  // Fill gen form with this slot data and navigate to content view
+  const d={type:slot.type||'Nhà phố',price:slot.price||'',area:slot.area||'',loc:slot.addr||'',pros:slot.pros||''};
+  // Build content inline using existing engine
+  const ct=`📞 ${prof.phone||'SĐT'} | ${prof.name||'Môi giới'}`;
+  const gs=[sc6Data.settings.goal||'Chốt nhanh'];
+  const frm='AIDA';
+  const content={
+    fb:mkFB(d,item.psy,frm,gs,ct),
+    zalo:mkZL(d,item.psy,gs,ct),
+    tiktok:mkTT(d,item.psy,gs,ct),
+    web:mkWB(d,item.psy,ct)
+  };
+  // Show in tab 4
+  switchSCTab(4,document.getElementById('sctab4'));
+  // Set selects
+  const vc=document.getElementById('sc_viewCan');
+  if(vc)vc.value=item.slotIdx;
+  const vp=document.getElementById('sc_viewPsy');
+  if(vp)vp.value=item.psy;
+  // Render
+  const out=document.getElementById('scContentOut');if(!out)return;
+  const cfg=SC_PSY_CFG[item.psy]||SC_PSY_CFG['Si'];
+  out.innerHTML=`
+    <div style="background:${cfg.bg};border:1px solid ${cfg.border};border-radius:10px;padding:11px 14px;margin-bottom:11px;display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+      <div style="font-size:1.3rem">${cfg.e}</div>
+      <div style="flex:1">
+        <div style="font-weight:800;font-size:.85rem;color:var(--tx)">Căn ${item.canNum} — Tâm lý: ${item.psy}</div>
+        <div style="font-size:.71rem;color:var(--t3)">${slot.addr||'—'} · ${slot.price||'—'} · ${item.date}</div>
+        <div style="font-size:.7rem;color:var(--t2);margin-top:2px;font-style:italic">📌 Góc tiếp cận: ${cfg.angle}</div>
+      </div>
+    </div>
+    <div class="ptabs" id="scPTabs">
+      <div class="ptab on" onclick="showSCPlt(this,'fb',${JSON.stringify(content).replace(/"/g,'&quot;')})">📘 Facebook</div>
+      <div class="ptab" onclick="showSCPlt(this,'zalo',${JSON.stringify(content).replace(/"/g,'&quot;')})">💬 Zalo</div>
+      <div class="ptab" onclick="showSCPlt(this,'tiktok',${JSON.stringify(content).replace(/"/g,'&quot;')})">🎵 TikTok</div>
+      <div class="ptab" onclick="showSCPlt(this,'web',${JSON.stringify(content).replace(/"/g,'&quot;')})">🌐 Website</div>
+    </div>
+    <div class="cbox" id="scContentBox">
+      <pre id="scPre" style="white-space:pre-wrap;font-family:'Be Vietnam Pro',sans-serif;font-size:.78rem;line-height:1.78;color:var(--tx);padding-right:52px">${esc(content.fb)}</pre>
+      <button class="cpbtn" onclick="cpEl('scPre')">📋 Copy</button>
+    </div>
+    <div style="margin-top:9px;display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn btn-g btn-sm" onclick="saveOutputToLibrary('🏘️ Căn ${item.canNum} – ${item.psy}',document.getElementById('scPre').textContent,'sixcan')">💾 Lưu thư viện</button>
+      <button class="btn btn-s btn-sm" onclick="switchSCTab(3,document.getElementById('sctab3'))">← Về lịch</button>
+    </div>`;
+}
+
+function showSCPlt(el,plt,content){
+  document.querySelectorAll('#scPTabs .ptab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  const pre=document.getElementById('scPre');
+  if(pre)pre.textContent=content[plt]||'';
+}
+
+// ── Content view tab ──
+function buildSCCanSelect(){
+  const sel=document.getElementById('sc_viewCan');if(!sel)return;
+  const filled=sc6Data.slots.map((s,i)=>({...s,i})).filter(s=>s.filled);
+  sel.innerHTML='<option value="">-- Chọn căn --</option>'+
+    filled.map(s=>`<option value="${s.i}">Căn ${s.i+1} — ${s.addr?.substring(0,30)||s.type}</option>`).join('');
+}
+
+function renderSCContent(){
+  const canIdx=document.getElementById('sc_viewCan')?.value;
+  const psy=document.getElementById('sc_viewPsy')?.value;
+  const plt=document.getElementById('sc_viewPlt')?.value||'fb';
+  if(canIdx===''||!psy)return;
+  const slot=sc6Data.slots[parseInt(canIdx)];if(!slot||!slot.filled)return;
+  const d={type:slot.type||'Nhà phố',price:slot.price||'',area:slot.area||'',loc:slot.addr||'',pros:slot.pros||''};
+  const ct=`📞 ${prof.phone||'SĐT'} | ${prof.name||'Môi giới'}`;
+  const gs=[sc6Data.settings.goal||'Chốt nhanh'];
+  const content={fb:mkFB(d,psy,'AIDA',gs,ct),zalo:mkZL(d,psy,gs,ct),tiktok:mkTT(d,psy,gs,ct),web:mkWB(d,psy,ct)};
+  const cfg=SC_PSY_CFG[psy]||SC_PSY_CFG['Si'];
+  const out=document.getElementById('scContentOut');if(!out)return;
+  const pid='scv_'+Date.now();
+  out.innerHTML=`
+    <div style="background:${cfg.bg};border:1px solid ${cfg.border};border-radius:9px;padding:9px 13px;margin-bottom:10px;font-size:.73rem;color:var(--t2)">
+      📌 <strong style="color:${cfg.c}">${cfg.e} ${psy}:</strong> ${cfg.angle}
+    </div>
+    <div class="cbox"><pre id="${pid}" style="white-space:pre-wrap;font-family:'Be Vietnam Pro',sans-serif;font-size:.78rem;line-height:1.78;color:var(--tx);padding-right:52px">${esc(content[plt]||'')}</pre><button class="cpbtn" onclick="cpEl('${pid}')">📋 Copy</button></div>
+    <div style="margin-top:8px;display:flex;gap:6px"><button class="btn btn-g btn-sm" onclick="saveOutputToLibrary('🏘️ Căn ${parseInt(canIdx)+1} – ${psy}',document.getElementById('${pid}').textContent,'sixcan')">💾 Lưu</button></div>`;
+}
+
+// ── Tab switcher ──
+function switchSCTab(n,el){
+  [1,2,3,4].forEach(i=>{
+    const pg=document.getElementById('scpg'+i);if(pg)pg.style.display=i===n?'block':'none';
+    const tb=document.getElementById('sctab'+i);if(tb)tb.classList.toggle('on',i===n);
+  });
+  if(n===3&&sc6Data.schedule.length){renderSC30Table();renderSCStats();}
+  if(n===4){buildSCCanSelect();}
+}
+
+// ── Helpers ──
+function scAutoFromCRM(){
+  if(!crm.length)return toast('⚠️ CRM chưa có dữ liệu! Lưu tin vào CRM trước.');
+  // Fill empty slots from CRM entries
+  let filled=0;
+  crm.slice(0,6).forEach((e,i)=>{
+    if(sc6Data.slots[i]&&!sc6Data.slots[i].filled){
+      sc6Data.slots[i]={id:i+1,addr:e.loc||'',type:e.type||'',price:e.price||'',area:e.area||'',floors:'',pros:e.pros||'',code:e.code||'',filled:true};
+      filled++;
+    }
+  });
+  if(!filled)return toast('⚠️ Tất cả slot đã có dữ liệu!');
+  saveSC();buildSCSlots();toast(`✅ Đã gợi ý ${filled} căn từ CRM!`);
+}
+
+function clearSixCan(){
+  if(!confirm('Xóa toàn bộ dữ liệu chiến dịch 6 căn?'))return;
+  sc6Data={slots:Array.from({length:6},(_,i)=>({id:i+1,addr:'',type:'',price:'',area:'',floors:'',pros:'',code:'',filled:false})),settings:{startDate:'',goal:'Chốt nhanh',platforms:['fb','zalo','tiktok'],dist:'smart',psyList:['Tham','Sân','Si','Nghi ngờ','Ngạo mạn']},schedule:[],posted:{}};
+  saveSC();initSixCan();toast('🗑️ Đã xóa!');
+}
+
+function clearSC30(){
+  if(!confirm('Xóa lịch 30 ngày?'))return;
+  sc6Data.schedule=[];sc6Data.posted={};
+  saveSC();
+  document.getElementById('sc30Body').innerHTML='';
+  document.getElementById('scStats').innerHTML='';
+  switchSCTab(1,document.getElementById('sctab1'));
+  toast('🗑️ Đã xóa lịch!');
+}
+
+function expSC30(){
+  if(!sc6Data.schedule.length)return toast('⚠️ Chưa có lịch!');
+  const filled=sc6Data.slots.filter(s=>s.filled);
+  let txt=`CHIẾN THUẬT 6 CĂN — LỊCH 30 NGÀY\n${'='.repeat(50)}\n`;
+  txt+=`Chiến dịch: ${filled.length} căn · ${sc6Data.settings.goal}\n`;
+  txt+=`Bắt đầu: ${sc6Data.settings.startDate}\n`;
+  txt+=`Nền tảng: ${sc6Data.settings.platforms.map(p=>SC_PLT_LABELS[p]).join(', ')}\n\n`;
+  txt+=`DANH SÁCH ${filled.length} CĂN:\n`;
+  filled.forEach((s,i)=>{txt+=`Căn ${i+1}: [${s.code}] ${s.type} — ${s.addr} — ${s.price} — ${s.area}\n`;});
+  txt+=`\n${'─'.repeat(50)}\nLỊCH CHI TIẾT:\n\n`;
+  let week=0;
+  sc6Data.schedule.forEach((item,i)=>{
+    const w=Math.floor(i/7)+1;
+    if(w!==week){week=w;txt+=`\n📅 TUẦN ${w}\n${'─'.repeat(30)}\n`;}
+    const slot=sc6Data.slots[item.slotIdx]||{};
+    const postedAny=sc6Data.settings.platforms.some(p=>sc6Data.posted[`${i}_${p}`]);
+    txt+=`Ngày ${item.day} [${item.wd}] ${item.date}${postedAny?' ✅':''}\n`;
+    txt+=`  Căn: ${item.canNum} — ${slot.addr||'—'} (${slot.price||'—'})\n`;
+    txt+=`  Tâm lý: ${SC_PSY_CFG[item.psy]?.e||''} ${item.psy}\n`;
+    txt+=`  Giờ đăng: ${item.time}\n`;
+    txt+=`  Nền tảng: ${sc6Data.settings.platforms.map(p=>SC_PLT_LABELS[p]).join(' · ')}\n\n`;
+  });
+  dlTxt(txt,`chien-thuat-6-can-${sc6Data.settings.startDate||Date.now()}.txt`);
+  toast('📄 Đã xuất lịch!');
+}
+
+// ── Update buildHomeFeatures to include sixcan ──
+// (already included in previous buildHomeFeatures update)
 const CK_ITEMS=[
   // Nhóm KH & Follow-up
   {g:'📞 KH & Follow-up',txt:'Xem danh sách nhắc lịch hôm nay',sub:'Ai đến hạn follow-up? Gọi ngay trước 9:00!'},
