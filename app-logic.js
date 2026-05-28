@@ -147,6 +147,17 @@ selEl='Kim',selPsy='Si',selFrm='AIDA',
 schedProp='',svData={},rkAnswers=[],
 saleScripts=[...DEFAULT_SCRIPTS],curSaleCat='Chốt deal';
 
+// KH Labels state — khai báo sớm để buildDashboard dùng được
+let khList=[];
+
+// 6-Can state — khai báo sớm để buildDashboard dùng được  
+let sc6Data={
+  slots:Array.from({length:6},(_,i)=>({id:i+1,addr:'',type:'',price:'',area:'',floors:'',pros:'',code:'',filled:false})),
+  settings:{startDate:'',goal:'Chốt nhanh',platforms:['fb','zalo','tiktok'],dist:'smart',psyList:['Tham','Sân','Si','Nghi ngờ','Ngạo mạn']},
+  schedule:[],
+  posted:{}
+};
+
 // ===================== POST TRACKER =====================
 // State: per content-session, keyed by content ID (timestamp)
 let trackerState = {fb:false,zalo:false,tiktok:false,web:false};
@@ -433,10 +444,12 @@ async function doGenerate(){
   VS=plist.map(p=>buildVer(d,p,auto?autoFrm(p):frm,gs));VI=0;schedProp=`${d.type} ${d.loc} ${d.price}`;
   // Log content for dashboard
   logContentCreated(d);
-  // Reset post tracker for new content
+  // Reset post tracker và CRM edit mode cho content mới
   trackerState={fb:false,zalo:false,tiktok:false,web:false};
   trackerNotes={fb:'',zalo:'',tiktok:'',web:''};
   trackerTimes={fb:'',zalo:'',tiktok:'',web:''};
+  trackerId=0; // content mới chưa có CRM entry
+  const banner=document.getElementById('crmEditBanner');if(banner)banner.style.display='none';
   renderOut(auto,gs,v5);
 }
 
@@ -492,6 +505,9 @@ function clearGen(){
   const gc=document.getElementById('gen_code');if(gc)gc.value='';
   const gs=document.getElementById('genCodeStatus');if(gs)gs.textContent='';
   document.getElementById('outArea').classList.remove('on');VS=[];
+  // Reset chế độ chỉnh sửa CRM
+  trackerId=0;
+  const banner=document.getElementById('crmEditBanner');if(banner)banner.style.display='none';
 }
 function goSch(){if(schedProp)document.getElementById('sch_prop').value=schedProp;nav('sch');}
 function goScr(){if(VS.length)document.getElementById('scrTxt').value=VS[VI][PLT]||VS[VI].fb||'';nav('scr');}
@@ -929,6 +945,225 @@ function doCalc(){
   document.getElementById('calcOut').classList.remove('hidden');
 }
 
+// ===================== ROI ĐẦU TƯ BĐS =====================
+function getROIInputs(){
+  const price  = parseFloat(document.getElementById('roi_price')?.value)||0;
+  const equity = parseFloat(document.getElementById('roi_equity')?.value)||price;
+  const loanRate= parseFloat(document.getElementById('roi_loanrate')?.value)||8.5;
+  const area   = parseFloat(document.getElementById('roi_area')?.value)||0;
+  const rent   = parseFloat(document.getElementById('roi_rent')?.value)||0;
+  const growth = parseFloat(document.getElementById('roi_growth')?.value)||5;
+  const repair = parseFloat(document.getElementById('roi_repair')?.value)||0;
+  const opex   = parseFloat(document.getElementById('roi_opex')?.value)||0;
+  const hold   = parseFloat(document.getElementById('roi_hold')?.value)||5;
+  const saveRate= parseFloat(document.getElementById('roi_saverate')?.value)||5.5;
+  return{price,equity,loanRate,area,rent,growth,repair,opex,hold,saveRate};
+}
+
+function roiLiveCalc(){
+  const v=getROIInputs();
+  if(!v.price||!v.equity)return;
+  document.getElementById('roiLive').style.display='block';
+  const loan=(v.price-v.equity)*1e9;
+  const monthlyLoanPay=loan>0?loan*(v.loanRate/100/12)*Math.pow(1+v.loanRate/100/12,v.hold*12)/(Math.pow(1+v.loanRate/100/12,v.hold*12)-1):0;
+  const rentAnnual=v.rent*12*1e6;
+  const opexAnnual=v.opex*1e6;
+  const loanAnnual=monthlyLoanPay*12;
+  const netRentAnnual=rentAnnual-opexAnnual-loanAnnual;
+  const totalInvested=(v.equity+v.repair/1e3)*1e9;
+  const capitalGainAnnual=v.price*1e9*(v.growth/100);
+  const totalAnnualReturn=netRentAnnual+capitalGainAnnual;
+  const roi=(totalAnnualReturn/totalInvested)*100;
+  const payback=totalAnnualReturn>0?(totalInvested/totalAnnualReturn):999;
+  const vsS=roi-v.saveRate;
+  document.getElementById('liveROI').textContent=roi.toFixed(1)+'%';
+  document.getElementById('livePayback').textContent=payback<99?payback.toFixed(1)+' năm':'∞';
+  document.getElementById('liveVsSaving').textContent=(vsS>0?'+':'')+vsS.toFixed(1)+'%';
+  document.getElementById('liveROI').style.color=roi>=10?'var(--gr)':roi>=5?'var(--ac)':'var(--rd)';
+  document.getElementById('liveVsSaving').style.color=vsS>0?'var(--gr)':'var(--rd)';
+}
+
+function doROI(){
+  const v=getROIInputs();
+  if(!v.price)return toast('⚠️ Nhập giá mua BĐS!');
+  if(!v.equity)return toast('⚠️ Nhập vốn tự có!');
+  document.getElementById('roiOut').classList.add('hidden');
+
+  // Core calculations
+  const priceVND=v.price*1e9;
+  const equityVND=v.equity*1e9;
+  const loanVND=priceVND-equityVND;
+  const repairVND=v.repair*1e6;
+  const totalInvested=equityVND+repairVND;
+  const loanPctOfPrice=(loanVND/priceVND*100).toFixed(0);
+
+  // Monthly loan payment
+  const r=v.loanRate/100/12;
+  const n=v.hold*12;
+  const monthlyLoan=loanVND>0?loanVND*(r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1):0;
+  const annualLoan=monthlyLoan*12;
+
+  // Income & expense
+  const rentAnnual=v.rent*1e6*12;
+  const opexAnnual=v.opex*1e6;
+  const grossRentIncome=rentAnnual;
+  const netOperatingIncome=rentAnnual-opexAnnual;
+  const cashFlowAnnual=netOperatingIncome-annualLoan;
+
+  // Capital appreciation
+  const exitPrice=priceVND*Math.pow(1+v.growth/100,v.hold);
+  const capitalGain=exitPrice-priceVND;
+  const capitalGainAnnual=capitalGain/v.hold;
+
+  // ROI metrics
+  const totalReturnAnnual=cashFlowAnnual+capitalGainAnnual;
+  const roi=(totalReturnAnnual/totalInvested)*100;
+  const cashOnCash=(cashFlowAnnual/totalInvested)*100;
+  const capRate=(netOperatingIncome/priceVND)*100;
+  const grossYield=(rentAnnual/priceVND)*100;
+  const paybackYears=totalReturnAnnual>0?totalInvested/totalReturnAnnual:999;
+
+  // Savings comparison
+  const savingsGrowth=equityVND*Math.pow(1+v.saveRate/100,v.hold);
+  const savingsReturn=savingsGrowth-equityVND;
+  const bdsReturn=cashFlowAnnual*v.hold+capitalGain;
+  const vsS=roi-v.saveRate;
+  const advantage=bdsReturn-savingsReturn;
+
+  // Total hold period analysis
+  const totalRentCollected=cashFlowAnnual*v.hold;
+  const totalProfit=totalRentCollected+capitalGain;
+
+  // Rating
+  const rating=roi>=15?{txt:'🏆 Xuất sắc',c:'var(--gr)',sub:'ROI cao — nên đầu tư'}
+    :roi>=10?{txt:'👍 Tốt',c:'var(--gr)',sub:'ROI khá — đáng cân nhắc'}
+    :roi>=7?{txt:'⚠️ Trung bình',c:'var(--ac)',sub:'ROI vừa — cần cân nhắc kỹ'}
+    :roi>=v.saveRate?{txt:'📊 Thấp',c:'var(--ac)',sub:'Nhỉnh hơn tiết kiệm một chút'}
+    :{txt:'❌ Kém',c:'var(--rd)',sub:'Thấp hơn gửi tiết kiệm'};
+
+  // Format helpers
+  const fmt=n=>n>=1e9?(n/1e9).toFixed(2)+' tỷ':n>=1e6?(n/1e6).toFixed(0)+' tr':'0';
+
+  const roiId='roi_'+Date.now();
+  document.getElementById('roiOut').innerHTML=`
+    <!-- Header verdict -->
+    <div style="background:linear-gradient(135deg,rgba(62,207,142,.12),rgba(245,166,35,.08));border:1.5px solid ${rating.c.replace('var(--gr)','rgba(62,207,142,.5)').replace('var(--ac)','rgba(245,166,35,.5)').replace('var(--rd)','rgba(239,83,80,.5)')};border-radius:12px;padding:15px 16px;margin-bottom:13px">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:9px;margin-bottom:12px">
+        <div>
+          <div style="font-weight:900;font-size:1rem;color:${rating.c}">${rating.txt} — ROI ${roi.toFixed(1)}%/năm</div>
+          <div style="font-size:.74rem;color:var(--t2);margin-top:3px">${rating.sub} · ${v.price} tỷ · ${v.rent} tr/tháng · nắm giữ ${v.hold} năm</div>
+        </div>
+        <div style="display:flex;gap:7px">
+          <button class="btn btn-g btn-sm" onclick="cpTxt(document.getElementById('${roiId}').textContent)">📋 Copy</button>
+          <button class="btn btn-r btn-sm" onclick="document.getElementById('roiOut').classList.add('hidden')">🗑️</button>
+        </div>
+      </div>
+      <!-- 4 key metrics -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center">
+        <div style="background:rgba(0,0,0,.15);border-radius:9px;padding:10px">
+          <div style="font-size:1.5rem;font-weight:900;color:${rating.c};font-family:'Space Mono',monospace">${roi.toFixed(1)}%</div>
+          <div style="font-size:.63rem;color:var(--t3);margin-top:2px">ROI/năm</div>
+        </div>
+        <div style="background:rgba(0,0,0,.15);border-radius:9px;padding:10px">
+          <div style="font-size:1.5rem;font-weight:900;color:var(--ac);font-family:'Space Mono',monospace">${paybackYears<99?paybackYears.toFixed(1):'∞'}</div>
+          <div style="font-size:.63rem;color:var(--t3);margin-top:2px">Năm hoàn vốn</div>
+        </div>
+        <div style="background:rgba(0,0,0,.15);border-radius:9px;padding:10px">
+          <div style="font-size:1.5rem;font-weight:900;color:${vsS>0?'var(--gr)':'var(--rd)'};font-family:'Space Mono',monospace">${vsS>0?'+':''}${vsS.toFixed(1)}%</div>
+          <div style="font-size:.63rem;color:var(--t3);margin-top:2px">vs Tiết kiệm</div>
+        </div>
+        <div style="background:rgba(0,0,0,.15);border-radius:9px;padding:10px">
+          <div style="font-size:1.5rem;font-weight:900;color:${cashFlowAnnual>=0?'var(--gr)':'var(--rd)'};font-family:'Space Mono',monospace">${fmt(cashFlowAnnual)}</div>
+          <div style="font-size:.63rem;color:var(--t3);margin-top:2px">Dòng tiền/năm</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detail breakdown -->
+    <div id="${roiId}" style="display:none"></div>
+    <div class="card" style="margin-bottom:10px">
+      <div class="ctit"><span class="dot"></span>💰 Phân tích vốn đầu tư</div>
+      <div style="display:grid;gap:5px;font-size:.77rem">
+        <div style="display:flex;justify-content:space-between;padding:5px 9px;background:var(--bg3);border-radius:7px"><span style="color:var(--t2)">Giá mua BĐS</span><strong style="color:var(--ac)">${fmt(priceVND)}</strong></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 9px;background:var(--bg3);border-radius:7px"><span style="color:var(--t2)">Vốn tự có (${(v.equity/v.price*100).toFixed(0)}%)</span><strong style="color:var(--gr)">${fmt(equityVND)}</strong></div>
+        ${loanVND>0?`<div style="display:flex;justify-content:space-between;padding:5px 9px;background:var(--bg3);border-radius:7px"><span style="color:var(--t2)">Vay ngân hàng (${loanPctOfPrice}%)</span><strong style="color:var(--bl)">${fmt(loanVND)}</strong></div>`:'' }
+        <div style="display:flex;justify-content:space-between;padding:5px 9px;background:var(--bg3);border-radius:7px"><span style="color:var(--t2)">Chi phí sửa chữa ban đầu</span><strong>${fmt(repairVND)}</strong></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 9px;background:rgba(245,166,35,.1);border-radius:7px;border:1px solid rgba(245,166,35,.3)"><span style="font-weight:700;color:var(--tx)">Tổng vốn đầu tư thực</span><strong style="color:var(--ac);font-size:.9rem">${fmt(totalInvested)}</strong></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:10px">
+      <div class="ctit"><span class="dot"></span>📊 Thu nhập & Chi phí hàng năm</div>
+      <div style="display:grid;gap:5px;font-size:.77rem">
+        <div style="display:flex;justify-content:space-between;padding:5px 9px;background:rgba(62,207,142,.08);border-radius:7px"><span style="color:var(--t2)">Thu nhập thuê (${v.rent} tr × 12 tháng)</span><strong style="color:var(--gr)">+ ${fmt(rentAnnual)}</strong></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 9px;background:var(--bg3);border-radius:7px"><span style="color:var(--t2)">Chi phí vận hành/năm</span><strong style="color:var(--rd)">− ${fmt(opexAnnual)}</strong></div>
+        ${loanVND>0?`<div style="display:flex;justify-content:space-between;padding:5px 9px;background:var(--bg3);border-radius:7px"><span style="color:var(--t2)">Trả nợ ngân hàng/năm</span><strong style="color:var(--rd)">− ${fmt(annualLoan)}</strong></div>`:''}
+        <div style="display:flex;justify-content:space-between;padding:6px 9px;background:${cashFlowAnnual>=0?'rgba(62,207,142,.1)':'rgba(239,83,80,.1)'};border-radius:7px;border:1px solid ${cashFlowAnnual>=0?'rgba(62,207,142,.3)':'rgba(239,83,80,.3)'}"><span style="font-weight:700;color:var(--tx)">Dòng tiền ròng/năm</span><strong style="color:${cashFlowAnnual>=0?'var(--gr)':'var(--rd)'};">${cashFlowAnnual>=0?'+':''}${fmt(cashFlowAnnual)}</strong></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 9px;background:rgba(76,156,245,.08);border-radius:7px"><span style="color:var(--t2)">Tăng giá BĐS ước tính/năm (${v.growth}%)</span><strong style="color:var(--bl)">+ ${fmt(capitalGainAnnual)}</strong></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 9px;background:rgba(245,166,35,.1);border-radius:7px;border:1px solid rgba(245,166,35,.3)"><span style="font-weight:700;color:var(--tx)">Tổng lợi nhuận/năm</span><strong style="color:var(--ac);font-size:.9rem">${fmt(totalReturnAnnual)}</strong></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:10px">
+      <div class="ctit"><span class="dot"></span>🏁 Kết quả sau ${v.hold} năm nắm giữ</div>
+      <div style="display:grid;gap:5px;font-size:.77rem">
+        <div style="display:flex;justify-content:space-between;padding:5px 9px;background:var(--bg3);border-radius:7px"><span style="color:var(--t2)">Giá bán ước tính</span><strong style="color:var(--ac)">${fmt(exitPrice)}</strong></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 9px;background:var(--bg3);border-radius:7px"><span style="color:var(--t2)">Lãi vốn (tăng giá)</span><strong style="color:var(--gr)">+${fmt(capitalGain)}</strong></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 9px;background:var(--bg3);border-radius:7px"><span style="color:var(--t2)">Tiền thuê tích lũy (ròng)</span><strong style="color:var(--gr)">+${fmt(totalRentCollected)}</strong></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 9px;background:linear-gradient(135deg,rgba(62,207,142,.12),rgba(245,166,35,.08));border-radius:7px;border:1px solid rgba(62,207,142,.4)"><span style="font-weight:700;color:var(--tx)">Tổng lợi nhuận ${v.hold} năm</span><strong style="color:var(--gr);font-size:1rem">+${fmt(totalProfit)}</strong></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:10px;border-color:rgba(76,156,245,.3)">
+      <div class="ctit"><span class="dot" style="background:var(--bl)"></span>🏦 So sánh với gửi tiết kiệm ${v.saveRate}%/năm</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:9px">
+        <div style="background:rgba(62,207,142,.1);border-radius:9px;padding:11px;text-align:center">
+          <div style="font-size:.68rem;color:var(--t3);margin-bottom:4px">🏠 Đầu tư BĐS (${v.hold} năm)</div>
+          <div style="font-size:1.3rem;font-weight:900;color:var(--gr)">${fmt(bdsReturn)}</div>
+          <div style="font-size:.65rem;color:var(--gr);margin-top:2px">ROI: ${roi.toFixed(1)}%/năm</div>
+        </div>
+        <div style="background:rgba(76,156,245,.1);border-radius:9px;padding:11px;text-align:center">
+          <div style="font-size:.68rem;color:var(--t3);margin-bottom:4px">🏦 Gửi tiết kiệm (${v.hold} năm)</div>
+          <div style="font-size:1.3rem;font-weight:900;color:var(--bl)">${fmt(savingsReturn)}</div>
+          <div style="font-size:.65rem;color:var(--bl);margin-top:2px">Lãi: ${v.saveRate}%/năm</div>
+        </div>
+      </div>
+      <div style="background:${advantage>0?'rgba(62,207,142,.12)':'rgba(239,83,80,.1)'};border:1px solid ${advantage>0?'rgba(62,207,142,.4)':'rgba(239,83,80,.4)'};border-radius:9px;padding:10px;text-align:center;font-size:.8rem">
+        ${advantage>0
+          ?`🏆 <strong style="color:var(--gr)">BĐS lợi hơn tiết kiệm +${fmt(advantage)}</strong> sau ${v.hold} năm`
+          :`⚠️ <strong style="color:var(--rd)">BĐS thua tiết kiệm ${fmt(Math.abs(advantage))}</strong> — xem lại thông số đầu vào`}
+      </div>
+    </div>
+
+    <!-- KPIs cho môi giới -->
+    <div class="card" style="margin-bottom:10px;border-color:rgba(156,110,245,.3)">
+      <div class="ctit"><span class="dot" style="background:var(--pu)"></span>📋 Chỉ số KPI chuyên nghiệp</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;font-size:.75rem">
+        <div style="background:var(--bg3);border-radius:7px;padding:8px 10px;display:flex;justify-content:space-between"><span style="color:var(--t2)">Gross Yield</span><strong style="color:var(--pu)">${grossYield.toFixed(1)}%/năm</strong></div>
+        <div style="background:var(--bg3);border-radius:7px;padding:8px 10px;display:flex;justify-content:space-between"><span style="color:var(--t2)">Cap Rate</span><strong style="color:var(--pu)">${capRate.toFixed(1)}%/năm</strong></div>
+        <div style="background:var(--bg3);border-radius:7px;padding:8px 10px;display:flex;justify-content:space-between"><span style="color:var(--t2)">Cash-on-Cash</span><strong style="color:${cashOnCash>=0?'var(--gr)':'var(--rd)'}">${cashOnCash.toFixed(1)}%/năm</strong></div>
+        ${v.area?`<div style="background:var(--bg3);border-radius:7px;padding:8px 10px;display:flex;justify-content:space-between"><span style="color:var(--t2)">Giá/m²</span><strong style="color:var(--ac)">${(v.price*1e3/v.area).toFixed(0)} tr/m²</strong></div>`:''}
+      </div>
+      <div style="margin-top:9px;background:rgba(156,110,245,.08);border-radius:8px;padding:9px 11px;font-size:.72rem;color:var(--t2);line-height:1.7">
+        💡 <strong style="color:var(--pu)">Gợi ý dùng cho KH đầu tư:</strong><br>
+        "Căn này Gross Yield ${grossYield.toFixed(1)}%/năm, Cap Rate ${capRate.toFixed(1)}% — cao hơn gửi tiết kiệm ${v.saveRate}% là ${(grossYield-v.saveRate).toFixed(1)}%. 
+        Với vốn ${fmt(equityVND)}, dự kiến hoàn vốn trong ${paybackYears<99?paybackYears.toFixed(1)+' năm':'thời gian dài'}, tổng lợi nhuận ${v.hold} năm ước tính ${fmt(totalProfit)}."
+      </div>
+    </div>`;
+
+  // Store in hidden div for copy
+  document.getElementById(roiId).textContent=
+    `BÁO CÁO ROI ĐẦU TƯ BĐS\n${'='.repeat(44)}\n`+
+    `Giá mua: ${v.price} tỷ | Vốn tự có: ${v.equity} tỷ | Thuê: ${v.rent} tr/tháng\n`+
+    `Tăng giá: ${v.growth}%/năm | Nắm giữ: ${v.hold} năm\n\n`+
+    `ROI/năm: ${roi.toFixed(1)}% | Hoàn vốn: ${paybackYears<99?paybackYears.toFixed(1)+' năm':'dài hạn'}\n`+
+    `So với TK ${v.saveRate}%: ${vsS>0?'+':''}${vsS.toFixed(1)}% | Dòng tiền: ${fmt(cashFlowAnnual)}/năm\n`+
+    `Lợi nhuận ${v.hold} năm: ${fmt(totalProfit)}\n\n`+
+    `Gross Yield: ${grossYield.toFixed(1)}% | Cap Rate: ${capRate.toFixed(1)}% | Cash-on-Cash: ${cashOnCash.toFixed(1)}%`;
+
+  document.getElementById('roiOut').classList.remove('hidden');
+}
+
 function doObj(){
   const prop=V('obj_prop')||'BĐS';const obj=pst.obj||'price';
   document.getElementById('objOut').classList.add('hidden');
@@ -983,28 +1218,288 @@ function doChecklist(){
   document.getElementById('clOut').classList.remove('hidden');
 }
 
-function doPersona(){
+// ===================== PERSONA KH THÔNG MINH (NÂNG CẤP) =====================
+let personaData={budget:'',purpose:'',timeline:'',status:'',area:'',extra:''};
+
+function buildSmartPersona(){
   const el=document.getElementById('personaOut');if(!el)return;
-  document.getElementById('personaTabs').querySelectorAll('.tool-tab').forEach((t,i)=>{if(i===0){t.classList.add('on');}else t.classList.remove('on');});
-  const personas=[
-    {name:'Trần Văn Mạnh',age:35,job:'Kỹ sư IT',income:'40tr/tháng',goal:'Mua nhà ở thực cho gia đình 4 người',pain:'Giá leo thang, lo sợ mua sai quyết định lớn',psy:'Nghi ngờ',tip:'Cung cấp dữ liệu thực, sổ hồng scan trước, so sánh căn cùng khu'},
-    {name:'Nguyễn Thị Lan',age:45,job:'Kinh doanh',income:'100tr+/tháng',goal:'Đầu tư sinh lời — cho thuê hoặc bán lại',pain:'Sợ mua giá cao, muốn ROI tối thiểu 8%/năm',psy:'Tham',tip:'Tính ROI cụ thể, so sánh với gửi tiết kiệm, nhấn tiềm năng tăng giá'},
-    {name:'Lê Hoàng Nam',age:28,job:'Nhân viên văn phòng',income:'15tr/tháng',goal:'Lần đầu mua nhà — không biết bắt đầu từ đâu',pain:'Thiếu kinh nghiệm, sợ bị lừa, không hiểu vay NH',psy:'Si',tip:'Hướng dẫn từng bước, giải thích vay NH, kết nối dịch vụ công chứng'}
-  ];
-  el.innerHTML=personas.map((p,i)=>`<div class="card" style="display:${i===0?'block':'none'}" id="persona${i}"><div style="display:flex;align-items:center;gap:10px;margin-bottom:11px"><div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--a2));display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">👤</div><div><div style="font-weight:800;font-size:.9rem;color:var(--tx)">${p.name}</div><div style="font-size:.72rem;color:var(--t3)">${p.age} tuổi · ${p.job} · ${p.income}</div></div></div><div style="display:grid;gap:7px;font-size:.76rem"><div style="background:rgba(62,207,142,.08);border-radius:8px;padding:9px;border-left:3px solid var(--gr)"><strong style="color:var(--gr)">🎯 Mục tiêu:</strong> ${p.goal}</div><div style="background:rgba(239,83,80,.08);border-radius:8px;padding:9px;border-left:3px solid var(--rd)"><strong style="color:var(--rd)">😤 Nỗi đau:</strong> ${p.pain}</div><div style="background:rgba(245,166,35,.08);border-radius:8px;padding:9px;border-left:3px solid var(--ac)"><strong style="color:var(--ac)">🧠 Tâm lý:</strong> ${p.psy}</div><div style="background:rgba(76,156,245,.08);border-radius:8px;padding:9px;border-left:3px solid var(--bl)"><strong style="color:var(--bl)">💡 Cách tiếp cận:</strong> ${p.tip}</div></div></div>`).join('');
+  const budget=document.getElementById('persona_budget')?.value||'';
+  const purpose=document.getElementById('persona_purpose')?.value||'';
+  const timeline=document.getElementById('persona_timeline')?.value||'';
+  const status=document.getElementById('persona_status')?.value||'';
+  const area=V('persona_area');
+  const extra=V('persona_extra');
+  if(!budget||!purpose)return toast('⚠️ Chọn ít nhất Ngân sách & Mục đích!');
+
+  // Map answers → psychology
+  const psyMap={
+    'dautu':'Tham','chottien':'Tham',
+    'o_thuc':'Si','giadinh':'Si',
+    'lantdau':'Si','chothue':'Tham',
+    'nhanh':'Sân','1thang':'Sân',
+    'danhtim':'Nghi ngờ','so_lua':'Nghi ngờ',
+    'caocp':'Ngạo mạn','premium':'Ngạo mạn'
+  };
+  let psy='Si';
+  if(purpose==='dautu'||purpose==='chottien')psy='Tham';
+  else if(purpose==='caocp')psy='Ngạo mạn';
+  else if(status==='danhtim'||status==='so_lua')psy='Nghi ngờ';
+  else if(timeline==='1thang'||timeline==='nhanh')psy='Sân';
+  else psy='Si';
+
+  const psyCfg=SC_PSY_CFG[psy]||SC_PSY_CFG['Si'];
+
+  // Budget display
+  const budgetLabel={
+    'duoi2':'Dưới 2 tỷ','2den5':'2–5 tỷ','5den10':'5–10 tỷ','tren10':'Trên 10 tỷ','thue':'Thuê (5–20 tr/tháng)'
+  }[budget]||budget;
+
+  // Purpose display
+  const purposeLabel={
+    'o_thuc':'🏠 Mua ở thực','dautu':'📈 Đầu tư sinh lời','chothue':'🔑 Mua cho thuê lại','giadinh':'👨‍👩‍👧 An cư cho gia đình','caocp':'💎 Nâng cấp cuộc sống'
+  }[purpose]||purpose;
+
+  // Timeline display
+  const timelineLabel={
+    '1thang':'Trong vòng 1 tháng','3thang':'1–3 tháng','6thang':'3–6 tháng','chuaro':'Chưa rõ, đang tìm hiểu'
+  }[timeline]||timeline;
+
+  // Status display
+  const statusLabel={
+    'danhtue':'Đang thuê nhà','songcunggia':'Sống cùng gia đình','cosannhung':'Có sẵn nhà nhưng muốn đổi','danhtim':'Đang tìm nhiều nơi'
+  }[status]||status;
+
+  // Generate approach script
+  const approaches={
+    'Tham':{
+      open:'Dẫn đầu bằng giá và cơ hội sinh lời. Hỏi ngay: "Anh/chị kỳ vọng ROI bao nhiêu %/năm?"',
+      content:'Nhấn giá thấp hơn thị trường, tiềm năng tăng giá khu vực, so sánh với gửi tiết kiệm',
+      close:'Urgency + khan hiếm: "Tuần này còn 1 căn, tuần sau chủ tăng giá"',
+      avoid:'Không nói về cảm xúc, không đề cập sống đẹp — chỉ nói số liệu'
+    },
+    'Sân':{
+      open:'Đi thẳng vào vấn đề. Đừng vòng vo. Báo giá và thông số ngay trong 2 phút đầu',
+      content:'Nhấn: đẹp hơn căn cùng giá, vị trí tốt hơn, hẻm rộng hơn — so sánh trực tiếp',
+      close:'Quyết đoán: "Anh/chị xem ngay sáng mai không? Em giữ lịch cho"',
+      avoid:'Không giải thích dài, không hỏi nhiều câu — KH này mất kiên nhẫn nhanh'
+    },
+    'Si':{
+      open:'Hỏi về gia đình trước: "Gia đình anh/chị mấy người? Bé mấy tuổi?" — tạo kết nối cảm xúc',
+      content:'Hình ảnh cuộc sống: sáng đưa con đi học gần, buổi tối sum họp, không gian riêng tư',
+      close:'Mental ownership: "Nếu là nhà mình, anh/chị sẽ đặt phòng ngủ master ở tầng nào?"',
+      avoid:'Không đi vào số liệu ROI — KH này mua bằng cảm xúc, không phải lý trí'
+    },
+    'Nghi ngờ':{
+      open:'Chủ động đưa bằng chứng trước khi KH hỏi: scan sổ hồng, cam kết hoàn tiền',
+      content:'Nhấn: minh bạch 100%, video quay thực tế, pháp lý rõ ràng không ẩn phí',
+      close:'Đề nghị ra phòng công chứng kiểm tra hồ sơ trước — không mất gì cả',
+      avoid:'Không hứa hẹn mơ hồ, không dùng từ "chắc" hay "có lẽ" — phải chắc chắn 100%'
+    },
+    'Ngạo mạn':{
+      open:'Tiếp cận như ngang hàng, không sales rẻ tiền: "Em có sản phẩm dành cho người có gu"',
+      content:'Nhấn: khu dân cư chất lượng, không gian riêng tư, thiết kế độc bản, chủ nhân xứng tầm',
+      close:'Giới hạn số lượng: "Sản phẩm này không dành cho tất cả, em muốn giới thiệu cho anh/chị trước"',
+      avoid:'Không giảm giá ngay, không năn nỉ — mất đẳng cấp trong mắt KH này'
+    }
+  };
+  const appr=approaches[psy];
+
+  // Generate matching BDS suggestion
+  const bdsMatch={
+    'duoi2':['Nhà hẻm','Căn hộ mini','Đất nền vùng ven'],
+    '2den5':['Nhà phố hẻm xe hơi','Căn hộ 2PN','Nhà cấp 4 mở rộng'],
+    '5den10':['Nhà phố mặt tiền hẻm lớn','Căn hộ cao cấp','Biệt thự nhỏ'],
+    'tren10':['Nhà mặt tiền','Biệt thự','Penthouse','Shophouse'],
+    'thue':['Căn hộ dịch vụ','Nhà nguyên căn cho thuê']
+  }[budget]||['Nhà phố','Căn hộ'];
+
   el.classList.remove('hidden');
+  el.innerHTML=`
+    <!-- Persona card -->
+    <div style="background:linear-gradient(135deg,${psyCfg.bg},rgba(0,0,0,0));border:1.5px solid ${psyCfg.border};border-radius:12px;padding:15px 16px;margin-bottom:13px">
+      <div style="display:flex;align-items:center;gap:11px;margin-bottom:12px">
+        <div style="width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--a2));display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0">${psyCfg.e}</div>
+        <div style="flex:1">
+          <div style="font-weight:800;font-size:.95rem;color:var(--tx)">Tâm lý: <span style="color:${psyCfg.c}">${psy}</span></div>
+          <div style="font-size:.72rem;color:var(--t2);margin-top:2px">${purposeLabel} · ${budgetLabel} · ${timelineLabel||'Chưa rõ timeline'}</div>
+        </div>
+        <button class="btn btn-s btn-xs" onclick="document.getElementById('personaOut').classList.add('hidden')">✕</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="background:rgba(0,0,0,.15);border-radius:8px;padding:9px">
+          <div style="font-size:.65rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">📋 Thông tin</div>
+          <div style="font-size:.72rem;color:var(--t2);line-height:1.7">💰 ${budgetLabel}<br>🎯 ${purposeLabel}<br>⏰ ${timelineLabel||'Chưa rõ'}<br>🏠 ${statusLabel||'Chưa rõ'}${area?`<br>📍 ${area}`:''}
+          </div>
+        </div>
+        <div style="background:rgba(0,0,0,.15);border-radius:8px;padding:9px">
+          <div style="font-size:.65rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">🏠 BĐS phù hợp</div>
+          <div style="font-size:.72rem;color:var(--t2);line-height:1.7">${bdsMatch.map(b=>`✅ ${b}`).join('<br>')}${area?`<br>📍 Khu vực: ${area}`:''}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Approach guide -->
+    <div class="card" style="margin-bottom:9px">
+      <div class="ctit"><span class="dot"></span>🎯 Chiến thuật tiếp cận — Tâm lý ${psy}</div>
+      <div style="display:grid;gap:7px">
+        <div style="background:rgba(62,207,142,.08);border:1px solid rgba(62,207,142,.25);border-radius:8px;padding:9px 11px">
+          <div style="font-size:.68rem;font-weight:700;color:var(--gr);margin-bottom:3px">🚀 Mở đầu cuộc trò chuyện</div>
+          <div style="font-size:.76rem;color:var(--t2);line-height:1.6">${appr.open}</div>
+        </div>
+        <div style="background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.25);border-radius:8px;padding:9px 11px">
+          <div style="font-size:.68rem;font-weight:700;color:var(--ac);margin-bottom:3px">✍️ Content nên nhấn mạnh</div>
+          <div style="font-size:.76rem;color:var(--t2);line-height:1.6">${appr.content}</div>
+        </div>
+        <div style="background:rgba(76,156,245,.08);border:1px solid rgba(76,156,245,.25);border-radius:8px;padding:9px 11px">
+          <div style="font-size:.68rem;font-weight:700;color:var(--bl);margin-bottom:3px">💰 Câu chốt deal</div>
+          <div style="font-size:.76rem;color:var(--t2);line-height:1.6">${appr.close}</div>
+        </div>
+        <div style="background:rgba(239,83,80,.08);border:1px solid rgba(239,83,80,.25);border-radius:8px;padding:9px 11px">
+          <div style="font-size:.68rem;font-weight:700;color:var(--rd);margin-bottom:3px">⛔ Tuyệt đối tránh</div>
+          <div style="font-size:.76rem;color:var(--t2);line-height:1.6">${appr.avoid}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div style="display:flex;gap:7px;flex-wrap:wrap">
+      <button class="btn btn-p btn-sm" onclick="addKHFromPersona('${psy}','${budget}','${purpose}','${area}','${extra}')">➕ Thêm vào KH Labels</button>
+      <button class="btn btn-g btn-sm" onclick="nav('gen');document.getElementById('autoSmart').checked=false;setTimeout(()=>{document.querySelectorAll('.psy-card').forEach(c=>c.dataset.p==='${psy}'?c.click():'')},200)">✍️ Tạo content tâm lý này</button>
+      <button class="btn btn-r btn-sm" onclick="resetPersonaForm()">🔄 Phân tích lại</button>
+    </div>`;
 }
 
-function doEmail(){
+function addKHFromPersona(psy,budget,purpose,area,extra){
+  const name=V('persona_khname')||'KH mới';
+  const phone=V('persona_khphone')||'';
+  loadKHList();
+  const label=psy==='Tham'?'hot':psy==='Sân'?'warm':'warm';
+  khList.unshift({id:Date.now(),name,phone,prop:area||'',label,note:`Tâm lý: ${psy} · ${budget} · ${purpose}`,created:new Date().toLocaleString('vi-VN'),interactions:[]});
+  saveKHList();toast(`✅ Đã thêm "${name}" vào KH Labels!`);
+}
+
+function resetPersonaForm(){
+  ['persona_budget','persona_purpose','persona_timeline','persona_status'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  ['persona_area','persona_extra','persona_khname','persona_khphone'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  const el=document.getElementById('personaOut');if(el)el.classList.add('hidden');
+}
+
+// ===================== EMAIL THÔNG MINH + CRM (NÂNG CẤP) =====================
+function buildSmartEmailKH(){
+  // Populate KH select from khList + CRM
+  loadKHList();
+  const sel=document.getElementById('email_kh_select');
+  if(sel){
+    const allKH=[
+      ...khList.map(k=>({id:'khl_'+k.id,name:k.name,phone:k.phone,prop:k.prop,src:'khl'})),
+      ...reminders.filter(r=>r.khName).map(r=>({id:'rem_'+r.id,name:r.khName,phone:r.phone,prop:r.property,src:'rem'}))
+    ];
+    // Dedupe by name
+    const seen=new Set();
+    const unique=allKH.filter(k=>{if(seen.has(k.name))return false;seen.add(k.name);return true;});
+    sel.innerHTML='<option value="">-- Chọn KH --</option>'+unique.map(k=>`<option value="${k.id}" data-name="${k.name}" data-phone="${k.phone||''}" data-prop="${k.prop||''}">${k.name}${k.phone?' ('+k.phone+')':''}</option>`).join('');
+  }
+}
+
+function genSmartEmail(){
+  const sel=document.getElementById('email_kh_select');
+  const type=document.getElementById('email_type')?.value||'intro';
+  const bds=V('email_bds');
   const el=document.getElementById('emailOut');if(!el)return;
+
+  // Get KH info
+  let khName='anh/chị';let khPhone='';let khProp=bds;
+  if(sel&&sel.value){
+    const opt=sel.options[sel.selectedIndex];
+    khName=opt.dataset.name||'anh/chị';
+    khPhone=opt.dataset.phone||'';
+    khProp=bds||opt.dataset.prop||'BĐS quan tâm';
+  }
+  if(!khName||khName==='anh/chị')return toast('⚠️ Chọn KH hoặc nhập tên KH!');
+
+  // My info from profile
+  const myName=prof.name||'[Tên môi giới]';
+  const myPhone=prof.phone||'[SĐT]';
+  const myZalo=prof.zalo||prof.phone||'[Zalo]';
+  const myTitle=prof.title||'Chuyên gia tư vấn BĐS';
+
+  const sig=`\nTrân trọng,\n${myName} — ${myTitle}\n📞 ${myPhone} | 💬 Zalo: ${myZalo}`;
+
+  const templates={
+    intro:{
+      title:'✉️ Email 1 — Giới thiệu lần đầu',
+      body:`Chào ${khName}!
+
+Em ${myName} — ${myTitle}.
+
+Em biết ${khName} đang quan tâm đến BĐS khu vực${khProp?' ('+khProp+')':''}.
+
+Em có ${bds||'vài căn phù hợp'} — giá tốt, pháp lý rõ ràng, sổ hồng riêng.
+
+${khName} có thể dành 10–15 phút để em giới thiệu trực tiếp không ạ? Em sắp lịch theo giờ thuận tiện của ${khName}.${sig}`
+    },
+    followup3:{
+      title:'✉️ Email 2 — Follow-up ngày 3',
+      body:`Chào ${khName}!
+
+Em ${myName} muốn hỏi thăm — ${khName} đã có dịp xem thông tin căn${khProp?' '+khProp:''} em gửi chưa ạ?
+
+Tuần này em vừa có thêm 1 căn mới cùng khu — vị trí và giá còn tốt hơn. Em muốn ${khName} được xem trước.
+
+${khName} rảnh sáng hay chiều để em đưa đi xem thực tế ạ?${sig}`
+    },
+    value:{
+      title:'✉️ Email 3 — Cung cấp giá trị (không bán)',
+      body:`Chào ${khName}!
+
+Em ${myName} gửi ${khName} thông tin thị trường BĐS${khProp?' khu vực '+khProp:''} tháng này:
+
+• Giá trung bình: đang ổn định, chưa có dấu hiệu tăng mạnh
+• Thanh khoản: tốt ở phân khúc 3–7 tỷ
+• Xu hướng: KH đang có xu hướng ưu tiên hẻm xe hơi + pháp lý sạch
+
+Không cần phản hồi ạ — em chỉ muốn ${khName} có thêm thông tin hữu ích để quyết định đúng thời điểm.${sig}`
+    },
+    remind:{
+      title:'✉️ Email 4 — Nhắc lịch xem nhà',
+      body:`Chào ${khName}!
+
+Em ${myName} nhắc lịch xem nhà${khProp?' '+khProp:''} theo lịch hẹn.
+
+${khName} vẫn còn tiện không ạ? Nếu cần đổi giờ, ${khName} cứ nhắn em qua Zalo ${myZalo} — em linh động theo ạ.
+
+Em đã chuẩn bị đầy đủ hồ sơ, sổ hồng và thông tin pháp lý để ${khName} xem trực tiếp.${sig}`
+    },
+    birthday:{
+      title:'🎂 Email — Chúc mừng sinh nhật',
+      body:`Chào ${khName}!
+
+Nhân dịp sinh nhật, em ${myName} gửi đến ${khName} lời chúc sức khoẻ, hạnh phúc và mọi điều tốt đẹp nhất! 🎉
+
+Chúc ${khName} một ngày sinh nhật thật vui vẻ bên gia đình và người thân ạ.
+
+Nếu ${khName} có nhu cầu tìm nhà hay đầu tư BĐS, em luôn sẵn sàng hỗ trợ nhé!${sig}`
+    }
+  };
+
+  const tmpl=templates[type]||templates.intro;
   const eid='em_'+Date.now();
-  const emails=[
-    {n:'Email 1 — Giới thiệu',content:`Chào anh/chị [Tên],\n\nEm [Tên bạn] — chuyên gia BĐS khu vực. Em biết anh/chị đang tìm nhà tại [Khu vực].\n\nEm có [X] căn phù hợp ngân sách và nhu cầu của anh/chị.\n\nAnh/chị có thể dành 15 phút để em giới thiệu không ạ?\n\nTrân trọng,\n[Tên bạn] | [SĐT]`},
-    {n:'Email 2 — Follow-up sau 3 ngày',content:`Chào anh/chị [Tên],\n\nEm muốn hỏi thăm — anh/chị đã có cơ hội xem thông tin em gửi chưa ạ?\n\nTuần này em vừa có thêm 2 căn mới tại [Khu vực] — giá và vị trí rất tốt.\n\nNếu anh/chị muốn, em sắp lịch xem ngay trong tuần này nhé?\n\n[Tên bạn] | [SĐT]`},
-    {n:'Email 3 — Cung cấp giá trị',content:`Chào anh/chị [Tên],\n\nEm gửi anh/chị báo cáo thị trường BĐS [Khu vực] tháng này:\n\n• Giá trung bình: [X] tr/m²\n• Tốc độ tăng 6 tháng: +[Y]%\n• Thanh khoản: [Nhanh/Trung bình]\n\nKhông cần phản hồi — chỉ muốn anh/chị có thêm thông tin hữu ích.\n\n[Tên bạn]`}
-  ];
-  el.innerHTML=`<div id="${eid}">${emails.map((e,i)=>`<div class="card" style="margin-bottom:9px"><div class="ctit"><span class="dot"></span>${e.n}</div><pre style="white-space:pre-wrap;font-size:.75rem;color:var(--t2);line-height:1.7">${e.content}</pre><button class="btn btn-s btn-xs" style="margin-top:6px" onclick="cpTxt(this.previousElementSibling.textContent)">📋 Copy</button></div>`).join('')}</div>`;
   el.classList.remove('hidden');
+  el.innerHTML=`
+    <div class="card" style="border-color:rgba(76,156,245,.35)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:7px">
+        <div class="ctit" style="margin:0"><span class="dot"></span>${tmpl.title}</div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-g btn-sm" onclick="cpEl('em_pre_${eid}')">📋 Copy</button>
+          <button class="btn btn-b btn-sm" onclick="saveOutputToLibrary('📧 ${tmpl.title} — ${khName}',document.getElementById('em_pre_${eid}').textContent,'email')">💾 Lưu</button>
+        </div>
+      </div>
+      <div style="background:rgba(76,156,245,.07);border-radius:7px;padding:6px 10px;margin-bottom:9px;font-size:.7rem;color:var(--bl)">
+        👤 Gửi cho: <strong>${khName}</strong>${khPhone?' · 📞 '+khPhone:''} ${khProp?'· 🏠 '+khProp:''}
+      </div>
+      <pre id="em_pre_${eid}" style="white-space:pre-wrap;font-family:'Be Vietnam Pro',sans-serif;font-size:.78rem;color:var(--t2);line-height:1.8;background:var(--bg3);border-radius:9px;padding:12px">${tmpl.body}</pre>
+      ${!prof.name?`<div style="background:rgba(239,83,80,.08);border:1px solid rgba(239,83,80,.3);border-radius:8px;padding:8px 11px;margin-top:9px;font-size:.72rem;color:var(--rd)">⚠️ Chưa điền Hồ Sơ — email đang dùng placeholder. <span style="cursor:pointer;text-decoration:underline" onclick="nav('prof')">Điền Hồ Sơ ngay →</span></div>`:''}
+    </div>`;
 }
 
 // ===================== CMP =====================
@@ -1069,16 +1564,46 @@ function genPropCode(type,loc,id){
 function saveCRM(){
   if(!VS.length)return toast('⚠️ Chưa có content!');
   const d=gfd();
-  const id=Date.now();
-  // Ưu tiên mã căn đã nhập trong form, nếu không thì tự sinh
   const existingCode=(document.getElementById('gen_code')?.value||'').trim();
-  const code=existingCode||genPropCode(d.type,d.loc,id);
-  trackerId=id;
-  crm.unshift({id,code,type:d.type,loc:d.loc,price:d.price,area:d.area,pros:d.pros,time:new Date().toLocaleString('vi-VN'),vs:VS,posted:{fb:false,zalo:false,tiktok:false,web:false},postedTimes:{},postedNotes:{},note:''});
-  saveSt();buildCRM();updStats();buildHomeRecent();
-  // Điền lại mã căn vào tất cả 3 form
-  fillCodeAll(code);
-  toast(`💾 Đã lưu CRM! Mã căn: ${code}`);
+
+  // Kiểm tra xem đang load từ CRM cũ không (trackerId trùng với id trong crm[])
+  const existingIdx=trackerId?crm.findIndex(e=>e.id===trackerId):-1;
+
+  if(existingIdx>=0){
+    // ── CẬP NHẬT bản ghi cũ — KHÔNG tạo mới ──
+    const old=crm[existingIdx];
+    const code=existingCode||old.code||genPropCode(d.type,d.loc,old.id);
+    crm[existingIdx]={
+      ...old,           // giữ lại posted, postedTimes, postedNotes, note, id, time cũ
+      code,
+      type:d.type,
+      loc:d.loc,
+      price:d.price,
+      area:d.area,
+      pros:d.pros,
+      vs:VS,
+      updatedAt:new Date().toLocaleString('vi-VN')
+    };
+    fillCodeAll(code);
+    saveSt();buildCRM();updStats();buildHomeRecent();
+    toast(`✅ Đã cập nhật CRM! Mã căn: ${code}`);
+  } else {
+    // ── TẠO MỚI — lần đầu lưu ──
+    const id=Date.now();
+    const code=existingCode||genPropCode(d.type,d.loc,id);
+    trackerId=id;
+    crm.unshift({
+      id,code,
+      type:d.type,loc:d.loc,price:d.price,area:d.area,pros:d.pros,
+      time:new Date().toLocaleString('vi-VN'),
+      vs:VS,
+      posted:{fb:false,zalo:false,tiktok:false,web:false},
+      postedTimes:{},postedNotes:{},note:''
+    });
+    fillCodeAll(code);
+    saveSt();buildCRM();updStats();buildHomeRecent();
+    toast(`💾 Đã lưu CRM mới! Mã căn: ${code}`);
+  }
 }
 
 // Filter state
@@ -1253,9 +1778,9 @@ function loadCRM(i){
   trackerState=e.posted?JSON.parse(JSON.stringify(e.posted)):{fb:false,zalo:false,tiktok:false,web:false};
   trackerTimes=e.postedTimes?JSON.parse(JSON.stringify(e.postedTimes)):{fb:'',zalo:'',tiktok:'',web:''};
   trackerNotes=e.postedNotes?JSON.parse(JSON.stringify(e.postedNotes)):{fb:'',zalo:'',tiktok:'',web:''};
-  // Khôi phục mã căn vào tất cả 3 form
   if(e.code)fillCodeAll(e.code);
   nav('gen');
+  updCRMEditBanner(e);
   if(VS.length){
     document.getElementById('outArea').classList.add('on');
     document.getElementById('vTabsRow').classList.toggle('hidden',VS.length<=1);
@@ -1265,11 +1790,34 @@ function loadCRM(i){
     }
     renderPlt();renderTracker();
   }
-  toast(`📂 Đã load! Mã căn: ${e.code||'—'}`);
+  toast(`📂 Đã load! Tick nền tảng rồi bấm "💾 Cập nhật CRM"`);
 }
 
-function delCRM(i){if(!confirm('Xóa tin này?'))return;crm.splice(i,1);saveSt();buildCRM();updStats();buildHomeRecent();toast('🗑️ Đã xóa!');}
-function clearAllCRM(){if(!confirm('Xóa toàn bộ CRM?'))return;crm=[];saveSt();buildCRM();updStats();buildHomeRecent();toast('🗑️ Đã xóa toàn bộ!');}
+function updCRMEditBanner(e){
+  let banner=document.getElementById('crmEditBanner');
+  if(!banner){
+    banner=document.createElement('div');
+    banner.id='crmEditBanner';
+    banner.style.cssText='background:linear-gradient(135deg,rgba(76,156,245,.15),rgba(76,156,245,.05));border:1.5px solid rgba(76,156,245,.4);border-radius:11px;padding:10px 14px;margin-bottom:11px;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;display:none';
+    const pg=document.getElementById('pg-gen');
+    const firstCard=pg?pg.querySelector('.card'):null;
+    if(firstCard)firstCard.before(banner);
+  }
+  if(e){
+    banner.style.display='flex';
+    banner.innerHTML=`<div style="display:flex;align-items:center;gap:9px;flex:1"><span style="font-size:1.2rem">✏️</span><div><div style="font-weight:800;font-size:.82rem;color:var(--bl)">Đang chỉnh sửa — bấm "Cập nhật CRM" để lưu, KHÔNG tạo thêm bản ghi mới</div><div style="font-size:.7rem;color:var(--t2);margin-top:2px"><span style="font-family:'Space Mono',monospace;color:var(--ac)">${e.code||'—'}</span> · ${e.type||''} · ${e.loc||''} · ${e.price||''}</div></div></div><div style="display:flex;gap:6px;flex-shrink:0"><button class="btn btn-b btn-sm" onclick="saveCRM()">💾 Cập nhật CRM</button><button class="btn btn-r btn-sm" onclick="resetCRMEditMode()">✕ Tạo tin mới</button></div>`;
+  } else {
+    banner.style.display='none';
+  }
+}
+
+function resetCRMEditMode(){
+  trackerId=0;
+  const banner=document.getElementById('crmEditBanner');
+  if(banner)banner.style.display='none';
+  toast('✅ Chế độ tạo tin mới — Lưu CRM sẽ tạo bản ghi mới');
+}
+
 
 // Migrate old CRM entries (add code if missing)
 function migrateCRM(){
@@ -1496,152 +2044,320 @@ function formatTimeLeft(dt){
   return`Còn ${mins} phút`;
 }
 
-// ===================== DASHBOARD (NEW) =====================
+
+// ===================== DASHBOARD + XUẤT BÁO CÁO =====================
 function buildDashboard(){
   const el=document.getElementById('dashboardContent');if(!el)return;
-  const now=new Date();
-  const thisWeek=getWeekNumber(now);
-  const thisMonth=now.getMonth()+1;
-  const thisYear=now.getFullYear();
+  try{
+    const now=new Date();
+    const thisWeek=getWeekNumber(now);
+    const thisMonth=now.getMonth()+1;
+    const thisYear=now.getFullYear();
+    const mNames=['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
+    const monthName=mNames[now.getMonth()];
+    const totalContent=contentLog.length;
+    const thisWeekContent=contentLog.filter(c=>c.week===thisWeek&&c.year===thisYear).length;
+    const thisMonthContent=contentLog.filter(c=>c.month===thisMonth&&c.year===thisYear).length;
+    const lastMonthContent=contentLog.filter(c=>c.month===(thisMonth===1?12:thisMonth-1)&&c.year===(thisMonth===1?thisYear-1:thisYear)).length;
+    const growthPct=lastMonthContent?Math.round(((thisMonthContent-lastMonthContent)/lastMonthContent)*100):0;
+    const dueReminders=reminders.filter(r=>!r.done&&new Date(r.datetime)<=now).length;
+    const doneReminders=reminders.filter(r=>r.done).length;
+    const totalReminders=reminders.length;
+    const hotKH=(khList||[]).filter(k=>k.label==='hot').length;
+    const warmKH=(khList||[]).filter(k=>k.label==='warm').length;
+    const doneKH=(khList||[]).filter(k=>k.label==='done').length;
+    const sc6Posted=Object.values((sc6Data&&sc6Data.posted)||{}).filter(Boolean).length;
+    const sc6Total=(sc6Data&&sc6Data.schedule)?sc6Data.schedule.length:0;
+    const sc6Filled=(sc6Data&&sc6Data.slots)?sc6Data.slots.filter(s=>s.filled).length:0;
 
-  // Stats
-  const totalContent=contentLog.length;
-  const thisWeekContent=contentLog.filter(c=>c.week===thisWeek&&c.year===thisYear).length;
-  const thisMonthContent=contentLog.filter(c=>c.month===thisMonth&&c.year===thisYear).length;
-  const totalReminders=reminders.length;
-  const dueReminders=reminders.filter(r=>!r.done&&new Date(r.datetime)<=now).length;
-  const doneReminders=reminders.filter(r=>r.done).length;
+    // Last 7 days
+    const last7=[];
+    for(let i=6;i>=0;i--){
+      const d=new Date(now);d.setDate(d.getDate()-i);
+      const dayStr=d.toISOString().split('T')[0];
+      const count=contentLog.filter(c=>c.date===dayStr).length;
+      const dayName=['CN','T2','T3','T4','T5','T6','T7'][d.getDay()];
+      last7.push({day:dayName,date:dayStr,count});
+    }
+    const maxDay=Math.max(...last7.map(d=>d.count),1);
 
-  // Last 7 days chart data
-  const last7=[];
-  for(let i=6;i>=0;i--){
-    const d=new Date(now);d.setDate(d.getDate()-i);
-    const dayStr=d.toISOString().split('T')[0];
-    const count=contentLog.filter(c=>c.date===dayStr).length;
-    const dayName=['CN','T2','T3','T4','T5','T6','T7'][d.getDay()];
-    last7.push({day:dayName,date:dayStr,count});
-  }
-  const maxDay=Math.max(...last7.map(d=>d.count),1);
+    // Last 4 weeks
+    const last4weeks=[];
+    for(let i=3;i>=0;i--){
+      const wn=thisWeek-i;
+      const count=contentLog.filter(c=>c.week===wn&&c.year===thisYear).length;
+      last4weeks.push({week:`T${wn}`,count});
+    }
+    const maxWeek=Math.max(...last4weeks.map(w=>w.count),1);
 
-  // Last 4 weeks
-  const last4weeks=[];
-  for(let i=3;i>=0;i--){
-    const weekNum=thisWeek-i;
-    const count=contentLog.filter(c=>c.week===weekNum&&c.year===thisYear).length;
-    last4weeks.push({week:`T${weekNum}`,count});
-  }
-  const maxWeek=Math.max(...last4weeks.map(w=>w.count),1);
+    // Platform posted stats
+    const ps={fb:0,zalo:0,tiktok:0,web:0};
+    crm.forEach(e=>{if(e.posted){['fb','zalo','tiktok','web'].forEach(k=>{if(e.posted[k])ps[k]++;});}});
+    const totalPosted=Object.values(ps).reduce((a,b)=>a+b,0);
 
-  // Content by platform (simulated from CRM data)
-  const byType={};
-  crm.forEach(c=>{byType[c.type]=(byType[c.type]||0)+1;});
-  const topTypes=Object.entries(byType).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    // Top types
+    const byType={};
+    crm.forEach(c=>{byType[c.type]=(byType[c.type]||0)+1;});
+    const topTypes=Object.entries(byType).sort((a,b)=>b[1]-a[1]).slice(0,5);
 
-  el.innerHTML=`
-    <!-- Stats row -->
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">
-      <div style="background:linear-gradient(135deg,rgba(245,166,35,.15),rgba(245,166,35,.05));border:1px solid rgba(245,166,35,.3);border-radius:12px;padding:14px;text-align:center">
-        <div style="font-size:2rem;font-weight:900;color:var(--ac);font-family:'Space Mono',monospace">${totalContent}</div>
-        <div style="font-size:.68rem;color:var(--t3);margin-top:3px">Tổng content</div>
-      </div>
-      <div style="background:linear-gradient(135deg,rgba(62,207,142,.15),rgba(62,207,142,.05));border:1px solid rgba(62,207,142,.3);border-radius:12px;padding:14px;text-align:center">
-        <div style="font-size:2rem;font-weight:900;color:var(--gr);font-family:'Space Mono',monospace">${thisWeekContent}</div>
-        <div style="font-size:.68rem;color:var(--t3);margin-top:3px">Tuần này</div>
-      </div>
-      <div style="background:linear-gradient(135deg,rgba(76,156,245,.15),rgba(76,156,245,.05));border:1px solid rgba(76,156,245,.3);border-radius:12px;padding:14px;text-align:center">
-        <div style="font-size:2rem;font-weight:900;color:var(--bl);font-family:'Space Mono',monospace">${thisMonthContent}</div>
-        <div style="font-size:.68rem;color:var(--t3);margin-top:3px">Tháng này</div>
-      </div>
-      <div style="background:linear-gradient(135deg,rgba(239,83,80,.15),rgba(239,83,80,.05));border:1px solid rgba(239,83,80,.3);border-radius:12px;padding:14px;text-align:center">
-        <div style="font-size:2rem;font-weight:900;color:var(--rd);font-family:'Space Mono',monospace">${dueReminders}</div>
-        <div style="font-size:.68rem;color:var(--t3);margin-top:3px">Nhắc đến hạn</div>
-      </div>
-    </div>
-
-    <!-- 7-day chart -->
-    <div class="card" style="margin-bottom:12px">
-      <div class="ctit"><span class="dot"></span>📈 Content 7 ngày qua</div>
-      <div style="display:flex;align-items:flex-end;gap:6px;height:100px;padding:0 4px">
-        ${last7.map(d=>`
-          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
-            <div style="font-size:.65rem;color:var(--t3);font-family:'Space Mono',monospace">${d.count}</div>
-            <div style="width:100%;background:${d.count>0?'linear-gradient(180deg,var(--ac),var(--a2))':'var(--bg3)'};border-radius:4px 4px 0 0;height:${Math.max(4,Math.round((d.count/maxDay)*72))}px;transition:.3s"></div>
-            <div style="font-size:.62rem;color:var(--t3)">${d.day}</div>
-          </div>`).join('')}
-      </div>
-    </div>
-
-    <!-- Weekly chart -->
-    <div class="card" style="margin-bottom:12px">
-      <div class="ctit"><span class="dot"></span>📊 Content 4 tuần qua</div>
-      <div style="display:flex;align-items:flex-end;gap:8px;height:80px;padding:0 4px">
-        ${last4weeks.map(w=>`
-          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
-            <div style="font-size:.65rem;color:var(--t3);font-family:'Space Mono',monospace">${w.count}</div>
-            <div style="width:100%;background:${w.count>0?'linear-gradient(180deg,var(--bl),#2979e0)':'var(--bg3)'};border-radius:4px 4px 0 0;height:${Math.max(4,Math.round((w.count/maxWeek)*56))}px;transition:.3s"></div>
-            <div style="font-size:.62rem;color:var(--t3)">${w.week}</div>
-          </div>`).join('')}
-      </div>
-    </div>
-
-    <!-- Summary cards -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:12px">
-      <div class="card">
-        <div class="ctit"><span class="dot"></span>🗄️ Mini CRM</div>
-        <div style="font-size:.77rem;color:var(--t2);line-height:1.9">
-          📦 Tổng tin: <strong style="color:var(--ac)">${crm.length}</strong><br>
-          📌 Templates: <strong style="color:var(--bl)">${tpl.length}</strong>
+    el.innerHTML=`
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px">
+        <div style="background:linear-gradient(135deg,rgba(245,166,35,.15),rgba(245,166,35,.05));border:1px solid rgba(245,166,35,.3);border-radius:12px;padding:14px;text-align:center">
+          <div style="font-size:2rem;font-weight:900;color:var(--ac);font-family:'Space Mono',monospace">${totalContent}</div>
+          <div style="font-size:.68rem;color:var(--t3);margin-top:3px">Tổng content</div>
         </div>
-        <button class="btn btn-s btn-xs" style="margin-top:8px;width:100%;justify-content:center" onclick="nav('crm')">Mở CRM →</button>
-      </div>
-      <div class="card">
-        <div class="ctit"><span class="dot"></span>⏰ Nhắc Lịch</div>
-        <div style="font-size:.77rem;color:var(--t2);line-height:1.9">
-          🔴 Đến hạn: <strong style="color:var(--rd)">${dueReminders}</strong><br>
-          ✅ Hoàn thành: <strong style="color:var(--gr)">${doneReminders}</strong><br>
-          ⏳ Sắp tới: <strong style="color:var(--ac)">${totalReminders-dueReminders-doneReminders}</strong>
+        <div style="background:linear-gradient(135deg,rgba(62,207,142,.15),rgba(62,207,142,.05));border:1px solid rgba(62,207,142,.3);border-radius:12px;padding:14px;text-align:center">
+          <div style="font-size:2rem;font-weight:900;color:var(--gr);font-family:'Space Mono',monospace">${thisMonthContent}</div>
+          <div style="font-size:.68rem;color:var(--t3);margin-top:3px">${monthName} ${growthPct!==0?`<span style="color:${growthPct>0?'var(--gr)':'var(--rd)'}">(${growthPct>0?'+':''}${growthPct}%)</span>`:''}</div>
         </div>
-        <button class="btn btn-s btn-xs" style="margin-top:8px;width:100%;justify-content:center" onclick="nav('reminder')">Xem lịch →</button>
+        <div style="background:linear-gradient(135deg,rgba(76,156,245,.15),rgba(76,156,245,.05));border:1px solid rgba(76,156,245,.3);border-radius:12px;padding:14px;text-align:center">
+          <div style="font-size:2rem;font-weight:900;color:var(--bl);font-family:'Space Mono',monospace">${thisWeekContent}</div>
+          <div style="font-size:.68rem;color:var(--t3);margin-top:3px">Tuần này</div>
+        </div>
+        <div style="background:linear-gradient(135deg,rgba(239,83,80,.15),rgba(239,83,80,.05));border:1px solid rgba(239,83,80,.3);border-radius:12px;padding:14px;text-align:center">
+          <div style="font-size:2rem;font-weight:900;color:var(--rd);font-family:'Space Mono',monospace">${dueReminders}</div>
+          <div style="font-size:.68rem;color:var(--t3);margin-top:3px">Nhắc đến hạn</div>
+        </div>
       </div>
-    </div>
 
-    <!-- Posted platform stats -->
-    ${(()=>{
-      const ps={fb:0,zalo:0,tiktok:0,web:0};
-      crm.forEach(e=>{if(e.posted){['fb','zalo','tiktok','web'].forEach(k=>{if(e.posted[k])ps[k]++;});}});
-      const total=Object.values(ps).reduce((a,b)=>a+b,0);
-      if(!crm.length)return'';
-      const plInfo=[{k:'fb',ic:'📘',nm:'Facebook'},{k:'zalo',ic:'💬',nm:'Zalo'},{k:'tiktok',ic:'🎵',nm:'TikTok'},{k:'web',ic:'🌐',nm:'Website'}];
-      return`<div class="card" style="margin-bottom:12px">
-        <div class="ctit"><span class="dot"></span>📌 Thống kê đăng tin theo nền tảng</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:12px">
+        <div class="card">
+          <div class="ctit"><span class="dot"></span>📈 Content 7 ngày qua</div>
+          <div style="display:flex;align-items:flex-end;gap:5px;height:90px;padding:0 2px">
+            ${last7.map(d=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+              <div style="font-size:.58rem;color:var(--t3)">${d.count||''}</div>
+              <div style="width:100%;background:${d.count>0?'linear-gradient(180deg,var(--ac),var(--a2))':'var(--bg3)'};border-radius:4px 4px 0 0;height:${Math.max(3,Math.round((d.count/maxDay)*66))}px;transition:.3s" title="${d.date}:${d.count}"></div>
+              <div style="font-size:.58rem;color:var(--t3)">${d.day}</div>
+            </div>`).join('')}
+          </div>
+        </div>
+        <div class="card">
+          <div class="ctit"><span class="dot"></span>📊 4 tuần qua</div>
+          <div style="display:flex;align-items:flex-end;gap:8px;height:90px;padding:0 2px">
+            ${last4weeks.map(w=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+              <div style="font-size:.58rem;color:var(--t3)">${w.count||''}</div>
+              <div style="width:100%;background:${w.count>0?'linear-gradient(180deg,var(--bl),#2979e0)':'var(--bg3)'};border-radius:4px 4px 0 0;height:${Math.max(3,Math.round((w.count/maxWeek)*66))}px;transition:.3s"></div>
+              <div style="font-size:.58rem;color:var(--t3)">${w.week}</div>
+            </div>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:12px">
+        <div class="card">
+          <div class="ctit"><span class="dot"></span>🎯 Trạng thái KH</div>
+          <div style="display:grid;gap:5px;font-size:.76rem">
+            <div style="display:flex;justify-content:space-between;padding:5px 8px;background:rgba(239,83,80,.08);border-radius:7px"><span>🔴 Nóng</span><strong style="color:var(--rd)">${hotKH}</strong></div>
+            <div style="display:flex;justify-content:space-between;padding:5px 8px;background:rgba(245,166,35,.08);border-radius:7px"><span>🟡 Ấm</span><strong style="color:var(--ac)">${warmKH}</strong></div>
+            <div style="display:flex;justify-content:space-between;padding:5px 8px;background:rgba(62,207,142,.08);border-radius:7px"><span>✅ Chốt</span><strong style="color:var(--gr)">${doneKH}</strong></div>
+          </div>
+          <button class="btn btn-s btn-xs" style="margin-top:8px;width:100%;justify-content:center" onclick="nav('khlabels')">Xem KH →</button>
+        </div>
+        <div class="card">
+          <div class="ctit"><span class="dot"></span>⏰ Nhắc Lịch</div>
+          <div style="display:grid;gap:5px;font-size:.76rem">
+            <div style="display:flex;justify-content:space-between;padding:5px 8px;background:rgba(239,83,80,.08);border-radius:7px"><span>🔴 Đến hạn</span><strong style="color:var(--rd)">${dueReminders}</strong></div>
+            <div style="display:flex;justify-content:space-between;padding:5px 8px;background:rgba(62,207,142,.08);border-radius:7px"><span>✅ Xong</span><strong style="color:var(--gr)">${doneReminders}</strong></div>
+            <div style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--bg3);border-radius:7px"><span>⏳ Sắp tới</span><strong style="color:var(--t2)">${totalReminders-dueReminders-doneReminders}</strong></div>
+          </div>
+          <button class="btn btn-s btn-xs" style="margin-top:8px;width:100%;justify-content:center" onclick="nav('reminder')">Xem lịch →</button>
+        </div>
+        <div class="card">
+          <div class="ctit"><span class="dot"></span>🏘️ Chiến Thuật 6 Căn</div>
+          <div style="display:grid;gap:5px;font-size:.76rem">
+            <div style="display:flex;justify-content:space-between;padding:5px 8px;background:rgba(245,166,35,.08);border-radius:7px"><span>🏠 Căn đã nhập</span><strong style="color:var(--ac)">${sc6Filled}/6</strong></div>
+            <div style="display:flex;justify-content:space-between;padding:5px 8px;background:rgba(76,156,245,.08);border-radius:7px"><span>📅 Lịch</span><strong style="color:var(--bl)">${sc6Total} content</strong></div>
+            <div style="display:flex;justify-content:space-between;padding:5px 8px;background:rgba(62,207,142,.08);border-radius:7px"><span>✅ Đã đăng</span><strong style="color:var(--gr)">${sc6Posted}</strong></div>
+          </div>
+          <button class="btn btn-s btn-xs" style="margin-top:8px;width:100%;justify-content:center" onclick="nav('sixcan')">Xem chiến dịch →</button>
+        </div>
+      </div>
+
+      ${crm.length?`<div class="card" style="margin-bottom:12px">
+        <div class="ctit"><span class="dot"></span>📌 Đăng tin theo nền tảng</div>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:9px">
-          ${plInfo.map(p=>`<div style="background:${ps[p.k]>0?'rgba(62,207,142,.1)':'var(--bg3)'};border:1px solid ${ps[p.k]>0?'rgba(62,207,142,.35)':'var(--border)'};border-radius:9px;padding:10px 7px;text-align:center">
+          ${[{k:'fb',ic:'📘',nm:'Facebook'},{k:'zalo',ic:'💬',nm:'Zalo'},{k:'tiktok',ic:'🎵',nm:'TikTok'},{k:'web',ic:'🌐',nm:'Website'}].map(p=>`<div style="background:${ps[p.k]>0?'rgba(62,207,142,.1)':'var(--bg3)'};border:1px solid ${ps[p.k]>0?'rgba(62,207,142,.35)':'var(--border)'};border-radius:9px;padding:10px 7px;text-align:center">
             <div style="font-size:1.3rem">${p.ic}</div>
             <div style="font-weight:900;font-size:1.2rem;color:${ps[p.k]>0?'var(--gr)':'var(--t3)'};font-family:'Space Mono',monospace">${ps[p.k]}</div>
             <div style="font-size:.62rem;color:var(--t3)">${p.nm}</div>
           </div>`).join('')}
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;font-size:.72rem;color:var(--t2)">
-          <span>Tổng lượt đăng: <strong style="color:var(--ac)">${total}</strong></span>
-          <span>Tỷ lệ phủ sóng: <strong style="color:var(--gr)">${crm.length?Math.round(total/crm.length/4*100):0}%</strong></span>
+        <div style="display:flex;justify-content:space-between;font-size:.72rem;color:var(--t2)">
+          <span>Tổng lượt đăng: <strong style="color:var(--ac)">${totalPosted}</strong></span>
+          <span>Phủ sóng: <strong style="color:var(--gr)">${Math.round(totalPosted/Math.max(crm.length,1)/4*100)}%</strong></span>
         </div>
+      </div>`:''}
+
+      ${topTypes.length?`<div class="card" style="margin-bottom:12px">
+        <div class="ctit"><span class="dot"></span>🏠 Loại nhà hay đăng nhất</div>
+        ${topTypes.map(([t,c])=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+          <div style="font-size:.75rem;color:var(--t2);width:110px;flex-shrink:0">${t}</div>
+          <div style="flex:1;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden">
+            <div style="height:100%;background:linear-gradient(90deg,var(--ac),var(--a2));border-radius:4px;width:${Math.round((c/topTypes[0][1])*100)}%"></div>
+          </div>
+          <div style="font-size:.7rem;font-weight:700;color:var(--ac);width:22px;text-align:right">${c}</div>
+        </div>`).join('')}
+      </div>`:''}
+
+      <div style="text-align:center;padding:10px 0;font-size:.68rem;color:var(--t3)">
+        📅 Cập nhật: ${now.toLocaleString('vi-VN')} · <span style="cursor:pointer;color:var(--ac)" onclick="buildDashboard()">🔄 Refresh</span>
       </div>`;
-    })()}
+  }catch(err){
+    el.innerHTML=`<div style="text-align:center;padding:32px;color:var(--t3)"><div style="font-size:1.5rem;margin-bottom:9px">⚠️</div><div style="font-size:.82rem;margin-bottom:9px">Lỗi tải dashboard. Thử refresh.</div><button class="btn btn-s btn-sm" onclick="buildDashboard()">🔄 Thử lại</button></div>`;
+    console.error('buildDashboard error:',err);
+  }
+}
 
-    ${topTypes.length?`<div class="card">
-      <div class="ctit"><span class="dot"></span>🏠 Loại nhà hay đăng nhất</div>
-      ${topTypes.map(([t,c])=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
-        <div style="font-size:.75rem;color:var(--t2);width:100px;flex-shrink:0">${t}</div>
-        <div style="flex:1;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden">
-          <div style="height:100%;background:linear-gradient(90deg,var(--ac),var(--a2));border-radius:4px;width:${Math.round((c/topTypes[0][1])*100)}%"></div>
-        </div>
-        <div style="font-size:.7rem;font-weight:700;color:var(--ac);width:20px;text-align:right">${c}</div>
-      </div>`).join('')}
-    </div>`:''}
+function buildReportData(){
+  const now=new Date();
+  const mNames=['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
+  const thisMonth=now.getMonth()+1;const thisYear=now.getFullYear();
+  const monthName=mNames[now.getMonth()];
+  const thisWeek=getWeekNumber(now);
+  const totalContent=contentLog.length;
+  const thisMonthContent=contentLog.filter(c=>c.month===thisMonth&&c.year===thisYear).length;
+  const lastMonthContent=contentLog.filter(c=>c.month===(thisMonth===1?12:thisMonth-1)&&c.year===(thisMonth===1?thisYear-1:thisYear)).length;
+  const thisWeekContent=contentLog.filter(c=>c.week===thisWeek&&c.year===thisYear).length;
+  const growthPct=lastMonthContent?Math.round(((thisMonthContent-lastMonthContent)/lastMonthContent)*100):0;
+  const ps={fb:0,zalo:0,tiktok:0,web:0};
+  crm.forEach(e=>{if(e.posted){['fb','zalo','tiktok','web'].forEach(k=>{if(e.posted[k])ps[k]++;});}});
+  const totalPosted=Object.values(ps).reduce((a,b)=>a+b,0);
+  const hotKH=(khList||[]).filter(k=>k.label==='hot').length;
+  const warmKH=(khList||[]).filter(k=>k.label==='warm').length;
+  const doneKH=(khList||[]).filter(k=>k.label==='done').length;
+  const dueRem=reminders.filter(r=>!r.done&&new Date(r.datetime)<=now).length;
+  const doneRem=reminders.filter(r=>r.done).length;
+  const sc6Posted=Object.values((sc6Data&&sc6Data.posted)||{}).filter(Boolean).length;
+  const sc6Total=(sc6Data&&sc6Data.schedule)?sc6Data.schedule.length:0;
+  const recentCRM=crm.slice(0,5);
+  return{now,monthName,thisYear,thisMonth,totalContent,thisMonthContent,lastMonthContent,thisWeekContent,growthPct,ps,totalPosted,hotKH,warmKH,doneKH,dueRem,doneRem,sc6Posted,sc6Total,recentCRM};
+}
 
-    <div style="text-align:center;padding:10px 0;font-size:.7rem;color:var(--t3)">
-      📅 Cập nhật: ${now.toLocaleString('vi-VN')} · <span style="cursor:pointer;color:var(--ac)" onclick="buildDashboard()">🔄 Refresh</span>
-    </div>`;
+function exportReportTxt(){
+  const d=buildReportData();
+  // Lấy thông tin từ Hồ Sơ
+  const myName=prof.name||'[Chưa điền Hồ Sơ]';
+  const myTitle=prof.title||'Môi giới BĐS';
+  const myPhone=prof.phone||'[SĐT]';
+  const myZalo=prof.zalo||prof.phone||'[Zalo]';
+  const line='='.repeat(50);
+  let txt=`📊 BÁO CÁO HOẠT ĐỘNG ${d.monthName.toUpperCase()}/${d.thisYear}\n${line}\n`;
+  txt+=`👤 Họ tên:    ${myName}\n`;
+  txt+=`🏢 Chức danh: ${myTitle}\n`;
+  txt+=`📞 SĐT:       ${myPhone}\n`;
+  txt+=`💬 Zalo:      ${myZalo}\n`;
+  txt+=`📅 Ngày xuất: ${d.now.toLocaleString('vi-VN')}\n${line}\n\n`;
+  txt+=`📝 CONTENT & ĐĂNG TIN\n${'─'.repeat(36)}\n`;
+  txt+=`• Tổng content đã tạo:   ${d.totalContent}\n`;
+  txt+=`• ${d.monthName} này:           ${d.thisMonthContent}${d.growthPct!==0?` (${d.growthPct>0?'+':''}${d.growthPct}% vs tháng trước)`:''}\n`;
+  txt+=`• Tuần này:              ${d.thisWeekContent}\n`;
+  txt+=`• Đã đăng Facebook:      ${d.ps.fb}\n`;
+  txt+=`• Đã đăng Zalo:          ${d.ps.zalo}\n`;
+  txt+=`• Đã đăng TikTok:        ${d.ps.tiktok}\n`;
+  txt+=`• Đã đăng Website:       ${d.ps.web}\n`;
+  txt+=`• Tổng lượt đăng:        ${d.totalPosted}\n\n`;
+  txt+=`🎯 KHÁCH HÀNG\n${'─'.repeat(36)}\n`;
+  txt+=`• KH Nóng (follow gấp): ${d.hotKH}\n• KH Ấm (cân nhắc):     ${d.warmKH}\n• Đã chốt deal:          ${d.doneKH}\n`;
+  txt+=`• Nhắc đến hạn:          ${d.dueRem}\n• Follow-up xong:        ${d.doneRem}\n\n`;
+  txt+=`🏘️ CHIẾN THUẬT 6 CĂN\n${'─'.repeat(36)}\n`;
+  txt+=`• Lịch 30 ngày: ${d.sc6Total} content · Đã đăng: ${d.sc6Posted}\n`;
+  txt+=`• Tiến độ: ${d.sc6Total?Math.round(d.sc6Posted/d.sc6Total*100):0}%\n\n`;
+  txt+=`🗄️ CRM — 5 TIN GẦN NHẤT\n${'─'.repeat(36)}\n`;
+  d.recentCRM.forEach((e,i)=>{const pc=Object.values(e.posted||{}).filter(Boolean).length;txt+=`${i+1}. [${e.code||'—'}] ${e.type} — ${e.loc} — ${e.price} (${pc}/4 nền tảng)\n`;});
+  txt+=`\n${line}\n${myName} — ${myTitle} | 📞 ${myPhone}\n#aihockiemtien · AUTO PRO CONTENT BĐS v7\n`;
+  if(!prof.name)toast('⚠️ Chưa điền Hồ Sơ — báo cáo thiếu thông tin cá nhân!');
+  dlTxt(txt,`bao-cao-${d.monthName.replace(' ','-')}-${d.thisYear}.txt`);
+  toast('📄 Đã xuất báo cáo .txt!');
+}
+
+function exportReportHTML(){
+  const d=buildReportData();
+  const myName=prof.name||'[Chưa điền Hồ Sơ]';
+  const myTitle=prof.title||'Môi giới BĐS';
+  const myPhone=prof.phone||'[SĐT]';
+  const myZalo=prof.zalo||prof.phone||'[Zalo]';
+  const av=prof.avatar
+    ?`<img src="${prof.avatar}" style="width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.4)">`
+    :`<div style="width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:1.5rem">👤</div>`;
+  const html=`<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><title>Báo cáo ${d.monthName}/${d.thisYear} — ${myName}</title>
+<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Segoe UI',Arial,sans-serif;background:#f4f6fb;color:#1a1e2e;padding:20px}.w{max-width:660px;margin:0 auto}
+.hdr{background:linear-gradient(135deg,#f5a623,#e8891a);border-radius:12px;padding:18px 20px;color:#fff;display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.hdr-info h1{font-size:1.15rem;font-weight:700;margin-bottom:3px}.hdr-info .sub{font-size:.76rem;opacity:.85;margin-bottom:2px}.hdr-info .contact{font-size:.72rem;opacity:.75}
+.gr{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:14px}
+.sc{background:#fff;border-radius:10px;padding:12px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06)}.sc-n{font-size:1.7rem;font-weight:700;font-family:'Courier New',monospace}.sc-l{font-size:.64rem;color:#6b7490;margin-top:2px}
+.sec{background:#fff;border-radius:10px;padding:14px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}.sec h3{font-size:.86rem;font-weight:700;margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid #eee}
+.row{display:flex;justify-content:space-between;padding:5px 0;font-size:.8rem;border-bottom:1px solid #f4f6fb}.row:last-child{border-bottom:none}
+.v{font-weight:700;color:#f5a623}.v.g{color:#3ecf8e}.v.b{color:#4c9cf5}.v.r{color:#ef5350}
+.plts{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:8px}.plt{background:#f4f6fb;border-radius:7px;padding:9px;text-align:center}
+.plt-n{font-weight:700;font-size:1.1rem;color:#3ecf8e;font-family:'Courier New',monospace}.plt-l{font-size:.62rem;color:#6b7490}
+.ci{padding:6px 0;border-bottom:1px solid #f4f6fb;font-size:.78rem}.code{font-family:'Courier New',monospace;font-size:.68rem;color:#f5a623;background:#fff8ec;padding:1px 5px;border-radius:4px}
+.foot{text-align:center;padding:14px;font-size:.7rem;color:#8890a8;border-top:1px solid #e8eaf4;margin-top:4px}
+${prof.name?'':'.warn{background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:10px 13px;margin-bottom:12px;font-size:.78rem;color:#856404}'}
+@media print{body{background:#fff;padding:0}.w{max-width:100%}}</style></head>
+<body><div class="w">
+${!prof.name?'<div class="warn">⚠️ Chưa điền Hồ Sơ — Vào mục Hồ Sơ để thêm thông tin cá nhân cho báo cáo chuyên nghiệp hơn.</div>':''}
+<div class="hdr">${av}<div class="hdr-info"><h1>📊 Báo cáo ${d.monthName}/${d.thisYear}</h1><div class="sub">${myName} — ${myTitle}</div><div class="contact">📞 ${myPhone} | 💬 Zalo: ${myZalo}</div><div class="contact" style="margin-top:2px">🕐 ${d.now.toLocaleString('vi-VN')}</div></div></div>
+<div class="gr">
+<div class="sc"><div class="sc-n" style="color:#f5a623">${d.totalContent}</div><div class="sc-l">Tổng content</div></div>
+<div class="sc"><div class="sc-n" style="color:#3ecf8e">${d.thisMonthContent}</div><div class="sc-l">${d.monthName}${d.growthPct!==0?` ${d.growthPct>0?'↑':'↓'}${Math.abs(d.growthPct)}%`:''}</div></div>
+<div class="sc"><div class="sc-n" style="color:#4c9cf5">${d.thisWeekContent}</div><div class="sc-l">Tuần này</div></div>
+<div class="sc"><div class="sc-n" style="color:#ef5350">${d.dueRem}</div><div class="sc-l">Nhắc đến hạn</div></div>
+</div>
+<div class="sec"><h3>📌 Đăng tin theo nền tảng</h3>
+<div class="plts"><div class="plt"><div>📘</div><div class="plt-n">${d.ps.fb}</div><div class="plt-l">Facebook</div></div><div class="plt"><div>💬</div><div class="plt-n">${d.ps.zalo}</div><div class="plt-l">Zalo</div></div><div class="plt"><div>🎵</div><div class="plt-n">${d.ps.tiktok}</div><div class="plt-l">TikTok</div></div><div class="plt"><div>🌐</div><div class="plt-n">${d.ps.web}</div><div class="plt-l">Website</div></div></div>
+<div class="row" style="margin-top:9px"><span>Tổng lượt đăng</span><span class="v">${d.totalPosted}</span></div>
+<div class="row"><span>Tỷ lệ phủ sóng</span><span class="v g">${Math.round(d.totalPosted/Math.max(crm.length,1)/4*100)}%</span></div></div>
+<div class="sec"><h3>🎯 Trạng thái Khách Hàng</h3>
+<div class="row"><span>🔴 KH Nóng — cần follow gấp</span><span class="v r">${d.hotKH}</span></div>
+<div class="row"><span>🟡 KH Ấm — đang cân nhắc</span><span class="v">${d.warmKH}</span></div>
+<div class="row"><span>✅ Đã chốt deal</span><span class="v g">${d.doneKH}</span></div>
+<div class="row"><span>⏰ Follow-up đã xong</span><span class="v g">${d.doneRem}</span></div></div>
+<div class="sec"><h3>🏘️ Chiến Thuật 6 Căn</h3>
+<div class="row"><span>Lịch 30 ngày</span><span class="v">${d.sc6Total} content</span></div>
+<div class="row"><span>Đã đăng</span><span class="v g">${d.sc6Posted}/${d.sc6Total}</span></div>
+<div class="row"><span>Tiến độ</span><span class="v b">${d.sc6Total?Math.round(d.sc6Posted/d.sc6Total*100):0}%</span></div></div>
+<div class="sec"><h3>🗄️ CRM — 5 tin gần nhất</h3>
+${d.recentCRM.map(e=>{const pc=Object.values(e.posted||{}).filter(Boolean).length;return`<div class="ci"><span class="code">${e.code||'—'}</span> <strong>${e.type}</strong> — ${e.loc} — <span style="color:#f5a623">${e.price}</span><span style="float:right;color:#3ecf8e">${pc}/4</span></div>`;}).join('')}
+</div>
+<div class="foot">${myName} — ${myTitle} | 📞 ${myPhone} | 💬 ${myZalo}<br>#aihockiemtien · AUTO PRO CONTENT BĐS v7 · <em>Ctrl+P để in / lưu PDF</em></div>
+</div></body></html>`;
+  if(!prof.name)toast('⚠️ Chưa điền Hồ Sơ — báo cáo thiếu tên!');
+  dlTxt(html,`bao-cao-${d.monthName.replace(' ','-')}-${d.thisYear}.html`);
+  toast('🌐 Xuất HTML xong! Mở file → Ctrl+P → Save as PDF');
+}
+
+function copyReportToClipboard(){
+  const d=buildReportData();
+  const myName=prof.name||'[Chưa điền Hồ Sơ]';
+  const myTitle=prof.title||'Môi giới BĐS';
+  const myPhone=prof.phone||'[SĐT]';
+  const myZalo=prof.zalo||prof.phone||'[Zalo]';
+  const txt=
+`📊 BÁO CÁO ${d.monthName.toUpperCase()}/${d.thisYear}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+👤 ${myName}
+🏢 ${myTitle}
+📞 ${myPhone} | 💬 Zalo: ${myZalo}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📝 CONTENT & ĐĂNG TIN
+• Tổng content: ${d.totalContent}
+• ${d.monthName}: ${d.thisMonthContent}${d.growthPct!==0?` (${d.growthPct>0?'+':''}${d.growthPct}% vs tháng trước)`:''}
+• Tuần này: ${d.thisWeekContent}
+• Đăng: 📘${d.ps.fb} 💬${d.ps.zalo} 🎵${d.ps.tiktok} 🌐${d.ps.web}
+
+🎯 KHÁCH HÀNG
+• 🔴 Nóng: ${d.hotKH} · 🟡 Ấm: ${d.warmKH} · ✅ Chốt: ${d.doneKH}
+• ⏰ Follow-up đến hạn: ${d.dueRem}
+
+🏘️ CHIẾN THUẬT 6 CĂN
+• Tiến độ: ${d.sc6Posted}/${d.sc6Total} content đã đăng (${d.sc6Total?Math.round(d.sc6Posted/d.sc6Total*100):0}%)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#aihockiemtien · AUTO PRO CONTENT BĐS v7`;
+  if(!prof.name)toast('⚠️ Chưa điền Hồ Sơ — báo cáo thiếu tên!');
+  cpTxt(txt);
+  toast('📋 Đã copy! Paste vào Zalo/Email gửi sếp ngay!');
 }
 
 // ===================== GUIDE (NEW) =====================
@@ -1860,7 +2576,7 @@ function nav(id){
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   const pg=document.getElementById('pg-'+id);if(pg)pg.classList.add('on');
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
-  const mp={home:'🏠',gen:'✍️',sch:'📅',scr:'🎯',ab:'⚡',remix:'🔁',survey:'🔍',valuation:'🏷️',readkh:'🎭',guidetour:'🏡',salescripts:'💬',tools:'🔧',cmp:'📊',fs:'🔮',handbook:'📚',tpl:'📌',crm:'🗄️',ag:'🤖',earn:'💰',charity:'❤️',prof:'👤',reminder:'⏰',dashboard:'📊',guide:'❓',sixcan:'🏘️',morning:'☀️',calendar:'📅',khlabels:'🎯',timeline:'📋'};
+  const mp={home:'🏠',gen:'✍️',sch:'📅',scr:'🎯',ab:'⚡',remix:'🔁',survey:'🔍',valuation:'🏷️',readkh:'🎭',guidetour:'🏡',salescripts:'💬',tools:'🔧',cmp:'📊',fs:'🔮',handbook:'📚',tpl:'📌',crm:'🗄️',ag:'🤖',earn:'💰',charity:'❤️',prof:'👤',reminder:'⏰',dashboard:'📊',guide:'❓',sixcan:'🏘️',morning:'☀️',calendar:'📅',khlabels:'🎯',timeline:'📋',spin:'🔄'};
   document.querySelectorAll('.ni').forEach(n=>{const ic=n.querySelector('.ic');if(ic&&ic.textContent.trim()===mp[id])n.classList.add('on');});
   const sb=document.getElementById('sb');if(sb&&sb.classList.contains('mob'))sb.classList.remove('mob');
   window.scrollTo&&window.scrollTo(0,0);
@@ -1874,16 +2590,11 @@ function nav(id){
   if(id==='timeline')buildTLSelect();
   if(id==='sixcan')initSixCan();
   if(id==='handbook')buildHBExtra();
+  if(id==='spin'){buildSPINKHSelect();if(!document.getElementById('spinQArea').innerHTML)showSPINPhase(0);}
 }
 
 // ===================== CHIẾN THUẬT 6 CĂN =====================
-// State
-let sc6Data = {
-  slots: Array.from({length:6},(_,i)=>({id:i+1,addr:'',type:'',price:'',area:'',floors:'',pros:'',code:'',filled:false})),
-  settings: {startDate:'',goal:'Chốt nhanh',platforms:['fb','zalo','tiktok'],dist:'smart',psyList:['Tham','Sân','Si','Nghi ngờ','Ngạo mạn']},
-  schedule: [],  // 30 items
-  posted: {}     // {dayIdx_plt: bool}
-};
+// (sc6Data đã khai báo ở STATE section phía trên)
 
 const SC_PSY_CFG = {
   'Tham':  {e:'💰',c:'var(--ac)', bg:'rgba(245,166,35,.15)',  border:'rgba(245,166,35,.5)',
@@ -2391,6 +3102,266 @@ function expSC30(){
   toast('📄 Đã xuất lịch!');
 }
 
+// ===================== SPIN SELLING =====================
+const SPIN_QUESTIONS=[
+  {phase:0,phaseLabel:'S',q:'Hiện tại anh/chị đang ở chỗ thuê hay nhà riêng ạ?',tip:'Xác định tình trạng ở hiện tại — nền tảng cho toàn bộ cuộc trò chuyện.',key:'current_housing'},
+  {phase:0,phaseLabel:'S',q:'Gia đình mình mấy người, bé lớn nhỏ thế nào ạ?',tip:'Hiểu quy mô gia đình → gợi ý đúng số phòng, loại nhà.',key:'family_size'},
+  {phase:0,phaseLabel:'S',q:'Anh/chị đang làm việc ở khu vực nào, đi lại hàng ngày thế nào ạ?',tip:'Vị trí làm việc → gợi ý khu BĐS phù hợp.',key:'work_location'},
+  {phase:0,phaseLabel:'S',q:'Ngân sách mình đang chuẩn bị khoảng bao nhiêu? Anh/chị định vay NH không?',tip:'Hiểu tài chính thực → không lãng phí thời gian xem nhà không phù hợp.',key:'budget'},
+  {phase:0,phaseLabel:'S',q:'Anh/chị đã xem qua khu vực nào chưa, ấn tượng hoặc không ấn tượng chỗ nào ạ?',tip:'Biết KH đã tìm hiểu đến đâu → tránh giới thiệu lại điều họ đã biết.',key:'viewed_areas'},
+  {phase:0,phaseLabel:'S',q:'Mục đích chính là mua để ở, đầu tư hay cho thuê lại ạ?',tip:'Xác định mục đích → chọn đúng loại BĐS và góc tiếp cận tâm lý.',key:'purpose'},
+  {phase:1,phaseLabel:'P',q:'Chỗ đang ở hiện tại có điều gì anh/chị thấy chưa hài lòng không ạ?',tip:'Khơi nỗi đau hiện tại — nghe kỹ, đây là insight quan trọng nhất.',key:'current_pain'},
+  {phase:1,phaseLabel:'P',q:'Việc đang thuê/ở nhờ lâu dài có làm anh/chị thấy bất an hay áp lực không ạ?',tip:'Khai thác cảm giác thiếu an toàn — tâm lý "nhà riêng" rất mạnh.',key:'insecurity'},
+  {phase:1,phaseLabel:'P',q:'Điều gì khiến anh/chị chưa quyết định mua trước đây ạ?',tip:'Hiểu rào cản thật sự — pháp lý? Tài chính? Chưa tìm được căn phù hợp?',key:'barrier'},
+  {phase:1,phaseLabel:'P',q:'Anh/chị có lo ngại gì về pháp lý, thị trường hay rủi ro không ạ?',tip:'Xác định mức độ nghi ngờ → chuẩn bị bằng chứng phù hợp.',key:'concerns'},
+  {phase:1,phaseLabel:'P',q:'Những khu vực đã xem qua có vấn đề gì chưa phù hợp không ạ?',tip:'Hiểu lý do từ chối căn cũ → tránh lặp lại, gợi ý đúng hơn.',key:'rejected_reasons'},
+  {phase:2,phaseLabel:'I',q:'Nếu tiếp tục thuê thêm 3–5 năm nữa, anh/chị nghĩ tiền thuê đó sẽ đi về đâu ạ?',tip:'Tính chi phí cơ hội — tiền thuê = tiền mất, không tích lũy tài sản.',key:'rent_cost'},
+  {phase:2,phaseLabel:'I',q:'Khi các bé lớn hơn mà chưa có nhà riêng, anh/chị thấy sẽ ảnh hưởng thế nào ạ?',tip:'Khai thác lo lắng về tương lai con cái — rất hiệu quả với KH có gia đình.',key:'kids_future'},
+  {phase:2,phaseLabel:'I',q:'Nếu giá BĐS khu này tăng thêm 15–20% năm sau, lúc đó anh/chị cảm thấy thế nào?',tip:'FOMO — nỗi sợ bỏ lỡ. Đừng dùng nếu KH đang nghi ngờ giá cao.',key:'price_fomo'},
+  {phase:2,phaseLabel:'I',q:'Việc chưa có nhà riêng có ảnh hưởng đến kế hoạch tài chính dài hạn không ạ?',tip:'Mở rộng tầm nhìn — BĐS không chỉ là chỗ ở mà là tài sản tích lũy.',key:'financial_plan'},
+  {phase:2,phaseLabel:'I',q:'Nếu đợi thêm mà lỡ mất căn phù hợp với mức giá này, anh/chị có tiếc không ạ?',tip:'Khai thác hối tiếc tiềm tàng — chỉ dùng khi KH đã thể hiện quan tâm rõ.',key:'regret'},
+  {phase:3,phaseLabel:'N',q:'Nếu tìm được căn đúng khu, đúng giá, pháp lý sạch 100% — anh/chị có muốn xem ngay không ạ?',tip:'KH tự nói ra mong muốn — không phải bạn nói. Đây là tín hiệu chốt quan trọng.',key:'ideal_solution'},
+  {phase:3,phaseLabel:'N',q:'Điều quan trọng nhất với anh/chị khi chọn nhà là gì — vị trí, pháp lý, giá hay không gian?',tip:'Xác định priority số 1 → dùng đúng ngôn ngữ tâm lý khi giới thiệu căn.',key:'priority'},
+  {phase:3,phaseLabel:'N',q:'Nếu căn em giới thiệu đáp ứng được điều đó, anh/chị sẽ quyết định thế nào ạ?',tip:'Câu hỏi thử nghiệm quyết định — phản ứng KH cho biết họ có thật sự muốn mua.',key:'decision_readiness'},
+  {phase:3,phaseLabel:'N',q:'Anh/chị muốn em hỗ trợ bước tiếp theo như thế nào — sắp lịch xem nhà hay so sánh thêm vài căn ạ?',tip:'Luôn đưa ra 2 lựa chọn — tránh câu hỏi có/không. KH chọn cái nào cũng dẫn đến hành động.',key:'next_step'}
+];
+
+const SPIN_PHASES=[
+  {label:'S',name:'Situation',color:'var(--bl)',bg:'rgba(76,156,245,.15)',border:'rgba(76,156,245,.4)',count:6,desc:'Tìm hiểu tình huống'},
+  {label:'P',name:'Problem',color:'var(--rd)',bg:'rgba(239,83,80,.15)',border:'rgba(239,83,80,.4)',count:5,desc:'Khơi nỗi đau'},
+  {label:'I',name:'Implication',color:'var(--ac)',bg:'rgba(245,166,35,.15)',border:'rgba(245,166,35,.4)',count:5,desc:'Khoét sâu hệ quả'},
+  {label:'N',name:'Need-Payoff',color:'var(--gr)',bg:'rgba(62,207,142,.15)',border:'rgba(62,207,142,.4)',count:4,desc:'Dẫn đến giải pháp'}
+];
+
+let spinState={khName:'',khId:'',phase:0,answers:{},notes:{}};
+
+function buildSPINKHSelect(){
+  loadKHList();
+  const sel=document.getElementById('spin_kh');if(!sel)return;
+  const allKH=[
+    ...khList.map(k=>({id:'khl_'+k.id,name:k.name,phone:k.phone||''})),
+    ...reminders.filter(r=>r.khName).map(r=>({id:'rem_'+r.id,name:r.khName,phone:r.phone||''}))
+  ];
+  const seen=new Set();
+  const unique=allKH.filter(k=>{if(seen.has(k.name))return false;seen.add(k.name);return true;});
+  sel.innerHTML='<option value="">-- Chọn KH --</option>'+unique.map(k=>`<option value="${k.id}" data-name="${k.name}">${k.name}${k.phone?' ('+k.phone+')':''}</option>`).join('');
+  toast('✅ Đã load danh sách KH!');
+}
+
+function onSPINKHChange(){
+  const sel=document.getElementById('spin_kh');if(!sel||!sel.value)return;
+  const opt=sel.options[sel.selectedIndex];
+  const name=opt.dataset.name||opt.textContent.split('(')[0].trim();
+  document.getElementById('spin_khname').value=name;
+  spinState.khName=name;spinState.khId=sel.value;
+  try{const s=localStorage.getItem('bds_spin_'+sel.value);if(s){const d=JSON.parse(s);spinState.answers=d.answers||{};spinState.notes=d.notes||{};}else{spinState.answers={};spinState.notes={};}}catch(e){}
+  updSPINPhaseUI();showSPINPhase(0);
+}
+
+function updSPINKHName(){spinState.khName=document.getElementById('spin_khname')?.value||'';}
+
+function showSPINPhase(phase){
+  spinState.phase=phase;
+  updSPINPhaseUI();
+  const ph=SPIN_PHASES[phase];
+  const qs=SPIN_QUESTIONS.filter(q=>q.phase===phase);
+  const el=document.getElementById('spinQArea');if(!el)return;
+  el.innerHTML=`
+    <div style="background:${ph.bg};border:1.5px solid ${ph.border};border-radius:11px;padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <div>
+        <div style="font-weight:800;font-size:.92rem;color:${ph.color}">${ph.label} — ${ph.name}</div>
+        <div style="font-size:.73rem;color:var(--t2);margin-top:2px">${ph.desc} · ${ph.count} câu hỏi${spinState.khName?' · KH: '+spinState.khName:''}</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        ${phase>0?`<button class="btn btn-s btn-sm" onclick="showSPINPhase(${phase-1})">← ${SPIN_PHASES[phase-1].label}</button>`:''}
+        ${phase<3?`<button class="btn btn-s btn-sm" onclick="showSPINPhase(${phase+1})">${SPIN_PHASES[phase+1].label} →</button>`:''}
+        <button class="btn btn-p btn-sm" onclick="buildSPINAnalysis()">🧠 Phân tích</button>
+      </div>
+    </div>
+    ${qs.map(q=>{
+      const qIdx=SPIN_QUESTIONS.indexOf(q);
+      const answered=!!spinState.answers[q.key]&&spinState.answers[q.key]!=='[Bỏ qua]';
+      const skipped=spinState.answers[q.key]==='[Bỏ qua]';
+      return`<div class="spin-q-card${answered?' answered':''}" id="spinq_${qIdx}">
+        <div class="spin-q-num">
+          <span style="font-family:'Space Mono',monospace;font-weight:700;color:${ph.color}">Q${qIdx+1}</span>
+          <span class="phase-tag" style="background:${ph.bg};color:${ph.color}">${ph.label}</span>
+          ${answered?'<span style="color:var(--gr);font-size:.65rem">✅ Đã ghi nhận</span>':''}
+          ${skipped?'<span style="color:var(--t3);font-size:.65rem">⏭️ Bỏ qua</span>':''}
+        </div>
+        <div class="spin-q-txt">${q.q}</div>
+        <div class="spin-q-tip">💡 ${q.tip}</div>
+        ${answered
+          ?`<div class="spin-q-answered">${spinState.answers[q.key]}</div>
+             <button class="btn btn-s btn-xs" style="margin-top:7px" onclick="editSPINAnswer('${q.key}',${qIdx})">✏️ Sửa</button>`
+          :`<textarea class="spin-q-note" id="spinans_${qIdx}" placeholder="Ghi lại câu trả lời của KH..." rows="3">${skipped?'':''}</textarea>
+           <div style="display:flex;gap:6px;margin-top:7px">
+             <button class="btn btn-g btn-sm" onclick="saveSPINAnswer('${q.key}',${qIdx})">✅ Lưu</button>
+             <button class="btn btn-s btn-xs" onclick="skipSPINQ('${q.key}',${qIdx})">⏭️ Bỏ qua</button>
+           </div>`}
+      </div>`;
+    }).join('')}
+    <div style="display:flex;justify-content:space-between;margin-top:9px;flex-wrap:wrap;gap:7px">
+      <button class="btn btn-r btn-sm" onclick="resetSPINPhase(${phase})">🔄 Reset giai đoạn</button>
+      <button class="btn btn-p btn-sm" onclick="buildSPINAnalysis()">🧠 Xem phân tích KH</button>
+    </div>`;
+}
+
+function saveSPINAnswer(key,qIdx){
+  const val=(document.getElementById('spinans_'+qIdx)?.value||'').trim();
+  if(!val)return toast('⚠️ Nhập câu trả lời trước!');
+  spinState.answers[key]=val;saveSPINState();updSPINPhaseUI();showSPINPhase(spinState.phase);toast('✅ Đã lưu!');
+}
+
+function editSPINAnswer(key,qIdx){
+  const card=document.getElementById('spinq_'+qIdx);if(!card)return;
+  const oldVal=spinState.answers[key]||'';
+  const ph=SPIN_PHASES[SPIN_QUESTIONS[qIdx].phase];
+  const aEl=card.querySelector('.spin-q-answered');
+  if(aEl)aEl.outerHTML=`<textarea class="spin-q-note" id="spinans_${qIdx}" rows="3">${oldVal}</textarea>`;
+  const btn=card.querySelector('button.btn-s');
+  if(btn)btn.outerHTML=`<div style="display:flex;gap:6px;margin-top:7px"><button class="btn btn-g btn-sm" onclick="saveSPINAnswer('${key}',${qIdx})">✅ Lưu</button><button class="btn btn-r btn-xs" onclick="showSPINPhase(${spinState.phase})">✕</button></div>`;
+}
+
+function skipSPINQ(key,qIdx){spinState.answers[key]='[Bỏ qua]';saveSPINState();updSPINPhaseUI();showSPINPhase(spinState.phase);}
+
+function resetSPINPhase(phase){
+  if(!confirm('Reset giai đoạn '+SPIN_PHASES[phase].name+'?'))return;
+  SPIN_QUESTIONS.filter(q=>q.phase===phase).forEach(q=>{delete spinState.answers[q.key];});
+  saveSPINState();updSPINPhaseUI();showSPINPhase(phase);toast('🔄 Đã reset!');
+}
+
+function saveSPINState(){
+  if(!spinState.khId)return;
+  try{localStorage.setItem('bds_spin_'+spinState.khId,JSON.stringify({answers:spinState.answers,notes:spinState.notes,khName:spinState.khName,savedAt:new Date().toISOString()}));}catch(e){}
+}
+
+function updSPINPhaseUI(){
+  SPIN_PHASES.forEach((ph,pi)=>{
+    const qs=SPIN_QUESTIONS.filter(q=>q.phase===pi);
+    const ans=qs.filter(q=>spinState.answers[q.key]&&spinState.answers[q.key]!=='[Bỏ qua]').length;
+    const isDone=ans>=qs.length;const isActive=pi===spinState.phase;
+    const card=document.getElementById('spinph'+pi);
+    const prog=document.getElementById('spinprog'+pi);
+    if(card)card.className='spin-phase'+(isActive?' active':isDone?' done':'');
+    if(prog){prog.textContent=ans+'/'+qs.length;prog.style.background=isDone?'rgba(62,207,142,.2)':isActive?ph.bg.replace('.15','.25'):'var(--bg3)';prog.style.color=isDone?'var(--gr)':isActive?ph.color:'var(--t3)';}
+  });
+}
+
+function buildSPINAnalysis(){
+  const el=document.getElementById('spinAnalysis');if(!el)return;
+  const answered=SPIN_QUESTIONS.filter(q=>spinState.answers[q.key]&&spinState.answers[q.key]!=='[Bỏ qua]');
+  const pct=Math.round(answered.length/SPIN_QUESTIONS.length*100);
+  const allAns=Object.values(spinState.answers).join(' ').toLowerCase();
+  let psy='Si';
+  if(allAns.match(/đầu tư|sinh lời|cho thuê|lợi nhuận|tăng giá/))psy='Tham';
+  else if(allAns.match(/sợ|ngại|không chắc|lo lắng|rủi ro|pháp lý/))psy='Nghi ngờ';
+  else if(allAns.match(/nhanh|gấp|quyết định ngay/))psy='Sân';
+  else if(allAns.match(/đẳng cấp|sang|cao cấp/))psy='Ngạo mạn';
+  const psyCfg=SC_PSY_CFG[psy]||SC_PSY_CFG['Si'];
+  let readiness=0;
+  if(spinState.answers['budget']&&spinState.answers['budget']!=='[Bỏ qua]')readiness+=20;
+  if(spinState.answers['purpose']&&spinState.answers['purpose']!=='[Bỏ qua]')readiness+=15;
+  if(spinState.answers['current_pain']&&spinState.answers['current_pain']!=='[Bỏ qua]')readiness+=20;
+  if(spinState.answers['ideal_solution']&&!spinState.answers['ideal_solution'].includes('[Bỏ qua]'))readiness+=25;
+  if(spinState.answers['next_step']&&spinState.answers['next_step'].match(/xem ngay|sắp lịch|xem nhà/i))readiness+=20;
+  const rLabel=readiness>=80?'🔥 Rất cao — Chốt ngay!':readiness>=60?'⚡ Cao — Đang tiến triển':readiness>=40?'⏳ Trung bình — Cần follow-up':'❄️ Thấp — Còn đầu chặng';
+  const strategyMap={
+    'Tham':'Nhấn giá hời và tiềm năng sinh lời. Tính ROI cụ thể, so với gửi tiết kiệm. Tạo urgency bằng khan hiếm.',
+    'Sân':'Đi thẳng vào vấn đề, không vòng vo. Báo giá và thông số ngay. Đặt lịch xem nhà sớm nhất.',
+    'Si':'Khai thác cảm xúc gia đình. Vẽ hình ảnh cuộc sống tương lai. Dùng câu mental ownership khi dẫn xem nhà.',
+    'Nghi ngờ':'Cung cấp bằng chứng trước khi KH hỏi. Scan sổ hồng, cam kết hoàn tiền. Đề nghị ra phòng công chứng kiểm tra.',
+    'Ngạo mạn':'Tiếp cận như ngang hàng. Nhấn tính độc bản, khu dân cư chất lượng. Không giảm giá ngay — mất đẳng cấp.'
+  };
+  const insights=[
+    {l:'💰 Ngân sách',k:'budget'},{l:'🎯 Mục đích',k:'purpose'},{l:'😤 Nỗi đau',k:'current_pain'},
+    {l:'🚧 Rào cản',k:'barrier'},{l:'⭐ Ưu tiên số 1',k:'priority'},{l:'👣 Bước tiếp',k:'next_step'}
+  ].filter(i=>spinState.answers[i.k]&&spinState.answers[i.k]!=='[Bỏ qua]');
+
+  el.style.display='block';
+  el.innerHTML=`
+    <div style="background:linear-gradient(135deg,rgba(156,110,245,.12),rgba(62,207,142,.08));border:1.5px solid rgba(156,110,245,.4);border-radius:12px;padding:15px 16px;margin-bottom:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:9px;margin-bottom:13px">
+        <div>
+          <div style="font-weight:800;font-size:.95rem;color:var(--pu)">🧠 Phân tích SPIN — ${spinState.khName||'KH'}</div>
+          <div style="font-size:.72rem;color:var(--t2);margin-top:2px">${answered.length}/${SPIN_QUESTIONS.length} câu · ${pct}% hoàn thành</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-g btn-sm" onclick="cpTxt(buildSPINReport())">📋 Copy</button>
+          <button class="btn btn-b btn-sm" onclick="addSPINToTimeline()">📋 → Timeline</button>
+          <button class="btn btn-r btn-sm" onclick="document.getElementById('spinAnalysis').style.display='none'">✕</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center">
+        <div style="background:rgba(0,0,0,.15);border-radius:9px;padding:10px">
+          <div style="font-size:1.4rem;font-weight:900;color:${readiness>=70?'var(--gr)':readiness>=40?'var(--ac)':'var(--rd)'}">${readiness}%</div>
+          <div style="font-size:.62rem;color:var(--t3);margin-top:2px">Sẵn sàng mua</div>
+        </div>
+        <div style="background:rgba(0,0,0,.15);border-radius:9px;padding:10px">
+          <div style="font-size:1.4rem">${psyCfg.e}</div>
+          <div style="font-size:.7rem;font-weight:700;color:${psyCfg.c}">${psy}</div>
+          <div style="font-size:.6rem;color:var(--t3)">Tâm lý KH</div>
+        </div>
+        <div style="background:rgba(0,0,0,.15);border-radius:9px;padding:10px">
+          <div style="font-size:.78rem;font-weight:800;color:${readiness>=70?'var(--gr)':readiness>=40?'var(--ac)':'var(--rd)'};line-height:1.3">${rLabel.split('—')[0]}</div>
+          <div style="font-size:.6rem;color:var(--t3);margin-top:1px">${rLabel.split('—')[1]||''}</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:10px">
+      <div class="ctit"><span class="dot"></span>💡 Key Insights</div>
+      <div style="display:grid;gap:6px">
+        ${insights.map(i=>`<div style="display:flex;gap:9px;padding:7px 10px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--ac)">
+          <span style="font-size:.72rem;font-weight:700;color:var(--ac);flex-shrink:0;min-width:105px">${i.l}</span>
+          <span style="font-size:.73rem;color:var(--t2);line-height:1.5">${spinState.answers[i.k]}</span>
+        </div>`).join('')}
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:10px;border-color:${psyCfg.border||'rgba(245,166,35,.3)'}">
+      <div class="ctit"><span class="dot" style="background:${psyCfg.c}"></span>🎯 Chiến thuật — Tâm lý ${psy} ${psyCfg.e}</div>
+      <div style="background:${psyCfg.bg};border-radius:9px;padding:11px 13px;font-size:.77rem;color:var(--t2);line-height:1.7">${strategyMap[psy]||''}</div>
+      ${readiness>=70?`<div style="margin-top:9px;background:rgba(239,83,80,.1);border:1px solid rgba(239,83,80,.3);border-radius:8px;padding:9px 12px;font-size:.77rem;color:var(--rd);font-weight:700">🔥 KH sẵn sàng cao — Đề nghị xem nhà hoặc đặt cọc ngay hôm nay!</div>`:''}
+    </div>
+    <div class="card">
+      <div class="ctit"><span class="dot"></span>📋 Tất cả câu trả lời</div>
+      ${SPIN_QUESTIONS.filter(q=>spinState.answers[q.key]&&spinState.answers[q.key]!=='[Bỏ qua]').map(q=>{
+        const ph=SPIN_PHASES[q.phase];
+        return`<div style="margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border)">
+          <div style="display:flex;gap:6px;align-items:center;margin-bottom:3px">
+            <span style="font-size:.6rem;font-weight:700;padding:1px 6px;border-radius:6px;background:${ph.bg};color:${ph.color}">${ph.label}</span>
+            <span style="font-size:.71rem;color:var(--t2)">${q.q}</span>
+          </div>
+          <div style="font-size:.75rem;color:var(--tx);font-style:italic;padding:5px 9px;background:var(--bg3);border-radius:6px">${spinState.answers[q.key]}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  el.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function buildSPINReport(){
+  const line='='.repeat(46);
+  let r=`SPIN SELLING — KHÁM PHÁ KH\n${line}\nKH: ${spinState.khName||'—'}\nNgày: ${new Date().toLocaleString('vi-VN')}\n${line}\n\n`;
+  SPIN_PHASES.forEach((ph,pi)=>{
+    r+=`[${ph.label}] ${ph.name} — ${ph.desc}\n${'─'.repeat(30)}\n`;
+    SPIN_QUESTIONS.filter(q=>q.phase===pi&&spinState.answers[q.key]&&spinState.answers[q.key]!=='[Bỏ qua]').forEach(q=>{r+=`Q: ${q.q}\nA: ${spinState.answers[q.key]}\n\n`;});
+  });
+  r+=`${line}\nAUTO PRO CONTENT BĐS v7 · #aihockiemtien`;
+  return r;
+}
+
+function addSPINToTimeline(){
+  if(!spinState.khId)return toast('⚠️ Chọn KH trước!');
+  loadKHList();
+  const kh=khList.find(k=>'khl_'+k.id===spinState.khId);
+  if(kh){
+    if(!kh.interactions)kh.interactions=[];
+    kh.interactions.push({type:'🔄',typeLabel:'SPIN Selling — Khám phá KH',
+      note:`Nỗi đau: ${spinState.answers['current_pain']||'—'} · Ưu tiên: ${spinState.answers['priority']||'—'} · Bước tiếp: ${spinState.answers['next_step']||'—'}`,
+      time:new Date().toISOString()});
+    saveKHList();toast('✅ Đã lưu vào Timeline KH!');
+  }else toast('⚠️ KH không có trong KH Labels!');
+}
+
 // ── Update buildHomeFeatures to include sixcan ──
 // (already included in previous buildHomeFeatures update)
 const CK_ITEMS=[
@@ -2530,7 +3501,7 @@ function checkCKReset(){
 }
 
 // ===================== 2. KH LABELS =====================
-let khList=[];
+// (khList đã khai báo ở STATE section phía trên)
 
 function loadKHList(){try{const s=localStorage.getItem('bds_khl');if(s)khList=JSON.parse(s);}catch(e){}}
 function saveKHList(){try{localStorage.setItem('bds_khl',JSON.stringify(khList));}catch(e){}}

@@ -363,6 +363,29 @@ select option{background:var(--bg3)}
 .sc-plt-chip.done{background:rgba(62,207,142,.15);color:var(--gr)}
 .sc-week-sep{background:linear-gradient(135deg,rgba(245,166,35,.08),rgba(62,207,142,.05));font-size:.67rem;font-weight:700;color:var(--ac);padding:5px 9px;border-bottom:1px solid var(--border)}
 
+/* SPIN SELLING */
+.spin-phase{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px;text-align:center;cursor:pointer;transition:.2s}
+.spin-phase:hover{border-color:rgba(156,110,245,.4)}
+.spin-phase.active{border-color:var(--pu);background:rgba(156,110,245,.1)}
+.spin-phase.done{border-color:var(--gr);background:rgba(62,207,142,.08)}
+.spin-ph-num{font-size:1.4rem;font-weight:900;font-family:'Space Mono',monospace;margin-bottom:3px}
+.spin-phase.active .spin-ph-num{color:var(--pu)}
+.spin-phase.done .spin-ph-num{color:var(--gr)}
+.spin-ph-num{color:var(--t3)}
+.spin-ph-lbl{font-size:.73rem;font-weight:700;color:var(--tx);margin-bottom:2px}
+.spin-ph-sub{font-size:.62rem;color:var(--t3);margin-bottom:4px}
+.spin-ph-prog{font-size:.65rem;font-weight:700;padding:2px 6px;border-radius:8px;background:var(--bg3);color:var(--t3);display:inline-block}
+.spin-phase.active .spin-ph-prog{background:rgba(156,110,245,.2);color:var(--pu)}
+.spin-phase.done .spin-ph-prog{background:rgba(62,207,142,.2);color:var(--gr)}
+.spin-q-card{background:var(--card);border:1.5px solid var(--border);border-radius:11px;padding:13px 14px;margin-bottom:8px;transition:.2s}
+.spin-q-card.answered{border-color:rgba(62,207,142,.4);background:rgba(62,207,142,.04)}
+.spin-q-num{font-size:.62rem;font-weight:700;color:var(--t3);margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.spin-q-num .phase-tag{padding:1px 7px;border-radius:8px;font-size:.6rem;font-weight:700}
+.spin-q-txt{font-size:.82rem;font-weight:600;color:var(--tx);margin-bottom:9px;line-height:1.5}
+.spin-q-tip{font-size:.69rem;color:var(--t3);font-style:italic;margin-bottom:9px;padding:5px 9px;background:var(--bg3);border-radius:6px;border-left:2px solid var(--pu)}
+.spin-q-note{width:100%;font-size:.76rem;min-height:60px;resize:vertical}
+.spin-q-answered{font-size:.72rem;color:var(--t2);background:var(--bg3);border-radius:7px;padding:7px 9px;line-height:1.6;white-space:pre-wrap}
+
 /* MORNING CHECKLIST */
 .ck-item{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:11px 13px;display:flex;align-items:flex-start;gap:10px;margin-bottom:7px;cursor:pointer;transition:.2s;user-select:none}
 .ck-item:hover{border-color:rgba(245,166,35,.35)}
@@ -457,6 +480,7 @@ select option{background:var(--bg3)}
     <div class="ni" onclick="nav('guidetour')"><span class="ic">🏡</span><span class="ntxt">Dẫn Xem Nhà</span></div>
     <div class="ni" onclick="nav('salescripts')"><span class="ic">💬</span><span class="ntxt">Câu Chốt Sale</span></div>
     <div class="ni" onclick="nav('khlabels')"><span class="ic">🎯</span><span class="ntxt">KH Theo Nhãn</span><span class="nbdg" id="rmSideCount" style="background:var(--rd);color:#fff;display:none">0</span></div>
+    <div class="ni" onclick="nav('spin')"><span class="ic">🔄</span><span class="ntxt">SPIN Selling</span><span class="nbdg" style="background:var(--pu);color:#fff">NEW</span></div>
     <div class="ni" onclick="nav('timeline')"><span class="ic">📋</span><span class="ntxt">Timeline KH</span></div>
   </div>
   <div class="nsec">
@@ -1046,9 +1070,10 @@ select option{background:var(--bg3)}
 
 <!-- TOOLS -->
 <div class="pg" id="pg-tools">
-  <div class="ptit"><div><h2>🔧 Hộp Công Cụ Thực Chiến</h2><p>8 công cụ hỗ trợ môi giới hàng ngày</p></div></div>
+  <div class="ptit"><div><h2>🔧 Hộp Công Cụ Thực Chiến</h2><p>9 công cụ hỗ trợ môi giới hàng ngày</p></div></div>
   <div class="tool-tabs">
     <div class="tool-tab on" onclick="showTool(this,'calc')">🧮 Trả Góp</div>
+    <div class="tool-tab" onclick="showTool(this,'roi')">📈 ROI Đầu Tư</div>
     <div class="tool-tab" onclick="showTool(this,'objection')">🗣️ Phản Đối</div>
     <div class="tool-tab" onclick="showTool(this,'story')">📱 Story/Reels</div>
     <div class="tool-tab" onclick="showTool(this,'hashtag')">🏷️ Hashtag</div>
@@ -1058,13 +1083,143 @@ select option{background:var(--bg3)}
     <div class="tool-tab" onclick="showTool(this,'email')">📧 Email Chuỗi</div>
   </div>
   <div class="tool-pg on" id="tool-calc"><div class="card"><div class="ctit"><span class="dot"></span>🧮 Máy Tính Trả Góp</div><div class="fg2"><div class="fg"><label>💰 Giá nhà (tỷ)</label><input type="number" id="calc_price" placeholder="5.5" step="0.1"></div><div class="fg"><label>🏦 % Vay NH</label><input type="number" id="calc_pct" placeholder="70"></div><div class="fg"><label>📅 Kỳ hạn (năm)</label><input type="number" id="calc_years" placeholder="20"></div><div class="fg"><label>📊 Lãi suất/năm (%)</label><input type="number" id="calc_rate" placeholder="8.5" step="0.1"></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doCalc()">🧮 Tính Ngay</button></div><div id="calcOut" class="hidden"></div></div>
+
+  <!-- ROI ĐẦU TƯ BĐS -->
+  <div class="tool-pg" id="tool-roi">
+    <div class="card">
+      <div class="ctit"><span class="dot"></span>📈 Máy Tính ROI Đầu Tư BĐS</div>
+      <div style="background:linear-gradient(135deg,rgba(62,207,142,.1),rgba(245,166,35,.07));border:1px solid rgba(62,207,142,.3);border-radius:9px;padding:9px 13px;margin-bottom:13px;font-size:.75rem;color:var(--t2)">
+        💡 Nhập đầy đủ để tính <strong style="color:var(--gr)">Lợi suất %/năm</strong>, <strong style="color:var(--ac)">Thời gian hoàn vốn</strong> và so sánh với <strong style="color:var(--bl)">gửi tiết kiệm ngân hàng</strong>
+      </div>
+      <div class="fg2">
+        <!-- Cột trái: Thông tin mua -->
+        <div class="fg"><label>💰 Giá mua BĐS (tỷ đồng) *</label><input type="number" id="roi_price" placeholder="5.5" step="0.1" oninput="roiLiveCalc()"></div>
+        <div class="fg"><label>🏦 Vốn tự có (tỷ đồng) *</label><input type="number" id="roi_equity" placeholder="2.2" step="0.1" oninput="roiLiveCalc()"></div>
+        <div class="fg"><label>📊 Lãi vay NH (%/năm)</label><input type="number" id="roi_loanrate" placeholder="8.5" step="0.1" oninput="roiLiveCalc()"></div>
+        <div class="fg"><label>📐 Diện tích (m²)</label><input type="number" id="roi_area" placeholder="80" oninput="roiLiveCalc()"></div>
+        <!-- Cột phải: Thu nhập & Chi phí -->
+        <div class="fg"><label>💵 Tiền thuê thu được (triệu/tháng)</label><input type="number" id="roi_rent" placeholder="15" step="0.5" oninput="roiLiveCalc()"></div>
+        <div class="fg"><label>📈 Kỳ vọng tăng giá (%/năm)</label><input type="number" id="roi_growth" placeholder="7" step="0.5" oninput="roiLiveCalc()"></div>
+        <div class="fg"><label>🔧 Chi phí sửa chữa ban đầu (triệu)</label><input type="number" id="roi_repair" placeholder="50" step="5" oninput="roiLiveCalc()"></div>
+        <div class="fg"><label>💼 Chi phí vận hành/năm (triệu) <span style="font-size:.62rem;color:var(--t3)">quản lý, bảo trì, thuế...</span></label><input type="number" id="roi_opex" placeholder="20" step="5" oninput="roiLiveCalc()"></div>
+        <div class="fg"><label>📅 Thời gian nắm giữ (năm)</label><input type="number" id="roi_hold" placeholder="5" min="1" max="30" oninput="roiLiveCalc()"></div>
+        <div class="fg"><label>🏦 Lãi suất tiết kiệm (%/năm) <span style="font-size:.62rem;color:var(--t3)">để so sánh</span></label><input type="number" id="roi_saverate" placeholder="5.5" step="0.1" oninput="roiLiveCalc()"></div>
+      </div>
+      <!-- Live preview -->
+      <div id="roiLive" style="display:none;background:var(--bg3);border-radius:9px;padding:11px 13px;margin-top:11px">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center">
+          <div><div style="font-size:1.3rem;font-weight:900;color:var(--gr);font-family:'Space Mono',monospace" id="liveROI">—</div><div style="font-size:.62rem;color:var(--t3)">ROI/năm</div></div>
+          <div><div style="font-size:1.3rem;font-weight:900;color:var(--ac);font-family:'Space Mono',monospace" id="livePayback">—</div><div style="font-size:.62rem;color:var(--t3)">Hoàn vốn</div></div>
+          <div><div style="font-size:1.3rem;font-weight:900;color:var(--bl);font-family:'Space Mono',monospace" id="liveVsSaving">—</div><div style="font-size:.62rem;color:var(--t3)">vs Tiết kiệm</div></div>
+        </div>
+      </div>
+      <button class="btn btn-p btn-full" style="margin-top:11px" onclick="doROI()">📈 Tính ROI Chi Tiết</button>
+    </div>
+    <div id="roiOut" class="hidden"></div>
+  </div>
   <div class="tool-pg" id="tool-objection"><div class="card"><div class="ctit"><span class="dot"></span>🗣️ Kịch Bản Xử Lý Phản Đối</div><div class="fg" style="margin-bottom:10px"><label>🏠 BĐS</label><input type="text" id="obj_prop" placeholder="Nhà phố Q7, 80m², 6.5 tỷ"></div><div class="fg"><label>❓ Phản đối</label><div class="pgr" id="objPills"><div class="pill on" onclick="spill(this,'obj','price')" data-v="price">Sao đắt vậy?</div><div class="pill" onclick="spill(this,'obj','legal')" data-v="legal">Pháp lý chắc?</div><div class="pill" onclick="spill(this,'obj','think')" data-v="think">Suy nghĩ thêm</div><div class="pill" onclick="spill(this,'obj','compare')" data-v="compare">Chỗ khác rẻ</div><div class="pill" onclick="spill(this,'obj','money')" data-v="money">Chưa đủ tiền</div></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doObj()">🗣️ Sinh Kịch Bản</button></div><div id="objOut" class="hidden"></div></div>
   <div class="tool-pg" id="tool-story"><div class="card"><div class="ctit"><span class="dot"></span>📱 Script Story/Reels FB & Zalo</div><div class="fg2"><div class="fg"><label>🏠 BĐS</label><input type="text" id="story_prop" placeholder="Nhà phố Q7, 80m², 6.5 tỷ"></div><div class="fg"><label>⏱️ Thời lượng</label><div class="pgr" style="margin-top:4px"><div class="pill on" onclick="spill(this,'story_dur','15s')" data-v="15s">15 giây</div><div class="pill" onclick="spill(this,'story_dur','30s')" data-v="30s">30 giây</div><div class="pill" onclick="spill(this,'story_dur','60s')" data-v="60s">60s Reels</div></div></div><div class="fg full"><label>📱 Nền tảng</label><div class="pgr" style="margin-top:4px"><div class="pill on" onclick="spill(this,'story_plt','FB Story')" data-v="FB Story">📘 FB Story</div><div class="pill" onclick="spill(this,'story_plt','FB Reels')" data-v="FB Reels">📘 FB Reels</div><div class="pill" onclick="spill(this,'story_plt','Zalo Story')" data-v="Zalo Story">💬 Zalo Story</div></div></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doStory()">📱 Tạo Script</button></div><div id="storyOut" class="hidden"></div></div>
   <div class="tool-pg" id="tool-hashtag"><div class="card"><div class="ctit"><span class="dot"></span>🏷️ Hashtag Generator BĐS</div><div class="fg2"><div class="fg"><label>🏠 Loại nhà</label><input type="text" id="ht_type" placeholder="Nhà phố, căn hộ..."></div><div class="fg"><label>📍 Khu vực</label><input type="text" id="ht_loc" placeholder="Quận 7, Bình Thạnh..."></div><div class="fg"><label>💰 Phân khúc</label><select id="ht_seg"><option value="mid">Trung cấp (3-7 tỷ)</option><option value="budget">Bình dân (dưới 3 tỷ)</option><option value="high">Cao cấp (7-15 tỷ)</option><option value="luxury">Luxury (trên 15 tỷ)</option></select></div><div class="fg"><label>🎯 Mục đích</label><select id="ht_goal"><option value="sell">Bán nhà</option><option value="rent">Cho thuê</option><option value="invest">Đầu tư</option></select></div><div class="fg full"><label>📱 Nền tảng</label><div class="pgr" style="margin-top:4px"><div class="pill on" onclick="spill(this,'ht_plt','FB')" data-v="FB">📘 Facebook</div><div class="pill" onclick="spill(this,'ht_plt','Zalo')" data-v="Zalo">💬 Zalo</div><div class="pill" onclick="spill(this,'ht_plt','TikTok')" data-v="TikTok">🎵 TikTok</div><div class="pill" onclick="spill(this,'ht_plt','Website')" data-v="Website">🌐 Website</div></div></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doHashtag()">🏷️ Tạo Hashtag</button></div><div id="hashtagOut" class="hidden"></div></div>
   <div class="tool-pg" id="tool-coldcall"><div class="card"><div class="ctit"><span class="dot"></span>📞 Script Cold Call</div><div class="fg2"><div class="fg"><label>🏠 BĐS</label><input type="text" id="cc_prop" placeholder="Nhà phố Q7, 6.5 tỷ"></div><div class="fg"><label>🧠 Tâm lý KH</label><select id="cc_psy"><option value="Tham">💰 Tham</option><option value="Si">🤔 Si</option><option value="Sân">🔥 Sân</option><option value="Nghi ngờ">🔍 Nghi ngờ</option></select></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doColdCall()">📞 Tạo Script</button></div><div id="ccOut" class="hidden"></div></div>
   <div class="tool-pg" id="tool-checklist"><div class="card"><div class="ctit"><span class="dot"></span>📋 Checklist Pháp Lý BĐS</div><div style="font-size:.76rem;color:var(--t2);margin-bottom:11px">Tặng KH → Tăng uy tín chuyên gia → KH tin tưởng hơn khi mua qua bạn.</div><div class="fg"><label>🏠 Loại BĐS</label><div class="pgr" style="margin-top:4px"><div class="pill on" onclick="spill(this,'cl_type','Nhà phố')" data-v="Nhà phố">Nhà phố</div><div class="pill" onclick="spill(this,'cl_type','Căn hộ')" data-v="Căn hộ">Căn hộ</div><div class="pill" onclick="spill(this,'cl_type','Đất nền')" data-v="Đất nền">Đất nền</div></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doChecklist()">📋 Tạo Checklist</button></div><div id="clOut" class="hidden"></div></div>
-  <div class="tool-pg" id="tool-persona"><div class="card"><div class="ctit"><span class="dot"></span>🎭 Persona Khách Hàng BĐS</div><div style="font-size:.76rem;color:var(--t2);margin-bottom:11px">3 persona phổ biến nhất — hiểu KH → tư vấn đúng ngay từ đầu</div><div class="tool-tabs" id="personaTabs" style="gap:5px"><div class="tool-tab on" onclick="showPersonaTab(this,0)">👨‍💼 Kỹ sư IT</div><div class="tool-tab" onclick="showPersonaTab(this,1)">👩‍💼 Kinh doanh</div><div class="tool-tab" onclick="showPersonaTab(this,2)">👨‍🏫 Lần đầu</div></div><button class="btn btn-p btn-full" onclick="doPersona()">🎭 Xem Persona</button></div><div id="personaOut" class="hidden"></div></div>
-  <div class="tool-pg" id="tool-email"><div class="card"><div class="ctit"><span class="dot"></span>📧 Chuỗi Email Follow-up</div><div style="font-size:.76rem;color:var(--t2);margin-bottom:11px">3 email theo thứ tự: Giới thiệu → Follow-up → Cung cấp giá trị</div><button class="btn btn-p btn-full" onclick="doEmail()">📧 Tạo Chuỗi Email</button></div><div id="emailOut" class="hidden"></div></div>
+  <div class="tool-pg" id="tool-persona">
+    <div class="card">
+      <div class="ctit"><span class="dot"></span>🎭 Persona KH Thông Minh</div>
+      <div style="background:linear-gradient(135deg,rgba(156,110,245,.1),rgba(76,156,245,.07));border:1px solid rgba(156,110,245,.3);border-radius:9px;padding:9px 12px;margin-bottom:12px;font-size:.75rem;color:var(--t2)">
+        💡 Trả lời 5 câu hỏi về KH → app tự phân tích tâm lý và đưa ra chiến thuật tiếp cận riêng
+      </div>
+      <!-- KH basic info -->
+      <div class="fg2" style="margin-bottom:11px">
+        <div class="fg"><label>👤 Tên KH (tuỳ chọn)</label><input type="text" id="persona_khname" placeholder="Anh Minh, Chị Lan..."></div>
+        <div class="fg"><label>📞 SĐT (tuỳ chọn)</label><input type="text" id="persona_khphone" placeholder="0938.xxx.xxx"></div>
+      </div>
+      <!-- 5 questions -->
+      <div class="fg2">
+        <div class="fg">
+          <label>💰 1. Ngân sách *</label>
+          <select id="persona_budget">
+            <option value="">-- Chọn --</option>
+            <option value="duoi2">Dưới 2 tỷ</option>
+            <option value="2den5">2–5 tỷ</option>
+            <option value="5den10">5–10 tỷ</option>
+            <option value="tren10">Trên 10 tỷ</option>
+            <option value="thue">Thuê (5–20 tr/tháng)</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>🎯 2. Mục đích mua *</label>
+          <select id="persona_purpose">
+            <option value="">-- Chọn --</option>
+            <option value="o_thuc">🏠 Mua ở thực</option>
+            <option value="giadinh">👨‍👩‍👧 An cư cho gia đình</option>
+            <option value="dautu">📈 Đầu tư sinh lời</option>
+            <option value="chothue">🔑 Mua để cho thuê</option>
+            <option value="caocp">💎 Nâng cấp cuộc sống</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>⏰ 3. Timeline mua</label>
+          <select id="persona_timeline">
+            <option value="">-- Chọn --</option>
+            <option value="1thang">Trong vòng 1 tháng</option>
+            <option value="3thang">1–3 tháng</option>
+            <option value="6thang">3–6 tháng</option>
+            <option value="chuaro">Chưa rõ, đang tìm hiểu</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>🏠 4. Tình trạng hiện tại</label>
+          <select id="persona_status">
+            <option value="">-- Chọn --</option>
+            <option value="danhtue">Đang thuê nhà</option>
+            <option value="songcunggia">Sống cùng gia đình</option>
+            <option value="cosannhung">Có nhà nhưng muốn đổi</option>
+            <option value="danhtim">Đang tìm nhiều nơi</option>
+          </select>
+        </div>
+        <div class="fg"><label>📍 5. Khu vực quan tâm</label><input type="text" id="persona_area" placeholder="Quận 7, Bình Thạnh..."></div>
+        <div class="fg"><label>📝 Ghi chú thêm</label><input type="text" id="persona_extra" placeholder="Điều gì đặc biệt về KH này..."></div>
+      </div>
+      <button class="btn btn-p btn-full" style="margin-top:12px" onclick="buildSmartPersona()">🧠 Phân Tích Tâm Lý KH</button>
+    </div>
+    <div id="personaOut" class="hidden"></div>
+  </div>
+  <div class="tool-pg" id="tool-email">
+    <div class="card">
+      <div class="ctit"><span class="dot"></span>📧 Email Thông Minh — Kết nối KH</div>
+      <div style="background:linear-gradient(135deg,rgba(76,156,245,.1),rgba(62,207,142,.07));border:1px solid rgba(76,156,245,.3);border-radius:9px;padding:9px 12px;margin-bottom:12px;font-size:.75rem;color:var(--t2)">
+        💡 Chọn KH từ danh sách → chọn loại email → app tự điền tên, BĐS và thông tin môi giới vào email hoàn chỉnh
+      </div>
+      <div class="fg2">
+        <div class="fg">
+          <label>👤 Chọn KH <span class="lib-btn" onclick="buildSmartEmailKH()">🔄 Load danh sách</span></label>
+          <select id="email_kh_select" onchange="" style="font-size:.78rem">
+            <option value="">-- Bấm Load hoặc chọn --</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>📌 Loại email</label>
+          <select id="email_type" style="font-size:.78rem">
+            <option value="intro">✉️ Giới thiệu lần đầu</option>
+            <option value="followup3">✉️ Follow-up ngày 3</option>
+            <option value="value">✉️ Cung cấp giá trị</option>
+            <option value="remind">✉️ Nhắc lịch xem nhà</option>
+            <option value="birthday">🎂 Chúc sinh nhật</option>
+          </select>
+        </div>
+        <div class="fg full">
+          <label>🏠 BĐS quan tâm (tuỳ chọn, để trống nếu đã có trong hồ sơ KH)</label>
+          <input type="text" id="email_bds" placeholder="Nhà phố Q7, 6.5 tỷ sổ hồng riêng...">
+        </div>
+      </div>
+      <div style="display:flex;gap:7px;margin-top:11px">
+        <button class="btn btn-p" style="flex:1;justify-content:center" onclick="genSmartEmail()">📧 Tạo Email</button>
+        <button class="btn btn-s btn-sm" onclick="buildSmartEmailKH()">🔄 Load KH</button>
+      </div>
+      ${''/* Profile warning injected by JS */}
+    </div>
+    <div id="emailOut" class="hidden"></div>
+  </div>
 </div>
 
 <!-- CMP -->
@@ -1458,7 +1613,14 @@ select option{background:var(--bg3)}
 
 <!-- DASHBOARD PAGE (NEW) -->
 <div class="pg" id="pg-dashboard">
-  <div class="ptit"><div><h2>📊 Dashboard Thống Kê</h2><p>Biểu đồ content đã tạo theo tuần/tháng · Tổng quan hoạt động</p></div></div>
+  <div class="ptit">
+    <div><h2>📊 Dashboard Thống Kê</h2><p>Biểu đồ content · Tổng quan · Xuất báo cáo</p></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn btn-p btn-sm" onclick="exportReportTxt()">📄 Xuất .txt</button>
+      <button class="btn btn-g btn-sm" onclick="exportReportHTML()">🌐 Xuất HTML</button>
+      <button class="btn btn-b btn-sm" onclick="copyReportToClipboard()">📋 Copy Zalo/Email</button>
+    </div>
+  </div>
   <div id="dashboardContent">
     <div style="text-align:center;padding:40px;color:var(--t3)"><div class="spin" style="margin:0 auto 12px"></div>Đang tải dashboard...</div>
   </div>
@@ -1715,7 +1877,70 @@ select option{background:var(--bg3)}
   </div>
 </div>
 
-<!-- ==================== KH LABELS (trong CRM page đã có, thêm trang riêng quản lý KH) ==================== -->
+<!-- ==================== SPIN SELLING ==================== -->
+<div class="pg" id="pg-spin">
+  <div class="ptit">
+    <div><h2>🔄 SPIN Selling — Khám Phá KH</h2><p>20 câu hỏi mở theo 4 giai đoạn · Chọn KH từ CRM · Ghi chú & phân tích tâm lý</p></div>
+  </div>
+
+  <!-- Intro -->
+  <div style="background:linear-gradient(135deg,rgba(156,110,245,.12),rgba(76,156,245,.08));border:1px solid rgba(156,110,245,.4);border-radius:12px;padding:13px 15px;margin-bottom:14px">
+    <div style="font-weight:800;font-size:.9rem;color:var(--pu);margin-bottom:5px">📌 SPIN = Situation · Problem · Implication · Need-Payoff</div>
+    <div style="font-size:.76rem;color:var(--t2);line-height:1.7">Hỏi đúng thứ tự → KH <strong style="color:var(--pu)">tự thuyết phục mình mua</strong> — không cần bạn thuyết phục. Dùng trong buổi xem nhà hoặc gặp mặt lần đầu.</div>
+  </div>
+
+  <!-- KH selector + phase tracker -->
+  <div class="card" style="margin-bottom:12px">
+    <div class="ctit"><span class="dot"></span>Chọn KH & Theo dõi tiến trình</div>
+    <div class="fg2" style="margin-bottom:11px">
+      <div class="fg">
+        <label>👤 Chọn KH <span class="lib-btn" onclick="buildSPINKHSelect()">🔄 Load</span></label>
+        <select id="spin_kh" onchange="onSPINKHChange()" style="font-size:.78rem">
+          <option value="">-- Chọn KH hoặc nhập tên --</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>👤 Tên KH (nhập nếu chưa có trong danh sách)</label>
+        <input type="text" id="spin_khname" placeholder="Anh Minh, Chị Lan..." oninput="updSPINKHName()">
+      </div>
+    </div>
+    <!-- Phase progress bar -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+      <div class="spin-phase" id="spinph0" onclick="showSPINPhase(0)" data-phase="0">
+        <div class="spin-ph-num">S</div>
+        <div class="spin-ph-lbl">Situation</div>
+        <div class="spin-ph-sub">6 câu · Tìm hiểu</div>
+        <div class="spin-ph-prog" id="spinprog0">0/6</div>
+      </div>
+      <div class="spin-phase" id="spinph1" onclick="showSPINPhase(1)" data-phase="1">
+        <div class="spin-ph-num">P</div>
+        <div class="spin-ph-lbl">Problem</div>
+        <div class="spin-ph-sub">5 câu · Nỗi đau</div>
+        <div class="spin-ph-prog" id="spinprog1">0/5</div>
+      </div>
+      <div class="spin-phase" id="spinph2" onclick="showSPINPhase(2)" data-phase="2">
+        <div class="spin-ph-num">I</div>
+        <div class="spin-ph-lbl">Implication</div>
+        <div class="spin-ph-sub">5 câu · Hệ quả</div>
+        <div class="spin-ph-prog" id="spinprog2">0/5</div>
+      </div>
+      <div class="spin-phase" id="spinph3" onclick="showSPINPhase(3)" data-phase="3">
+        <div class="spin-ph-num">N</div>
+        <div class="spin-ph-lbl">Need-Payoff</div>
+        <div class="spin-ph-sub">4 câu · Giải pháp</div>
+        <div class="spin-ph-prog" id="spinprog3">0/4</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Questions area -->
+  <div id="spinQArea"></div>
+
+  <!-- Analysis result -->
+  <div id="spinAnalysis" style="display:none"></div>
+</div>
+
+<!-- ==================== KH LABELS ==================== -->
 <div class="pg" id="pg-khlabels">
   <div class="ptit"><div><h2>🎯 Quản Lý KH Theo Nhãn</h2><p>Nóng 🔴 · Ấm 🟡 · Lạnh ⚫ · Đã chốt ✅</p></div></div>
 
