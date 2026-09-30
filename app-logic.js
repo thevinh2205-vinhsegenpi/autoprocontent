@@ -160,17 +160,17 @@ let sc6Data={
 
 // ===================== POST TRACKER =====================
 // State: per content-session, keyed by content ID (timestamp)
-let trackerState = {fb:false,zalo:false,tiktok:false,web:false};
-let trackerNotes = {fb:'',zalo:'',web:'',tiktok:''};
-let trackerTimes = {fb:'',zalo:'',tiktok:'',web:''};
+let trackerState = {fb:false,zalo:false,tiktok:false,ig:false,threads:false,web:false};
+let trackerNotes = {fb:'',zalo:'',tiktok:'',ig:'',threads:'',web:''};
+let trackerTimes = {fb:'',zalo:'',tiktok:'',ig:'',threads:'',web:''};
 let trackerId = 0; // ties tracker to current content
 
 const PLT_LABELS = {fb:'📘 Facebook',zalo:'💬 Zalo',tiktok:'🎵 TikTok',web:'🌐 Website'};
 
 function resetTracker(){
-  trackerState={fb:false,zalo:false,tiktok:false,web:false};
-  trackerNotes={fb:'',zalo:'',tiktok:'',web:''};
-  trackerTimes={fb:'',zalo:'',tiktok:'',web:''};
+  trackerState={fb:false,zalo:false,tiktok:false,ig:false,threads:false,web:false};
+  trackerNotes={fb:'',zalo:'',tiktok:'',ig:'',threads:'',web:''};
+  trackerTimes={fb:'',zalo:'',tiktok:'',ig:'',threads:'',web:''};
   renderTracker();
   toast('🔄 Đã reset trạng thái đăng!');
 }
@@ -194,7 +194,7 @@ function saveTrackerNote(plt,val){
 }
 
 function renderTracker(){
-  const plts=['fb','zalo','tiktok','web'];
+  const plts=['fb','zalo','tiktok','ig','threads','web'];
   let doneCount=0;
   plts.forEach(p=>{
     const row=document.getElementById('tr_'+p);
@@ -215,15 +215,15 @@ function renderTracker(){
     if(tn)tn.value=trackerNotes[p]||'';
   });
   // Update progress
-  const pct=Math.round(doneCount/4*100);
+  const pct=Math.round(doneCount/6*100);
   const prog=document.getElementById('trackerProgress');
   const bar=document.getElementById('trackerBar');
   const pctEl=document.getElementById('trackerPct');
   const done=document.getElementById('trackerDone');
-  if(prog)prog.textContent=doneCount+'/4 nền tảng';
+  if(prog)prog.textContent=doneCount+'/6 nền tảng';
   if(bar)bar.style.width=pct+'%';
   if(pctEl)pctEl.textContent=pct+'%';
-  if(done)done.style.display=doneCount===4?'block':'none';
+  if(done)done.style.display=doneCount===6?'block':'none';
 }
 
 function saveTrackerToCRM(){
@@ -285,6 +285,7 @@ function init(){
   buildSg();buildPsychCards();buildFrmCards();
   buildAgents();buildFSEl();buildCRM();buildTpl();buildProf();buildEarn();
   updStats();buildHomeRecent();buildHomeWorkflow();buildHomeFeatures();buildHBModules();
+  renderSavedAngles();
   buildSurveySteps();buildReadKH();buildSaleScripts();
   updGoalHint('goalPills_gen');
   buildReminders();checkDueReminders();
@@ -322,7 +323,7 @@ function buildHomeWorkflow(){
     {i:'🏘️',t:'6 Căn',d:'Chọn BĐS',pg:'sixcan'},
     {i:'🔍',t:'Khảo Sát',d:'Thu dữ liệu',pg:'survey'},
     {i:'🏷️',t:'Định Giá',d:'Bóc tách',pg:'valuation'},
-    {i:'✍️',t:'Tạo Content',d:'4 nền tảng',pg:'gen'},
+    {i:'✍️',t:'Tạo Content',d:'6 nền tảng',pg:'gen'},
     {i:'📅',t:'Lịch 30 Ngày',d:'Auto phân bổ',pg:'sixcan'},
     {i:'🎯',t:'Chấm Điểm',d:'Tối ưu',pg:'scr'},
     {i:'🗄️',t:'Lưu CRM',d:'Quản lý',pg:'crm'}
@@ -333,8 +334,9 @@ function buildHomeWorkflow(){
 function buildHomeFeatures(){
   const el=document.getElementById('featureGrid');if(!el)return;
   const f=[
+    {i:'🔎',t:'Phân Tích V8',d:'Data Validation · AI Value Mining · Sales Angle · Tạo content đúng góc nhìn.',pg:'gen',b:'pu',bl:'V8🆕'},
     {i:'🏘️',t:'Chiến Thuật 6 Căn',d:'6 BĐS thật × 5 tâm lý = 30 content. Lịch 30 ngày. Bao phủ khu vực.',pg:'sixcan',b:'rd',bl:'🔥HOT'},
-    {i:'✍️',t:'Tạo Content',d:'1 input → FB, Zalo, TikTok, Web. 5 tâm lý. 7 công thức.',pg:'gen',b:'or',bl:'CORE'},
+    {i:'✍️',t:'Tạo Content',d:'1 input → FB, Zalo, TikTok, Instagram, Threads, Web. 5 tâm lý. 7 công thức.',pg:'gen',b:'or',bl:'CORE'},
     {i:'📅',t:'Lịch 7 Ngày',d:'Tự động từ content đã tạo. Phân bổ theo ngày + giờ vàng.',pg:'sch',b:'gr',bl:''},
     {i:'🔍',t:'Khảo Sát Nhà',d:'9 bước checklist chuẩn. Tự động sinh báo cáo 5x5.',pg:'survey',b:'gr',bl:''},
     {i:'🏷️',t:'Định Giá BĐS',d:'Bóc tách giá đất + xây dựng. Kết nối tạo content.',pg:'valuation',b:'',bl:''},
@@ -398,60 +400,292 @@ function autoFrm(py){return{'Tham':'AIDA','Sân':'PAS','Si':'FAB','Ngạo mạn'
 
 function mkFB(d,py,frm,gs,ct){
   const hooks={'Tham':[`💥 HIẾM CÓ! ${d.type} ${d.loc} chỉ ${d.price} — Cơ hội không tới lần 2!`,`🔥 Deal hời: ${d.type} ${d.area} tại ${d.loc} giá ${d.price}`],'Sân':[`✅ ${d.type.toUpperCase()} ${d.loc} — ${d.price} — ${d.area} — SỔ HỒNG — LIÊN HỆ NGAY`,`⚡ Cần nhà? Đây. ${d.type} ${d.loc} — ${d.price}. Không lòng vòng.`],'Si':[`🤔 Đang phân vân mua nhà? Xem căn ${d.type} này — mọi thứ rõ ràng A-Z!`,`📖 Lần đầu mua nhà? Tôi giải thích toàn bộ về ${d.type} ${d.loc} này!`],'Ngạo mạn':[`👑 Không phải ai cũng đủ tầm sở hữu ${d.type} này tại ${d.loc}`,`💎 LIMITED — Chỉ 1 căn độc bản: ${d.type} ${d.area} ${d.loc} ${d.price}`],'Nghi ngờ':[`✅ CAM KẾT THẬT: ${d.type} ${d.loc} — Sổ hồng chính chủ, pháp lý 100% rõ`,`🔍 KIỂM CHỨNG ĐƯỢC: Công chứng ngay, không ẩn phí`]};
-  const hk=hooks[py]||hooks['Si'];const mh=hk[0];
+  const hk=hooks[py]||hooks['Si'];
+  const mh=d.v8hook?`${d.v8hook}`:hk[0];
+  const angleTag=d.v8angle?`\n📐 Góc nhìn: ${d.v8angle}`:'';
   const cta=gs.includes('Chốt nhanh')?`\n⏰ CHỈ HÔM NAY — Nhắn ngay trước khi ai chốt!\n📲 ${ct}`:gs.includes('Thu lead')?`\n💬 Nhắn "XEM NHÀ" nhận thêm ảnh + thông tin\n📲 ${ct}`:`\n❓ Bạn đang tìm loại nhà nào? Comment bên dưới!\n👍 Like & Share nếu hữu ích!`;
+
+  // ── TONE: đọc v8Tone từ d.v8toneRaw ──
+  const tone=d.v8toneRaw||{style:5,len:5,emo:5};
+  const isShort=tone.len<=3;
+  const isLong=tone.len>=8;
+  const isEmo=tone.emo>=7;
+  const isFact=tone.emo<=3;
+  const isFormal=tone.style>=8;
+  const isFriendly=tone.style<=3;
+
+  // Phần body theo tone
   let body='';
-  if(frm==='AIDA')body=`${mh}\n\n📍 ${d.loc} | 📐 ${d.area} | 💰 ${d.price}\n⭐ ${d.pros}\n🎯 ${d.diff}\n\n✨ Cơ hội hiếm — giá này không tồn tại lâu!`;
-  else if(frm==='PAS')body=`${mh}\n\n😤 Đang thuê nhà mãi không ra nhà của mình? Tiền thuê bay mà chẳng thành vốn...\n💔 Chật chội, không tự do sửa chữa, lo hết hạn hợp đồng...\n\n✅ GIẢI PHÁP: ${d.type} ${d.area} tại ${d.loc}\n📌 ${d.pros} | 🎯 ${d.diff}\n💰 Chỉ ${d.price}`;
-  else if(frm==='BAB')body=`${mh}\n\n😩 TRƯỚC: Chật chội thuê nhà...\n😊 SAU: An cư ${d.type} rộng ${d.area} tại ${d.loc}\n🌉 CẦU NỐI: Căn này — ${d.price} — ${d.pros}`;
-  else if(frm==='FAB')body=`${mh}\n\n📋 ĐẶC ĐIỂM: ${d.type} ${d.area} tại ${d.loc} | Giá: ${d.price}\n✅ LỢI THẾ: ${d.pros} | ${d.diff}\n🏡 LỢI ÍCH: An cư vững chắc · Tài sản tăng giá · Không lo tiền thuê`;
-  else body=`${mh}\n\n🏡 Tưởng tượng thức dậy trong ${d.type} riêng tại ${d.loc}...\n📐 ${d.area} rộng rãi | 💰 ${d.price}\n${d.diff} | ✅ ${d.pros}`;
-  return`${body}${cta}\n\n---\n🔀 HOOK BIẾN THỂ: ${hk.slice(1).map((h,i)=>`\n${i+1}. ${h}`).join('')}`;
+  if(isShort){
+    // NGẮN GỌN: chỉ hook + thông tin cốt lõi
+    body=`${mh}\n\n📍 ${d.loc} | 📐 ${d.area} | 💰 ${d.price}\n✅ ${d.pros}${angleTag}`;
+  } else if(frm==='AIDA'){
+    const emotionLine=isEmo
+      ?`\n✨ Hãy tưởng tượng mỗi sáng thức dậy trong không gian ${d.type} riêng — yên bình, tự do, không lo tiền thuê mỗi tháng...`
+      :isFact?`\n📊 Giá/m²: ${d.price&&d.area?Math.round(parseFloat(d.price)*1000/parseFloat(d.area))+'tr/m²':'tốt so với thị trường'}. Thanh khoản cao khu ${d.loc}.`
+      :`\n✨ Cơ hội hiếm — giá này không tồn tại lâu!`;
+    body=`${mh}\n\n📍 ${d.loc} | 📐 ${d.area} | 💰 ${d.price}\n⭐ ${d.pros}\n🎯 ${d.diff}${angleTag}${emotionLine}`;
+  } else if(frm==='PAS'){
+    const painLine=isEmo
+      ?`😤 Bạn đang thuê nhà mãi mà không ra nhà của mình? Tiền thuê tháng nào mất tháng đó, chẳng tích lũy gì...\n💔 Chật chội, không được sửa chữa tự do, lo hết hạn hợp đồng mỗi năm...`
+      :`😤 Chi phí thuê nhà đang chiếm ${isFact?'30-40%':'quá nhiều'} thu nhập hàng tháng mà không tích lũy thành tài sản...`;
+    body=`${mh}\n\n${painLine}\n\n✅ GIẢI PHÁP: ${d.type} ${d.area} tại ${d.loc}\n📌 ${d.pros} | 🎯 ${d.diff}\n💰 Chỉ ${d.price}${angleTag}`;
+  } else if(frm==='BAB'){
+    body=`${mh}\n\n${isEmo?'😩':'•'} TRƯỚC: Chật chội ${isEmo?'và bất an':'·'} thuê nhà mãi...\n${isEmo?'😊':'•'} SAU: An cư ${d.type} ${isLong?`rộng ${d.area}`:`${d.area}`} tại ${d.loc}${isEmo?' — tự do, ổn định, hạnh phúc':''}\n🌉 CẦU NỐI: Căn này — ${d.price} — ${d.pros}${angleTag}`;
+  } else if(frm==='FAB'){
+    body=`${mh}\n\n📋 ĐẶC ĐIỂM: ${d.type} ${d.area} tại ${d.loc} | Giá: ${d.price}\n✅ LỢI THẾ: ${d.pros}${d.diff?` | ${d.diff}`:''}\n🏡 LỢI ÍCH: ${isEmo?'An cư vững chắc · Gia đình hạnh phúc · Không còn nỗi lo tiền thuê':'Tài sản tăng giá · Không tốn tiền thuê · Thanh khoản cao'}${angleTag}`;
+  } else {
+    const dreamLine=isEmo
+      ?`🏡 Tưởng tượng thức dậy mỗi sáng trong ${d.type} riêng tại ${d.loc}...\nKhông còn lo hết hạn hợp đồng thuê. Không còn xin phép chủ nhà để đóng cái đinh.`
+      :`🏡 ${d.type} ${d.area} tại ${d.loc} — vị trí thuận tiện, pháp lý rõ ràng.`;
+    body=`${mh}\n\n${dreamLine}\n📐 ${d.area} | 💰 ${d.price}\n${d.diff?d.diff+' | ':''}✅ ${d.pros}${angleTag}`;
+  }
+
+  // Formal tone: bỏ emoji thừa
+  if(isFormal) body=body.replace(/😩|😊|😤|💔|✨|🏡|🔥|💥|⚡/g,'').replace(/\n\n+/g,'\n\n');
+  // Friendly tone: thêm emoji cuối
+  if(isFriendly&&!body.endsWith('😊')) body=body+'  😊';
+
+  const hookVariants=isShort?'':`\n\n---\n🔀 HOOK BIẾN THỂ: ${hk.slice(1).map((h,i)=>`\n${i+1}. ${h}`).join('')}`;
+  return`${body}${cta}${hookVariants}`;
 }
 
 function mkZL(d,py,gs,ct){
-  const mp={'Tham':`Chào anh/chị! Em có ${d.type} ${d.area} tại ${d.loc} giá ${d.price} CỰC TỐT ạ! 💰\n✅ ${d.pros}\n${gs.includes('Chốt nhanh')?'Anh/chị muốn xem không? Em sắp lịch ngay!':'Anh/chị muốn em gửi thêm ảnh không ạ? 🙏'}`,'Sân':`Chào anh/chị! ${d.type} ${d.loc} — ${d.price} — ${d.area}. ${d.pros}.\n${gs.includes('Chốt nhanh')?'Xem ngay không? Em giữ lịch hôm nay.':'Cần thêm gì em gửi ngay ạ.'}`,'Si':`Chào anh/chị! Em biết tìm nhà phức tạp. Em có ${d.type} tại ${d.loc} — ${d.price} rất phù hợp ạ.\n${d.pros}. ${gs.includes('Thu lead')?'Anh/chị muốn em gửi bảng so sánh không ạ? 😊':'Em giải thích A-Z kể cả pháp lý & vay NH ạ!'}`,'Ngạo mạn':`Kính gửi anh/chị.\nEm có ${d.type} premium tại ${d.loc} — ${d.price}. ${d.pros}.\nSản phẩm hiếm, dành cho người có gu. Anh/chị muốn tham khảo? 🏆`,'Nghi ngờ':`Chào anh/chị. Em có ${d.type} ${d.loc} — ${d.price}.\n✅ Sổ hồng chính chủ\n✅ Pháp lý 100% rõ, không ẩn phí\n✅ Hoàn cọc nếu thông tin sai\n${gs.includes('Thu lead')?'Anh/chị muốn em gửi scan hồ sơ trước không ạ? 🙏':'Anh/chị muốn xem hồ sơ trực tiếp không ạ? 🙏'}`};
+  const tone=d.v8toneRaw||{style:5,len:5,emo:5};
+  const isShort=tone.len<=3;
+  const isEmo=tone.emo>=7;
+  const isFormal=tone.style>=8;
+  const v8prefix=d.v8hook?`💬 "${d.v8hook}"\n\n`:'';
+  const greeting=isFormal?'Kính gửi anh/chị!':'Chào anh/chị!';
+  const mp={
+    'Tham':`${v8prefix}${greeting} Em có ${d.type} ${d.area} tại ${d.loc} giá ${d.price} CỰC TỐT ạ! 💰\n✅ ${d.pros}${isShort?'':`\n${isEmo?'Đây là cơ hội đầu tư/ở thực hiếm gặp ạ!':'Giá này hợp lý so với mặt bằng khu vực.'}`}\n${gs.includes('Chốt nhanh')?'Anh/chị muốn xem không? Em sắp lịch ngay!':'Anh/chị muốn em gửi thêm ảnh không ạ? 🙏'}`,
+    'Sân':`${v8prefix}${greeting} ${d.type} ${d.loc} — ${d.price} — ${d.area}. ${d.pros}.\n${gs.includes('Chốt nhanh')?'Xem ngay không? Em giữ lịch hôm nay.':'Cần thêm gì em gửi ngay ạ.'}`,
+    'Si':`${v8prefix}${greeting} Em biết tìm nhà ${isEmo?'là hành trình quan trọng của cả gia đình':'không dễ'}. Em có ${d.type} tại ${d.loc} — ${d.price} rất phù hợp ạ.\n${d.pros}.${isShort?'':isEmo?' Anh/chị và gia đình sẽ cảm thấy an tâm ngay khi xem ạ.':''}\n${gs.includes('Thu lead')?'Anh/chị muốn em gửi bảng so sánh không ạ? 😊':'Em giải thích A-Z kể cả pháp lý & vay NH ạ!'}`,
+    'Ngạo mạn':`${v8prefix}${isFormal?'Kính gửi':'Chào'} anh/chị.\nEm có ${d.type} premium tại ${d.loc} — ${d.price}. ${d.pros}.\n${isShort?'':'Sản phẩm được chọn lọc kỹ — dành cho người có gu và tầm nhìn. '}Anh/chị muốn tham khảo? 🏆`,
+    'Nghi ngờ':`${v8prefix}${greeting} Em có ${d.type} ${d.loc} — ${d.price}.\n✅ Sổ hồng chính chủ\n✅ Pháp lý 100% rõ, không ẩn phí\n✅ Hoàn cọc nếu thông tin sai${isShort?'':`\n${isEmo?'Em hiểu anh/chị cần thời gian kiểm tra kỹ — em sẵn sàng đồng hành từng bước ạ.':'Em có thể gửi scan hồ sơ pháp lý trước để anh/chị kiểm tra.'}`}\n${gs.includes('Thu lead')?'Anh/chị muốn em gửi scan hồ sơ trước không ạ? 🙏':'Anh/chị muốn xem hồ sơ trực tiếp không ạ? 🙏'}`
+  };
   return(mp[py]||mp['Si'])+`\n\n${ct}`;
 }
 
 function mkTT(d,py,gs,ct){
+  const tone=d.v8toneRaw||{style:5,len:5,emo:5};
+  const isShort=tone.len<=3;
+  const isEmo=tone.emo>=7;
   const h3={'Tham':`DỪNG LẠI! ${d.type} ${d.loc} chỉ ${d.price}! 🔥`,'Sân':`${d.type} ${d.loc} — ${d.price}. Xem đây!`,'Si':`Lần đầu mua nhà? Xem cái này...`,'Ngạo mạn':`Không phải ai cũng đủ tầm sở hữu căn này 👑`,'Nghi ngờ':`Sổ hồng chính chủ — xem đây!`};
+  const hook3s=d.v8hook?d.v8hook:(h3[py]||h3['Si']);
   const cta=gs.includes('Chốt nhanh')?'"Comment CHỐT để được liên hệ ngay!"':'"Follow & nhắn tin nhận tư vấn miễn phí!"';
-  return`🎬 HOOK 3 GIÂY: "${h3[py]}"\n\n📖 KỊCH BẢN:\n[0:00–0:05] Quay mặt ngoài ${d.type}\n→ Giọng: "Đây là ${d.type} ${d.area} tại ${d.loc} — chỉ ${d.price}"\n\n[0:05–0:20] Tour từng phòng\n→ Giọng: "Điểm đặc biệt: ${d.pros}. Còn thêm: ${d.diff}!"\n\n[0:20–0:28] Text thông tin liên hệ\n\n[CTA 0:28–0:30] → ${cta}\n\n📞 ${ct}`;
+  const angleNote=d.v8angle?`\n→ Góc bán: ${d.v8angle}`:'';
+  // Cảm xúc cao → thêm scene cảm xúc
+  const emoScene=isEmo
+    ?`\n[0:15–0:20] Cận cảnh góc sinh hoạt đẹp\n→ Giọng: "${isShort?'Đây là tổ ấm mơ ước của bạn!':'Hình dung bạn và gia đình sinh sống nơi đây — yên bình, hạnh phúc, tự do...'}"`
+    :`\n[0:15–0:20] Text thông số nổi bật\n→ Overlay: "${d.area} | ${d.price} | ${d.loc}"`;
+  const script=isShort
+    ?`[0:00–0:03] Hook: "${hook3s}"${angleNote}\n[0:03–0:15] Tour nhanh + thông tin\n[0:15–0:20] CTA: ${cta}`
+    :`[0:00–0:05] Quay mặt ngoài ${d.type}\n→ Giọng: "${hook3s}"${angleNote}\n\n[0:05–0:15] Tour từng phòng\n→ Giọng: "Điểm đặc biệt: ${d.pros}${d.diff?'. Còn thêm: '+d.diff+'!':''}"\n${emoScene}\n\n[0:20–0:28] Text thông tin liên hệ\n\n[CTA 0:28–0:30] → ${cta}`;
+  return`🎬 HOOK 3 GIÂY: "${hook3s}"\n\n📖 KỊCH BẢN:\n${script}\n\n📞 ${ct}`;
 }
 
 function mkWB(d,py,ct){
+  const tone=d.v8toneRaw||{style:5,len:5,emo:5};
+  const isShort=tone.len<=3;
+  const isEmo=tone.emo>=7;
+  const isFact=tone.emo<=3;
   const ti={'Tham':`Bán ${d.type} ${d.loc} Giá Rẻ ${d.price} — Đầu Tư Sinh Lời`,'Sân':`${d.type} ${d.loc} ${d.price} ${d.area} — Sổ Hồng Riêng`,'Si':`Hướng Dẫn Mua ${d.type} ${d.loc} ${d.price} — Pháp Lý Rõ Ràng A-Z`,'Ngạo mạn':`${d.type} Cao Cấp ${d.loc} ${d.price} — Đẳng Cấp Sống Khác Biệt`,'Nghi ngờ':`${d.type} ${d.loc} ${d.price} — Sổ Hồng Riêng Pháp Lý 100% Minh Bạch`};
   const meta=`${d.type} ${d.loc} giá ${d.price}, DT ${d.area}. ${d.pros}. ${d.diff}. Tư vấn miễn phí!`.substring(0,160);
-  return`📌 TIÊU ĐỀ SEO:\n${ti[py]||ti['Si']}\n\n📝 META (${meta.length}/160):\n${meta}\n\n## GIỚI THIỆU\n${d.type} ${d.area} tại ${d.loc}. Giá ${d.price} — lý tưởng để ở và đầu tư.\n\n## THÔNG TIN\n• ${d.type} | ${d.area} | ${d.loc} | ${d.price}\n• Pháp lý: ${d.pros}\n\n## ĐIỂM NỔI BẬT\n✅ ${d.pros.split(',').map(s=>s.trim()).join('\n✅ ')}\n\n## LIÊN HỆ\n${ct}\n*Tư vấn vay NH · Xem nhà miễn phí*`;
+  const angleSection=d.v8angle?`\n\n## GÓC BÁN\n${d.v8angle}${d.v8hook?` — "${d.v8hook}"`:''}`:'' ;
+  // Intro theo tone
+  const intro=isEmo
+    ?`${d.type} ${d.area} tại ${d.loc} — không chỉ là bất động sản, đây là nơi gia đình bạn sẽ gắn bó, lớn lên và tạo nên những kỷ niệm đẹp. Giá ${d.price}.`
+    :isFact
+    ?`${d.type} ${d.area} tại ${d.loc}. Giá ${d.price}. Giá/m²: ${d.price&&d.area?Math.round(parseFloat(d.price)*1000/parseFloat(d.area))+'tr':'cạnh tranh'}. Pháp lý: ${d.pros}.`
+    :`${d.type} ${d.area} tại ${d.loc}. Giá ${d.price} — lý tưởng để ở và đầu tư.`;
+  const highlights=isShort
+    ?`• ${d.pros}`
+    :`✅ ${d.pros.split(',').map(s=>s.trim()).join('\n✅ ')}`;
+  return`📌 TIÊU ĐỀ SEO:\n${ti[py]||ti['Si']}\n\n📝 META (${meta.length}/160):\n${meta}\n\n## GIỚI THIỆU\n${intro}${angleSection}\n\n## THÔNG TIN\n• ${d.type} | ${d.area} | ${d.loc} | ${d.price}\n\n## ĐIỂM NỔI BẬT\n${highlights}\n\n## LIÊN HỆ\n${ct}\n*Tư vấn vay NH · Xem nhà miễn phí*`;
+}
+
+function mkIG(d,py,frm,gs,ct){
+  const tone=d.v8toneRaw||{style:5,len:5,emo:5};
+  const isShort=tone.len<=3;
+  const isEmo=tone.emo>=7;
+  const isFact=tone.emo<=3;
+
+  // Hook — IG ưu tiên visual + cảm xúc
+  const igHooks={
+    'Tham'   :`💰 ${d.price} cho ${d.type} ${d.area} tại ${d.loc}. Không phải quảng cáo — đây là thật.`,
+    'Sân'    :`${d.type.toUpperCase()} ${d.loc} 📍 ${d.price} 📐 ${d.area} ⚡ Liên hệ ngay`,
+    'Si'     :`Đây có thể là tổ ấm tiếp theo của bạn 🏡`,
+    'Ngạo mạn':`Không phải ai cũng hiểu giá trị của căn này. Và đó là lợi thế của bạn 👑`,
+    'Nghi ngờ':`Pháp lý sạch. Sổ hồng chính chủ. Không lời hứa suông ✅`
+  };
+  const hook=d.v8hook||igHooks[py]||igHooks['Si'];
+  const angleTag=d.v8angle?`\n\n📐 Góc nhìn: ${d.v8angle}`:'';
+
+  // Caption body theo tone
+  const emoLine=isEmo
+    ?`\n\nHãy tưởng tượng bạn thức dậy mỗi sáng trong không gian này — tự do, yên bình, là của mình thật sự 💫`
+    :isFact
+    ?`\n\nGiá/m²: ${d.price&&d.area?Math.round(parseFloat(d.price)*1000/parseFloat(d.area))+'tr':'cạnh tranh so với khu vực'}. Thanh khoản tốt.`
+    :'';
+
+  const body=isShort
+    ?`${hook}\n\n📍 ${d.loc} | 📐 ${d.area} | 💰 ${d.price}\n✅ ${d.pros}${angleTag}`
+    :`${hook}\n\n📍 ${d.loc}\n📐 Diện tích: ${d.area}\n💰 Giá: ${d.price}\n\n✅ ${d.pros}${d.diff?`\n🎯 ${d.diff}`:''}${angleTag}${emoLine}`;
+
+  const cta=gs.includes('Chốt nhanh')
+    ?`\n\n👆 DM ngay hoặc comment "MUỐN XEM" để được liên hệ trong 5 phút!`
+    :gs.includes('Thu lead')
+    ?`\n\n💬 Comment "INFO" để nhận đầy đủ thông tin + ảnh thực tế nhé!`
+    :`\n\n💬 Thích căn này không? Comment hoặc DM mình nhé! 🙏`;
+
+  // Hashtags theo khu vực + loại nhà
+  const loc=d.loc.replace(/\s+/g,'').toLowerCase();
+  const type=d.type.replace(/\s+/g,'').toLowerCase();
+  const hashtags=`\n\n#batdongsan #${type} #${loc} #muaban${type} #nhadep #${type}${loc} #batdongsantphcm #muanhadep #dautu #realestate`;
+
+  return`${body}${cta}\n\n─────────────────\n📞 ${ct}${hashtags}`;
+}
+
+function mkThreads(d,py,gs){
+  const tone=d.v8toneRaw||{style:5,len:5,emo:5};
+  const isShort=tone.len<=3;
+  const isFriendly=tone.style<=4;
+
+  // Threads: text-first, gần gũi, 500 ký tự/thread, dạng thread nối tiếp
+  const opener={
+    'Tham'   :`Tôi có ${d.type} ở ${d.loc} giá ${d.price} mà nghe xong bạn sẽ muốn xem liền. Để tôi kể👇`,
+    'Sân'    :`${d.type} ${d.loc}. ${d.price}. ${d.area}. Pháp lý OK. Xem chưa?`,
+    'Si'     :`Hôm nay tôi muốn chia sẻ một căn nhà mà tôi nghĩ nhiều bạn đang tìm kiếm 🏡`,
+    'Ngạo mạn':`Có những căn nhà không phải ai cũng đủ tầm nhìn để nhận ra giá trị thật của nó.`,
+    'Nghi ngờ':`Tôi biết nhiều bạn đang ngại vì sợ pháp lý lùng bùng. Căn này thì khác.`
+  };
+  const hook=d.v8hook||opener[py]||opener['Si'];
+  const angleNote=d.v8angle?` [Góc: ${d.v8angle}]`:'';
+
+  if(isShort){
+    // Threads ngắn — 1 thread duy nhất
+    return`${hook}${angleNote}\n\n📍 ${d.loc} · 📐 ${d.area} · 💰 ${d.price}\n✅ ${d.pros}\n\n${gs.includes('Chốt nhanh')?'Inbox mình nhé!':'Có câu hỏi gì cứ hỏi mình ở comment 👇'}`;
+  }
+
+  // Threads dài — format thread nối tiếp (1/, 2/, 3/...)
+  const thread1=`${hook}${angleNote}`;
+  const thread2=`📋 Thông tin nhanh:\n\n📍 Khu vực: ${d.loc}\n📐 Diện tích: ${d.area}\n💰 Giá: ${d.price}\n🏠 Loại: ${d.type}`;
+  const thread3=`✅ Điểm nổi bật:\n\n${d.pros.split(',').map(s=>`• ${s.trim()}`).join('\n')}${d.diff?`\n\n🎯 ${d.diff}`:''}`;
+  const thread4=gs.includes('Chốt nhanh')
+    ?`Quan tâm? Inbox hoặc comment "XEM" mình liên hệ lại trong vài phút 🙏${isFriendly?' Chứ đừng để người khác chốt trước nha 😄':''}`
+    :gs.includes('Thu lead')
+    ?`Muốn nhận thêm ảnh thực tế + thông tin chi tiết? Comment "INFO" bên dưới nhé 📩`
+    :`Hỏi gì cứ hỏi mình ở comment — mình trả lời hết! 👇`;
+
+  return`1/ ${thread1}\n\n━━━━━━━━━━━\n2/ ${thread2}\n\n━━━━━━━━━━━\n3/ ${thread3}\n\n━━━━━━━━━━━\n4/ ${thread4}`;
 }
 
 function buildVer(d,py,frm,gs){
   const ct=`📞 ${prof.phone} | Zalo: ${prof.zalo}\n👤 ${prof.name} — ${prof.title}`;
-  return{py,frm,gs,fb:mkFB(d,py,frm,gs,ct),zalo:mkZL(d,py,gs,ct),tiktok:mkTT(d,py,gs,ct),web:mkWB(d,py,ct)};
+  return{py,frm,gs,fb:mkFB(d,py,frm,gs,ct),zalo:mkZL(d,py,gs,ct),tiktok:mkTT(d,py,gs,ct),ig:mkIG(d,py,frm,gs,ct),threads:mkThreads(d,py,gs),web:mkWB(d,py,ct)};
 }
 
 async function doGenerate(){
   const d=gfd(),auto=document.getElementById('autoSmart').checked,v5=pst.ver==='5';
   const gs=getGoals('goalPills_gen');if(!gs.length)return toast('⚠️ Chọn ít nhất 1 mục tiêu!');
+
+  // ── V8: nếu chưa phân tích thì tự động validate nhanh ──
+  if(v8State.usps.length===0){
+    const {errs}=v8ValidateData(d);
+    if(errs.length){
+      const banner=document.getElementById('v8ValBanner');
+      if(banner){banner.style.display='block';banner.innerHTML=`<div class="v8-val-banner v8-val-err"><span style="font-size:1.1rem;flex-shrink:0">🔴</span><div><div style="font-weight:700;margin-bottom:4px">Cần bổ sung dữ liệu trước khi tạo content</div>${errs.map(e=>`<div class="v8-val-item"><span class="vi-icon">❌</span><span>${e}</span></div>`).join('')}</div></div>`;}
+      return toast('⚠️ Dữ liệu chưa đủ — xem cảnh báo đỏ bên trên!');
+    }
+    // Hiện badge nhắc nhở nhẹ nhàng (không block)
+    const banner=document.getElementById('v8ValBanner');
+    if(banner){
+      banner.style.display='block';
+      banner.innerHTML=`<div class="v8-val-banner v8-val-warn" style="align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:1rem;flex-shrink:0">⚡</span>
+          <span><strong>Đang tạo content không qua V8</strong> — Bấm <strong style="color:var(--pu)">🔎 Phân Tích V8</strong> để chọn góc bán, chỉnh hook và tối ưu content hơn</span>
+        </div>
+        <button class="btn btn-s btn-sm" onclick="v8Analyze()" style="flex-shrink:0">🔎 Phân Tích V8 ngay</button>
+      </div>`;
+    }
+  }
+
   let py,frm;
   if(auto){py=autoPsy(d);frm=autoFrm(py);}else{py=selPsy||'Si';frm=selFrm==='Auto'?autoFrm(py):selFrm;}
-  const steps=v5?['🔍 Phân tích BĐS...','🧠 Xác định 5 tâm lý...','✍️ Tạo FB x5...','💬 Zalo x5...','🎵 TikTok x5...','🌐 Web x5...','✅ Hoàn tất!']:['🔍 Phân tích...','🧠 Xác định tâm lý...','✍️ Tạo 4 nền tảng...','✅ Hoàn tất!'];
+
+  // ── V8: nếu đã chọn góc bán → override tâm lý theo góc ──
+  if(v8State.selectedAngle && !auto){
+    const angleToPS={
+      cashflow:'Tham',invest:'Tham',price:'Tham',
+      location:'Si',family:'Si',showcase:'Si',lifestyle:'Si',
+      legal:'Nghi ngờ',potential:'Nghi ngờ',
+      traffic:'Sân',function:'Sân',
+      rare:'Ngạo mạn',reframe:'Ngạo mạn'
+    };
+    const sugPS=angleToPS[v8State.selectedAngle.id];
+    if(sugPS)py=sugPS;
+  }
+
+  const steps=v5
+    ?['🔍 Phân tích BĐS...','🧠 Xác định 5 tâm lý...','✍️ Tạo FB x5...','💬 Zalo x5...','🎵 TikTok x5...','📸 IG x5...','🧵 Threads x5...','🌐 Web x5...','✅ Hoàn tất!']
+    :v8State.selectedAngle
+      ?['🔎 Áp dụng góc '+v8State.selectedAngle.name+'...','🧠 Khai thác USP...','✍️ Tạo 6 nền tảng...','✅ Hoàn tất!']
+      :['🔍 Phân tích...','🧠 Xác định tâm lý...','✍️ Tạo 6 nền tảng...','✅ Hoàn tất!'];
+
   document.getElementById('ldArea').classList.add('on');document.getElementById('outArea').classList.remove('on');
   document.getElementById('ldSteps').innerHTML=steps.map((s,i)=>`<div class="lst" id="ls${i}">${s}</div>`).join('');
   for(let i=0;i<steps.length;i++){if(i>0){const prev=document.getElementById(`ls${i-1}`);if(prev){prev.classList.remove('cur');prev.classList.add('done');}}const cur=document.getElementById(`ls${i}`);if(cur)cur.classList.add('cur');await sleep(v5?280:230);}
   document.getElementById('ldArea').classList.remove('on');
+
   const plist=v5?['Tham','Sân','Si','Ngạo mạn','Nghi ngờ']:[py];
-  VS=plist.map(p=>buildVer(d,p,auto?autoFrm(p):frm,gs));VI=0;schedProp=`${d.type} ${d.loc} ${d.price}`;
-  // Log content for dashboard
-  logContentCreated(d);
-  // Reset post tracker và CRM edit mode cho content mới
-  trackerState={fb:false,zalo:false,tiktok:false,web:false};
-  trackerNotes={fb:'',zalo:'',tiktok:'',web:''};
-  trackerTimes={fb:'',zalo:'',tiktok:'',web:''};
-  trackerId=0; // content mới chưa có CRM entry
+
+  // ── V8: inject USP hook + custom hook + tone + custom USPs ──
+  const d8={...d};
+  if(v8State.selectedAngle){
+    // Ưu tiên hook người dùng đã chỉnh, fallback về AI hook
+    const hook=v8CustomHook||v8BuildAngleHook(v8State.selectedAngle.id,d,v8State.usps);
+    if(hook&&(!d.diff||d.diff.length<5))d8.diff=hook;
+    d8.v8angle=v8State.selectedAngle.name;
+    d8.v8hook=hook;
+    d8.v8hookCustom=!!v8CustomHook;
+  }
+  // Inject custom USPs vào pros
+  if(v8CustomUSPs.length){
+    const customTxt=v8CustomUSPs.map(u=>u.title).join(' · ');
+    d8.pros=(d8.pros?d8.pros+' · ':'')+customTxt;
+  }
+  // Inject tone context
+  d8.v8tone=getToneContext();
+  d8.v8toneRaw={...v8Tone}; // raw numbers for mk functions to read directly
+
+  VS=plist.map(p=>buildVer(d8,p,auto?autoFrm(p):frm,gs));VI=0;schedProp=`${d.type} ${d.loc} ${d.price}`;
+  logContentCreated(d8);
+  trackerState={fb:false,zalo:false,tiktok:false,ig:false,threads:false,web:false};
+  trackerNotes={fb:'',zalo:'',tiktok:'',ig:'',threads:'',web:''};
+  trackerTimes={fb:'',zalo:'',tiktok:'',ig:'',threads:'',web:''};
+  trackerId=0;
   const banner=document.getElementById('crmEditBanner');if(banner)banner.style.display='none';
   renderOut(auto,gs,v5);
+
+  // ── V8: hiển thị góc bán + hook + tone đã dùng trong output ──
+  if(v8State.selectedAngle){
+    const out=document.getElementById('outArea');
+    if(out){
+      const toneDesc=getToneContext();
+      const hookLabel=d8.v8hookCustom?'✍️ Hook của bạn':'🤖 Hook AI';
+      const tag=document.createElement('div');
+      tag.style.cssText='background:rgba(156,110,245,.1);border:1px solid rgba(156,110,245,.3);border-radius:10px;padding:9px 13px;margin-bottom:10px;font-size:.73rem';
+      tag.innerHTML=`<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:5px">
+        <span style="color:var(--pu);font-weight:700">🎯 Góc bán V8: ${v8State.selectedAngle.icon} ${v8State.selectedAngle.name}</span>
+        ${v8CustomUSPs.length?`<span style="background:rgba(156,110,245,.15);color:var(--pu);padding:1px 7px;border-radius:8px;font-size:.62rem">+${v8CustomUSPs.length} USP của bạn</span>`:''}
+      </div>
+      <div style="color:var(--ac);font-style:italic;margin-bottom:3px">${hookLabel}: "${d8.v8hook||''}"</div>
+      <div style="color:var(--t3);font-size:.67rem">${toneDesc}</div>`;
+      out.insertBefore(tag,out.firstChild);
+    }
+  }
 }
 
 function logContentCreated(d){
@@ -1185,12 +1419,45 @@ function doStory(){
 function doHashtag(){
   const type=V('ht_type')||'nhà phố',loc=V('ht_loc')||'hcm',seg=document.getElementById('ht_seg').value,goal=document.getElementById('ht_goal').value,plt=pst.ht_plt||'FB';
   document.getElementById('hashtagOut').classList.add('hidden');
-  const base=`#${type.toLowerCase().replace(/\s+/g,'')} #bds${loc.toLowerCase().replace(/\s+/g,'')} #${goal==='sell'?'bánhà':'cho_thuê_nhà'} #môigiới #bds #nhàđẹp`;
-  const segHt={'budget':'#nhàrẻ #nhàbìnhdân #nhàgiárẻ','mid':'#nhàtrungcấp #nhà3đến7tỷ','high':'#nhàcaocấp #nhàsangt rọng','luxury':'#luxury #penthouse #villanhandé'};
-  const platHt={'FB':'#facebook #bdsviệtnam #mualandranh','TikTok':'#tiktokrealestate #nhàtiktok #trendnhà','Zalo':'#zalomôigiới','Website':'#seobds #timkiếmnhà'};
+  const typeSlug=type.toLowerCase().replace(/\s+/g,'');
+  const locSlug=loc.toLowerCase().replace(/\s+/g,'');
+  const base=`#${typeSlug} #bds${locSlug} #${goal==='sell'?'bánhà':'cho_thuê_nhà'} #môigiới #bds #nhàđẹp #batdongsan`;
+  const segHt={
+    'budget':'#nhàrẻ #nhàbìnhdân #nhàgiárẻ #nhàdưới3tỷ',
+    'mid':'#nhàtrungcấp #nhà3đến7tỷ #muanha',
+    'high':'#nhàcaocấp #nhàsangtọng #luxuryhome',
+    'luxury':'#luxury #penthouse #villadep #luxuryrealestate'
+  };
+  const platHt={
+    'FB'   :'#facebook #bdsviệtnam #muabánnhà #nhàphố #đầutưbds',
+    'Zalo' :'#zalomôigiới #zalo #muabánnhàzalo',
+    'TikTok':'#tiktokrealestate #nhàtiktok #trendnhà #realestatetiktok #housevideo',
+    'Instagram':'#instarealestate #homeforsale #nhàdep #realestate #instahome #propertyph #homedecor #househunting #dreamhome #realestateinvestment',
+    'Threads':'#threads #threadshome #nhàthreads #realestatethreads #batdongsanthreads',
+    'Website':'#seobds #timkiếmnhà #muanhahanoi #muanhahcm #nhàsănhàng'
+  };
+  // IG thêm emoji-rich format
+  const isIG=plt==='Instagram';
+  const isThreads=plt==='Threads';
   const hid='ht_'+Date.now();
-  const htTxt=`${base} ${segHt[seg]||''} ${platHt[plt]||''}`;
-  document.getElementById('hashtagOut').innerHTML=`<div class="card"><div class="ctit"><span class="dot"></span>🏷️ Hashtag cho ${plt}</div><div id="${hid}" style="background:var(--bg3);border-radius:8px;padding:12px;font-size:.78rem;color:var(--ac);line-height:1.9;word-break:break-word">${htTxt}</div><div style="margin-top:8px;display:flex;gap:6px"><button class="btn btn-g btn-sm" onclick="cpEl('${hid}')">📋 Copy</button><button class="btn btn-r btn-sm" onclick="document.getElementById('hashtagOut').classList.add('hidden')">🗑️</button></div></div>`;
+  let htTxt=`${base} ${segHt[seg]||''} ${platHt[plt]||''}`;
+  // Threads: không quá nhiều hashtag, chú trọng nội dung
+  if(isThreads)htTxt=`${base.split(' ').slice(0,5).join(' ')} ${platHt['Threads']}`;
+  // IG: thêm set hashtag phong phú
+  if(isIG)htTxt=`${base}\n${segHt[seg]||''}\n${platHt['Instagram']}\n#${locSlug} #${locSlug}realestate #nhà${locSlug}`;
+  document.getElementById('hashtagOut').innerHTML=`<div class="card">
+    <div class="ctit"><span class="dot"></span>🏷️ Hashtag cho ${plt}</div>
+    <div style="background:rgba(156,110,245,.07);border:1px solid rgba(156,110,245,.2);border-radius:8px;padding:8px 11px;margin-bottom:9px;font-size:.69rem;color:var(--t3)">
+      ${isIG?'📸 Instagram: 10-15 hashtag, mix popular + niche':''}
+      ${isThreads?'🧵 Threads: tối đa 5 hashtag, không lạm dụng':''}
+      ${!isIG&&!isThreads?`💡 Dán hashtag vào cuối ${plt === 'TikTok' ? 'video' : 'bài viết'} của bạn`:'' }
+    </div>
+    <div id="${hid}" style="background:var(--bg3);border-radius:8px;padding:12px;font-size:.78rem;color:var(--ac);line-height:1.9;word-break:break-word">${htTxt}</div>
+    <div style="margin-top:8px;display:flex;gap:6px">
+      <button class="btn btn-g btn-sm" onclick="cpEl('${hid}')">📋 Copy</button>
+      <button class="btn btn-r btn-sm" onclick="document.getElementById('hashtagOut').classList.add('hidden')">🗑️</button>
+    </div>
+  </div>`;
   document.getElementById('hashtagOut').classList.remove('hidden');
 }
 
@@ -1598,7 +1865,7 @@ function saveCRM(){
       type:d.type,loc:d.loc,price:d.price,area:d.area,pros:d.pros,
       time:new Date().toLocaleString('vi-VN'),
       vs:VS,
-      posted:{fb:false,zalo:false,tiktok:false,web:false},
+      posted:{fb:false,zalo:false,tiktok:false,ig:false,threads:false,web:false},
       postedTimes:{},postedNotes:{},note:''
     });
     fillCodeAll(code);
@@ -1656,8 +1923,8 @@ function buildCRM(){
   else list.sort((a,b)=>b.id-a.id);
 
   // Update stats
-  const fullCnt=crm.filter(e=>Object.values(e.posted||{}).filter(Boolean).length===4).length;
-  const partCnt=crm.filter(e=>{const c=Object.values(e.posted||{}).filter(Boolean).length;return c>0&&c<4;}).length;
+  const fullCnt=crm.filter(e=>Object.values(e.posted||{}).filter(Boolean).length===6).length;
+  const partCnt=crm.filter(e=>{const c=Object.values(e.posted||{}).filter(Boolean).length;return c>0&&c<6;}).length;
   const newCnt=crm.filter(e=>Object.values(e.posted||{}).filter(Boolean).length===0).length;
   const st=document.getElementById('crmStatTotal');if(st)st.textContent=`Tổng: ${crm.length}`;
   const sf=document.getElementById('crmStatFull');if(sf)sf.textContent=`✅ Đủ 4: ${fullCnt}`;
@@ -1687,7 +1954,7 @@ function buildCRM(){
       return`<tr>
         <td>
           <div style="font-family:'Space Mono',monospace;font-size:.67rem;font-weight:700;color:var(--ac);white-space:nowrap">${hl(e.code||'—')}</div>
-          <div style="width:6px;height:6px;border-radius:50%;background:${statusDot};display:inline-block;margin-top:3px" title="${postedCount}/4 nền tảng"></div>
+          <div style="width:6px;height:6px;border-radius:50%;background:${statusDot};display:inline-block;margin-top:3px" title="${postedCount}/6 nền tảng"></div>
         </td>
         <td><strong style="color:var(--tx);font-size:.77rem">${hl(e.type)}</strong></td>
         <td style="font-size:.75rem">${hl(e.loc)}</td>
@@ -1713,7 +1980,7 @@ function buildCRM(){
 function openCRMDetail(i){
   const e=crm[i];if(!e)return;
   const p=e.posted||{};
-  const plt=[{k:'fb',ic:'📘',nm:'Facebook'},{k:'zalo',ic:'💬',nm:'Zalo'},{k:'tiktok',ic:'🎵',nm:'TikTok'},{k:'web',ic:'🌐',nm:'Website'}];
+  const plt=[{k:'fb',ic:'📘',nm:'Facebook'},{k:'zalo',ic:'💬',nm:'Zalo'},{k:'tiktok',ic:'🎵',nm:'TikTok'},{k:'ig',ic:'📸',nm:'Instagram'},{k:'threads',ic:'🧵',nm:'Threads'},{k:'web',ic:'🌐',nm:'Website'}];
   document.getElementById('crmDetailTitle').textContent=`${e.type} — ${e.loc}`;
   document.getElementById('crmDetailCode').textContent=`Mã căn: ${e.code||'—'}`;
   document.getElementById('crmDetailBody').innerHTML=`
@@ -1776,9 +2043,9 @@ function loadCRM(i){
   ['type','price','area','loc','pros'].forEach(k=>{const el=document.getElementById('i_'+k);if(el)el.value=e[k]||'';});
   VS=e.vs||[];VI=0;
   trackerId=e.id||0;
-  trackerState=e.posted?JSON.parse(JSON.stringify(e.posted)):{fb:false,zalo:false,tiktok:false,web:false};
-  trackerTimes=e.postedTimes?JSON.parse(JSON.stringify(e.postedTimes)):{fb:'',zalo:'',tiktok:'',web:''};
-  trackerNotes=e.postedNotes?JSON.parse(JSON.stringify(e.postedNotes)):{fb:'',zalo:'',tiktok:'',web:''};
+  trackerState=e.posted?JSON.parse(JSON.stringify(e.posted)):{fb:false,zalo:false,tiktok:false,ig:false,threads:false,web:false};
+  trackerTimes=e.postedTimes?JSON.parse(JSON.stringify(e.postedTimes)):{fb:'',zalo:'',tiktok:'',ig:'',threads:'',web:''};
+  trackerNotes=e.postedNotes?JSON.parse(JSON.stringify(e.postedNotes)):{fb:'',zalo:'',tiktok:'',ig:'',threads:'',web:''};
   if(e.code)fillCodeAll(e.code);
   nav('gen');
   updCRMEditBanner(e);
@@ -2092,8 +2359,8 @@ function buildDashboard(){
     const maxWeek=Math.max(...last4weeks.map(w=>w.count),1);
 
     // Platform posted stats
-    const ps={fb:0,zalo:0,tiktok:0,web:0};
-    crm.forEach(e=>{if(e.posted){['fb','zalo','tiktok','web'].forEach(k=>{if(e.posted[k])ps[k]++;});}});
+    const ps={fb:0,zalo:0,tiktok:0,ig:0,threads:0,web:0};
+    crm.forEach(e=>{if(e.posted){['fb','zalo','tiktok','ig','threads','web'].forEach(k=>{if(e.posted[k])ps[k]++;});}});
     const totalPosted=Object.values(ps).reduce((a,b)=>a+b,0);
 
     // Top types
@@ -2177,7 +2444,7 @@ function buildDashboard(){
       ${crm.length?`<div class="card" style="margin-bottom:12px">
         <div class="ctit"><span class="dot"></span>📌 Đăng tin theo nền tảng</div>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:9px">
-          ${[{k:'fb',ic:'📘',nm:'Facebook'},{k:'zalo',ic:'💬',nm:'Zalo'},{k:'tiktok',ic:'🎵',nm:'TikTok'},{k:'web',ic:'🌐',nm:'Website'}].map(p=>`<div style="background:${ps[p.k]>0?'rgba(62,207,142,.1)':'var(--bg3)'};border:1px solid ${ps[p.k]>0?'rgba(62,207,142,.35)':'var(--border)'};border-radius:9px;padding:10px 7px;text-align:center">
+          ${[{k:'fb',ic:'📘',nm:'Facebook'},{k:'zalo',ic:'💬',nm:'Zalo'},{k:'tiktok',ic:'🎵',nm:'TikTok'},{k:'ig',ic:'📸',nm:'Instagram'},{k:'threads',ic:'🧵',nm:'Threads'},{k:'web',ic:'🌐',nm:'Website'}].map(p=>`<div style="background:${ps[p.k]>0?'rgba(62,207,142,.1)':'var(--bg3)'};border:1px solid ${ps[p.k]>0?'rgba(62,207,142,.35)':'var(--border)'};border-radius:9px;padding:10px 7px;text-align:center">
             <div style="font-size:1.3rem">${p.ic}</div>
             <div style="font-weight:900;font-size:1.2rem;color:${ps[p.k]>0?'var(--gr)':'var(--t3)'};font-family:'Space Mono',monospace">${ps[p.k]}</div>
             <div style="font-size:.62rem;color:var(--t3)">${p.nm}</div>
@@ -2220,8 +2487,8 @@ function buildReportData(){
   const lastMonthContent=contentLog.filter(c=>c.month===(thisMonth===1?12:thisMonth-1)&&c.year===(thisMonth===1?thisYear-1:thisYear)).length;
   const thisWeekContent=contentLog.filter(c=>c.week===thisWeek&&c.year===thisYear).length;
   const growthPct=lastMonthContent?Math.round(((thisMonthContent-lastMonthContent)/lastMonthContent)*100):0;
-  const ps={fb:0,zalo:0,tiktok:0,web:0};
-  crm.forEach(e=>{if(e.posted){['fb','zalo','tiktok','web'].forEach(k=>{if(e.posted[k])ps[k]++;});}});
+  const ps={fb:0,zalo:0,tiktok:0,ig:0,threads:0,web:0};
+  crm.forEach(e=>{if(e.posted){['fb','zalo','tiktok','ig','threads','web'].forEach(k=>{if(e.posted[k])ps[k]++;});}});
   const totalPosted=Object.values(ps).reduce((a,b)=>a+b,0);
   const hotKH=(khList||[]).filter(k=>k.label==='hot').length;
   const warmKH=(khList||[]).filter(k=>k.label==='warm').length;
@@ -2264,7 +2531,7 @@ function exportReportTxt(){
   txt+=`• Lịch 30 ngày: ${d.sc6Total} content · Đã đăng: ${d.sc6Posted}\n`;
   txt+=`• Tiến độ: ${d.sc6Total?Math.round(d.sc6Posted/d.sc6Total*100):0}%\n\n`;
   txt+=`🗄️ CRM — 5 TIN GẦN NHẤT\n${'─'.repeat(36)}\n`;
-  d.recentCRM.forEach((e,i)=>{const pc=Object.values(e.posted||{}).filter(Boolean).length;txt+=`${i+1}. [${e.code||'—'}] ${e.type} — ${e.loc} — ${e.price} (${pc}/4 nền tảng)\n`;});
+  d.recentCRM.forEach((e,i)=>{const pc=Object.values(e.posted||{}).filter(Boolean).length;txt+=`${i+1}. [${e.code||'—'}] ${e.type} — ${e.loc} — ${e.price} (${pc}/6 nền tảng)\n`;});
   txt+=`\n${line}\n${myName} — ${myTitle} | 📞 ${myPhone}\n#aihockiemtien · AUTO PRO CONTENT BĐS v7\n`;
   if(!prof.name)toast('⚠️ Chưa điền Hồ Sơ — báo cáo thiếu thông tin cá nhân!');
   dlTxt(txt,`bao-cao-${d.monthName.replace(' ','-')}-${d.thisYear}.txt`);
@@ -2345,7 +2612,7 @@ function copyReportToClipboard(){
 • Tổng content: ${d.totalContent}
 • ${d.monthName}: ${d.thisMonthContent}${d.growthPct!==0?` (${d.growthPct>0?'+':''}${d.growthPct}% vs tháng trước)`:''}
 • Tuần này: ${d.thisWeekContent}
-• Đăng: 📘${d.ps.fb} 💬${d.ps.zalo} 🎵${d.ps.tiktok} 🌐${d.ps.web}
+• Đăng: 📘${d.ps.fb} 💬${d.ps.zalo} 🎵${d.ps.tiktok} 📸${d.ps.ig} 🧵${d.ps.threads} 🌐${d.ps.web}
 
 🎯 KHÁCH HÀNG
 • 🔴 Nóng: ${d.hotKH} · 🟡 Ấm: ${d.warmKH} · ✅ Chốt: ${d.doneKH}
@@ -2620,7 +2887,7 @@ const SC_GOLDEN_HOURS = {
   T2:'8:00 & 20:00', T3:'19:00–21:00', T4:'12:00 & 20:00',
   T5:'8:00 & 17:00', T6:'12:00–22:00', T7:'9:00–21:00', CN:'10:00–20:00'
 };
-const SC_PLT_LABELS = {fb:'📘 FB',zalo:'💬 Zalo',tiktok:'🎵 TikTok',web:'🌐 Web'};
+const SC_PLT_LABELS = {fb:'📘 FB',zalo:'💬 Zalo',tiktok:'🎵 TikTok',ig:'📸 IG',threads:'🧵 Threads',web:'🌐 Web'};
 const SC_PLT_PRIORITY = {T2:'fb',T3:'tiktok',T4:'fb',T5:'zalo',T6:'fb',T7:'fb',CN:'zalo'};
 
 // ── Load / Save ──
@@ -3103,6 +3370,520 @@ function expSC30(){
   toast('📄 Đã xuất lịch!');
 }
 
+// ===================== V8: DATA VALIDATION + VALUE MINING + SALES ANGLE =====================
+
+// ── Góc bán map ──
+const V8_ANGLES=[
+  {id:'location',  icon:'📍', name:'Vị Trí',      color:'var(--bl)',  bg:'rgba(76,156,245,.15)'},
+  {id:'cashflow',  icon:'💰', name:'Dòng Tiền',    color:'var(--gr)',  bg:'rgba(62,207,142,.15)'},
+  {id:'function',  icon:'🏠', name:'Công Năng',    color:'var(--ac)',  bg:'rgba(245,166,35,.15)'},
+  {id:'traffic',   icon:'🚗', name:'Giao Thông',   color:'var(--bl)',  bg:'rgba(76,156,245,.12)'},
+  {id:'family',    icon:'👨‍👩‍👧', name:'Gia Đình',     color:'var(--pu)',  bg:'rgba(156,110,245,.15)'},
+  {id:'invest',    icon:'📈', name:'Đầu Tư',       color:'var(--gr)',  bg:'rgba(62,207,142,.12)'},
+  {id:'potential', icon:'🛠️', name:'Tiềm Năng',    color:'var(--ac)',  bg:'rgba(245,166,35,.12)'},
+  {id:'legal',     icon:'🛡️', name:'Pháp Lý',      color:'var(--gr)',  bg:'rgba(62,207,142,.1)'},
+  {id:'reframe',   icon:'🧠', name:'Bẻ Góc Nhìn',  color:'var(--pu)',  bg:'rgba(156,110,245,.12)'},
+  {id:'showcase',  icon:'✨', name:'Showcase',      color:'var(--ac)',  bg:'rgba(245,166,35,.1)'}
+];
+
+// USP nhóm giá trị
+const V8_USP_GROUPS=[
+  {id:'location',  icon:'📍', label:'Vị trí',      color:'var(--bl)'},
+  {id:'traffic',   icon:'🚗', label:'Giao thông',  color:'var(--bl)'},
+  {id:'cashflow',  icon:'💵', label:'Dòng tiền',   color:'var(--gr)'},
+  {id:'function',  icon:'🏠', label:'Công năng',   color:'var(--ac)'},
+  {id:'business',  icon:'🏪', label:'Kinh doanh',  color:'var(--ac)'},
+  {id:'potential', icon:'🛠️', label:'Tiềm năng',   color:'var(--ac)'},
+  {id:'legal',     icon:'🛡️', label:'Pháp lý',     color:'var(--gr)'},
+  {id:'rare',      icon:'💎', label:'Hiếm có',     color:'var(--pu)'},
+  {id:'lifestyle', icon:'🌿', label:'Lifestyle',   color:'var(--pu)'},
+  {id:'price',     icon:'💰', label:'Giá trị/Giá', color:'var(--ac)'}
+];
+
+let v8State={
+  validated: false,
+  warnings: [],
+  errors: [],
+  usps: [],
+  angles: [],
+  primaryAngle: null,
+  selectedAngle: null
+};
+
+// ── BƯỚC 1: DATA VALIDATION ──
+function v8ValidateData(d){
+  const warns=[], errs=[], infos=[];
+
+  // Thiếu dữ liệu quan trọng
+  if(!d.type || d.type.length<2) errs.push('Chưa nhập loại nhà (nhà phố, căn hộ, đất nền...)');
+  if(!d.price || d.price.length<2) warns.push('Chưa có giá — AI sẽ không thể tính toán dòng tiền/đầu tư');
+  if(!d.area || d.area.length<2) warns.push('Chưa có diện tích — không thể tính giá/m²');
+  if(!d.loc || d.loc.length<2) errs.push('Chưa có khu vực — bắt buộc để tạo content địa phương hoá');
+  if(!d.pros || d.pros.length<5) warns.push('Điểm mạnh còn trống hoặc quá ngắn — content sẽ kém đặc trưng');
+
+  // Chuẩn hoá & phát hiện mâu thuẫn
+  const areaRaw=d.area||'';
+  const normalizedArea=areaRaw.replace(/\s/g,'').replace(/m²|m2|m/i,'m²');
+  if(areaRaw&&!normalizedArea.match(/\d/)) warns.push(`Diện tích "${areaRaw}" có vẻ không hợp lệ — kiểm tra lại`);
+
+  const priceRaw=d.price||'';
+  if(priceRaw && !priceRaw.match(/\d/)) warns.push(`Giá "${priceRaw}" không nhận ra được số — kiểm tra lại`);
+
+  // Cảnh báo pháp lý rủi ro
+  const prosText=(d.pros+' '+d.diff).toLowerCase();
+  if(prosText.match(/quy hoạch|đường mới|sắp lên|chắc chắn tăng|giá sẽ/))
+    warns.push('⚠️ Phát hiện nội dung suy luận rủi ro (quy hoạch, dự đoán giá...) — AI sẽ KHÔNG dùng suy luận này làm sự thật');
+
+  if(prosText.match(/không sổ|chưa sổ|giấy tay/) && prosText.match(/sổ hồng|pháp lý sạch/))
+    errs.push('🔴 Mâu thuẫn pháp lý: dữ liệu vừa ghi "không sổ" vừa ghi "sổ hồng" — cần xác nhận lại');
+
+  return{warns, errs, infos};
+}
+
+// ── BƯỚC 2: VALUE MINING ──
+function v8MineUSP(d){
+  const usps=[];
+  const text=`${d.type} ${d.pros} ${d.diff} ${d.loc}`.toLowerCase();
+  const area=parseFloat((d.area||'').replace(/[^\d.]/g,''))||0;
+  const price=parseFloat((d.price||'').replace(/[^\d.]/g,''))||0;
+
+  // Vị trí
+  if(text.match(/mặt tiền|mặt phố/)) usps.push({group:'location',strength:'strong',title:'Mặt tiền đắc địa',desc:'Vị trí mặt tiền — tiềm năng kinh doanh và tăng giá cao nhất phân khúc.',hook:`Mặt tiền ${d.loc} — vị trí hiếm không phải lúc nào cũng có`});
+  if(text.match(/trung tâm|gần chợ|gần trường|gần bệnh viện|tiện ích/)) usps.push({group:'location',strength:'strong',title:'Gần tiện ích trọng yếu',desc:'Vị trí thuận tiện sinh hoạt hàng ngày — yếu tố số 1 với KH mua ở.',hook:`Gần đầy đủ tiện ích — đi bộ hoặc 5 phút xe máy`});
+  if(text.match(/hẻm.*(xe hơi|ô tô|thông|rộng)|ô tô.*vào/)) usps.push({group:'traffic',strength:'strong',title:'Hẻm xe hơi vào tận nhà',desc:'Tiêu chí hàng đầu của người mua nhà TP.HCM — hẻm xe hơi tăng thanh khoản 30-40%.',hook:`Ô tô vào tận nhà — không lo xếp xe ngoài đường`});
+  if(text.match(/triệu.*tháng|cho thuê.*triệu|dòng tiền|đang có thuê/)) usps.push({group:'cashflow',strength:'strong',title:'Dòng tiền cho thuê thực',desc:'Căn nhà đang có thu nhập thụ động — điểm mạnh số 1 với KH đầu tư.',hook:`Đang có dòng tiền ${d.diff.match(/\d+\s*triệu/)||'cho thuê'} — mua xong là có thu nhập ngay`});
+  if(text.match(/4 phòng|4pn|5 phòng|5pn|nhiều phòng/)) usps.push({group:'function',strength:'strong',title:'Nhiều phòng ngủ độc lập',desc:'Phù hợp gia đình đông người hoặc cho nhiều người thuê.',hook:`${area?area+'m² với':''}  nhiều phòng ngủ riêng — đủ không gian cho cả gia đình`});
+  if(text.match(/sổ hồng|sổ đỏ|có sổ|hoàn công/)) usps.push({group:'legal',strength:'strong',title:'Pháp lý sạch — Sổ hồng riêng',desc:'Sổ hồng riêng là yếu tố an tâm số 1 với KH nghi ngờ.',hook:`Sổ hồng riêng — giao dịch minh bạch, vay NH được`});
+  if(text.match(/không ngập|không lụt|trên cao/)) usps.push({group:'lifestyle',strength:'medium',title:'Khu không ngập lụt',desc:'Điểm cộng lớn tại TP.HCM — tránh rủi ro hư hỏng tài sản.',hook:`Khu không ngập — an tâm mỗi mùa mưa`});
+  if(text.match(/view|ban công|sân thượng|cây xanh|yên tĩnh/)) usps.push({group:'lifestyle',strength:'medium',title:'Không gian sống chất lượng',desc:'View/không gian xanh — yếu tố cảm xúc mạnh với KH mua ở.',hook:`Không gian sống xanh — yên tĩnh giữa lòng đô thị`});
+  if(price>0 && text.match(/thấp hơn|giá tốt|hơn thị trường|rẻ hơn/)) usps.push({group:'price',strength:'strong',title:'Giá thấp hơn thị trường',desc:'Điểm mấu chốt để chốt deal nhanh — kết hợp với USP khác để tạo FOMO.',hook:`Giá ${d.price} — thấp hơn mặt bằng khu vực`});
+  if(text.match(/cũ|nát|xuống cấp|cần sửa|tiềm năng/)) usps.push({group:'potential',strength:'medium',title:'Tiềm năng cải tạo/xây mới',desc:'Giá trị nằm ở đất/vị trí — phù hợp KH đầu tư xây mới.',hook:`Đừng nhìn căn nhà cũ — hãy nhìn vị trí và tiềm năng`});
+  if(text.match(/nội thất|full nội thất|tặng nội thất/)) usps.push({group:'showcase',strength:'medium',title:'Tặng kèm nội thất',desc:'Giảm chi phí phát sinh sau mua — đặc biệt hấp dẫn với người mua lần đầu.',hook:`Vào ở ngay — tặng full nội thất không cần chi thêm`});
+
+  return usps;
+}
+
+// ── BƯỚC 3: SALES ANGLE SELECTION ──
+function v8PickAngles(d, usps){
+  const scores={};
+  V8_ANGLES.forEach(a=>{scores[a.id]=0;});
+
+  // Score dựa trên USP tìm được
+  usps.forEach(u=>{
+    const w=u.strength==='strong'?3:u.strength==='medium'?2:1;
+    if(u.group==='location')  {scores['location']+=w;scores['showcase']+=1;}
+    if(u.group==='cashflow')  {scores['cashflow']+=w;scores['invest']+=w;}
+    if(u.group==='function')  {scores['function']+=w;scores['family']+=w;}
+    if(u.group==='traffic')   {scores['traffic']+=w;scores['location']+=1;}
+    if(u.group==='legal')     {scores['legal']+=w;}
+    if(u.group==='lifestyle') {scores['family']+=w;scores['showcase']+=w;}
+    if(u.group==='potential') {scores['potential']+=w;scores['reframe']+=w;}
+    if(u.group==='price')     {scores['invest']+=w;scores['cashflow']+=1;}
+    if(u.group==='rare')      {scores['showcase']+=w;}
+    if(u.group==='business')  {scores['location']+=w;scores['invest']+=w;}
+  });
+
+  // KH mục tiêu ảnh hưởng góc
+  const buyer=pst.buyer||'Mua ở';
+  if(buyer==='Đầu tư')      {scores['cashflow']+=3;scores['invest']+=3;scores['potential']+=2;}
+  if(buyer==='Mua ở')       {scores['family']+=3;scores['function']+=2;scores['location']+=2;}
+  if(buyer==='Cho thuê lại'){scores['cashflow']+=4;scores['invest']+=2;}
+
+  // Lấy top angles có USP hỗ trợ
+  const ranked=V8_ANGLES
+    .map(a=>({...a,score:scores[a.id]}))
+    .filter(a=>a.score>0)
+    .sort((a,b)=>b.score-a.score);
+
+  const primary=ranked[0]||null;
+  const secondary=ranked.slice(1,7);
+
+  return{primary, secondary};
+}
+
+function v8BuildAngleHook(angleId, d, usps){
+  // Tìm USP phù hợp nhất cho góc này
+  const map={
+    location:['location','traffic'],cashflow:['cashflow','price'],function:['function'],
+    traffic:['traffic'],family:['function','lifestyle','legal'],invest:['cashflow','price','potential'],
+    potential:['potential'],legal:['legal'],reframe:['potential'],showcase:['lifestyle','showcase']
+  };
+  const relGroups=map[angleId]||[];
+  const relUSP=usps.find(u=>relGroups.includes(u.group));
+  if(relUSP) return relUSP.hook;
+  // Fallback hooks theo góc
+  const fallbacks={
+    location:`${d.type} tại ${d.loc} — vị trí đắc địa hiếm có`,
+    cashflow:`Dòng tiền ổn định — ${d.price} mua vào, thu về ngay`,
+    function:`${d.type} ${d.area} — bố trí thông minh, tối ưu công năng`,
+    traffic:`Giao thông thuận tiện — ô tô vào tận cửa`,
+    family:`Không gian lý tưởng cho gia đình ${d.loc}`,
+    invest:`Tài sản sinh lời tại ${d.loc} — giá ${d.price}`,
+    potential:`Đừng chỉ nhìn hiện tại — vị trí này sẽ khác trong 2-3 năm tới`,
+    legal:`Pháp lý minh bạch — mua an tâm, vay ngân hàng được`,
+    reframe:`Nhà hơi cũ nhưng giá trị thật nằm ở vị trí và tiềm năng`,
+    showcase:`Nhìn là thích — ${d.type} ${d.loc} đẹp từng góc`
+  };
+  return fallbacks[angleId]||`${d.type} ${d.loc} — ${d.price}`;
+}
+
+// ── MAIN: PHÂN TÍCH V8 ──
+function v8Analyze(){
+  const d=gfd();
+
+  // Step 1: Validate
+  const{warns,errs}=v8ValidateData(d);
+
+  // Show validation banner
+  const banner=document.getElementById('v8ValBanner');
+  if(errs.length){
+    banner.style.display='block';
+    banner.innerHTML=`<div class="v8-val-banner v8-val-err"><span style="font-size:1.1rem;flex-shrink:0">🔴</span><div><div style="font-weight:700;margin-bottom:4px">Cần bổ sung dữ liệu trước khi tạo content</div>${errs.map(e=>`<div class="v8-val-item"><span class="vi-icon">❌</span><span>${e}</span></div>`).join('')}${warns.map(w=>`<div class="v8-val-item"><span class="vi-icon">⚠️</span><span>${w}</span></div>`).join('')}</div></div>`;
+    toast('⚠️ Dữ liệu còn thiếu — xem cảnh báo bên dưới!');
+    if(errs.length)return; // Dừng nếu có lỗi bắt buộc
+  } else if(warns.length){
+    banner.style.display='block';
+    banner.innerHTML=`<div class="v8-val-banner v8-val-warn"><span style="font-size:1.1rem;flex-shrink:0">⚠️</span><div><div style="font-weight:700;margin-bottom:4px">Một số điểm cần lưu ý</div>${warns.map(w=>`<div class="v8-val-item"><span class="vi-icon">⚠️</span><span>${w}</span></div>`).join('')}</div></div>`;
+  } else {
+    banner.style.display='block';
+    banner.innerHTML=`<div class="v8-val-banner v8-val-ok"><span style="font-size:1.1rem;flex-shrink:0">✅</span><div><div style="font-weight:700">Dữ liệu hợp lệ — AI sẵn sàng phân tích</div></div></div>`;
+  }
+
+  // Step 2: Value Mining
+  const usps=v8MineUSP(d);
+  v8State.usps=usps;
+
+  // Render USP panel
+  const uspPanel=document.getElementById('v8UspPanel');
+  const uspGrid=document.getElementById('v8UspGrid');
+  const uspSum=document.getElementById('v8UspSummary');
+  uspPanel.style.display='block';
+  uspSum.textContent=`${usps.length} giá trị nổi bật được tìm thấy`;
+
+  if(usps.length===0){
+    uspGrid.innerHTML=`<div style="font-size:.78rem;color:var(--t3);padding:9px;text-align:center">Chưa phát hiện USP rõ ràng — thêm điểm mạnh chi tiết hơn vào ô "Điểm mạnh nổi bật"</div>`;
+  } else {
+    uspGrid.innerHTML=usps.map(u=>{
+      const grp=V8_USP_GROUPS.find(g=>g.id===u.group)||{icon:'💡',label:'Giá trị',color:'var(--ac)'};
+      const sc=u.strength==='strong'?'strong':u.strength==='medium'?'medium':'weak';
+      const scLabel=u.strength==='strong'?'🔥 Mạnh':u.strength==='medium'?'👍 Trung bình':'• Phụ';
+      return`<div class="v8-usp-item ${sc}">
+        <span class="v8-usp-tag" style="background:rgba(255,255,255,.08);color:${grp.color}">${grp.icon} ${grp.label}</span>
+        <div class="v8-usp-body">
+          <h5>${u.title} <span style="font-size:.6rem;font-weight:500;color:var(--t3)">${scLabel}</span></h5>
+          <p>${u.desc}</p>
+          <div style="margin-top:4px;font-size:.69rem;color:var(--ac);font-style:italic">"${u.hook}"</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  // Open USP panel
+  document.getElementById('v8UspBody').classList.add('open');
+  document.getElementById('v8UspHead').classList.add('open');
+  document.getElementById('v8UspArrow').textContent='▲';
+
+  // Step 3: Sales Angle
+  const {primary, secondary}=v8PickAngles(d,usps);
+  v8State.angles=[primary,...secondary].filter(Boolean);
+  v8State.primaryAngle=primary;
+  v8State.selectedAngle=primary;
+
+  const anglePanel=document.getElementById('v8AnglePanel');
+  const angleGrid=document.getElementById('v8AngleGrid');
+  const angleSum=document.getElementById('v8AngleSummary');
+  const angleChosen=document.getElementById('v8AngleChosen');
+  anglePanel.style.display='block';
+  angleSum.textContent=primary?`Góc chính: ${primary.icon} ${primary.name}`:'Chưa đủ dữ liệu để chọn góc';
+  angleChosen.textContent=primary?`${primary.icon} ${primary.name}`:'';
+
+  angleGrid.innerHTML=v8State.angles.map((a,i)=>{
+    const hook=v8BuildAngleHook(a.id,d,usps);
+    const isPrimary=i===0;
+    const reasonMap={
+      location:'Vị trí là USP nổi bật nhất — khai thác ngay yếu tố địa lý',
+      cashflow:'Dòng tiền thực tế — số liệu cụ thể thuyết phục KH đầu tư',
+      function:'Công năng đa dạng — phù hợp gia đình hoặc cho thuê nhiều phòng',
+      traffic:'Hẻm ô tô là tiêu chí hàng đầu — tăng thanh khoản đáng kể',
+      family:'KH mua ở ưu tiên không gian gia đình — khai thác cảm xúc',
+      invest:'KH đầu tư cần thấy tiềm năng sinh lời rõ ràng',
+      potential:'Giá trị nằm ở tương lai — thuyết phục KH nhìn xa hơn',
+      legal:'Pháp lý sạch là "bằng chứng tin cậy" quan trọng nhất',
+      reframe:'Biến điểm yếu thành lý do cân nhắc — tạo góc nhìn khác biệt',
+      showcase:'Hình ảnh và trải nghiệm sống — phù hợp content video/story'
+    };
+    return`<div class="v8-angle-card ${isPrimary?'primary':''} ${isPrimary?'selected':''}" id="v8ac_${a.id}" onclick="selectV8Angle('${a.id}')">
+      <div class="v8-angle-head">
+        <span class="v8-angle-badge" style="background:${a.bg};color:${a.color}">${a.icon} ${a.name}</span>
+        ${isPrimary?`<span style="font-size:.6rem;font-weight:700;color:var(--ac);padding:2px 8px;background:rgba(245,166,35,.12);border-radius:8px">⭐ Đề xuất chính</span>`:`<span style="font-size:.6rem;color:var(--t3)">Góc phụ ${i}</span>`}
+      </div>
+      <div class="v8-angle-reason">${reasonMap[a.id]||'Phù hợp với dữ liệu đã cung cấp'}</div>
+      <div class="v8-angle-hook">💬 Hook: "${hook}"</div>
+    </div>`;
+  }).join('');
+
+  // Open angle panel
+  document.getElementById('v8AngleBody').classList.add('open');
+  document.getElementById('v8AngleHead').classList.add('open');
+  document.getElementById('v8AngleArrow').textContent='▲';
+
+  toast(`✅ V8 phân tích xong! ${usps.length} USP · Góc chính: ${primary?primary.name:'Chưa xác định'}`);
+
+  // Scroll to results
+  setTimeout(()=>document.getElementById('v8UspPanel').scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+
+function selectV8Angle(id){
+  // Deselect all
+  document.querySelectorAll('.v8-angle-card').forEach(c=>c.classList.remove('selected'));
+  // Select clicked
+  const card=document.getElementById('v8ac_'+id);
+  if(card)card.classList.add('selected');
+  v8State.selectedAngle=V8_ANGLES.find(a=>a.id===id)||null;
+  const angleChosen=document.getElementById('v8AngleChosen');
+  if(angleChosen&&v8State.selectedAngle)angleChosen.textContent=`${v8State.selectedAngle.icon} ${v8State.selectedAngle.name}`;
+  toast(`🎯 Đã chọn góc bán: ${v8State.selectedAngle?.name}`);
+}
+
+function applyV8AngleAndGenerate(){
+  // Map góc bán → tâm lý phù hợp
+  const angleToPS={
+    cashflow:'Tham', invest:'Tham', price:'Tham',
+    location:'Si', family:'Si', showcase:'Si', lifestyle:'Si',
+    legal:'Nghi ngờ', potential:'Nghi ngờ',
+    traffic:'Sân', function:'Sân',
+    rare:'Ngạo mạn', reframe:'Ngạo mạn'
+  };
+  const angle=v8State.selectedAngle;
+  if(angle){
+    const suggestedPS=angleToPS[angle.id]||'Si';
+    // Switch to manual mode and set psychology
+    const autoToggle=document.getElementById('autoSmart');
+    if(autoToggle){autoToggle.checked=false;toggleAuto();}
+    // Select the matching psychology card
+    document.querySelectorAll('#psyGrid .psy-card').forEach(c=>{
+      if(c.dataset.p===suggestedPS){c.click();}
+    });
+    toast(`🎯 Góc "${angle.name}" → Tâm lý ${suggestedPS} · Đang tạo content...`);
+  }
+  setTimeout(()=>doGenerate(),300);
+}
+
+function v8ReAnalyze(){
+  v8State={validated:false,warnings:[],errors:[],usps:[],angles:[],primaryAngle:null,selectedAngle:null};
+  v8CustomHook=null;
+  v8CustomUSPs=[];
+  document.getElementById('v8ValBanner').style.display='none';
+  document.getElementById('v8UspPanel').style.display='none';
+  document.getElementById('v8AnglePanel').style.display='none';
+  const cl=document.getElementById('v8CustomUspList');if(cl)cl.innerHTML='';
+  const ci=document.getElementById('v8CustomUsp');if(ci)ci.value='';
+  const he=document.getElementById('v8HookEditorWrap');if(he)he.style.display='none';
+  ['toneStyle','toneLen','toneEmo'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=5;});
+  ['toneValStyle','toneValLen','toneValEmo'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=5;});
+  v8Tone={style:5,len:5,emo:5};
+  v8Analyze();
+}
+
+function toggleV8Panel(type){
+  const head=document.getElementById(`v8${type==='usp'?'Usp':'Angle'}Head`);
+  const body=document.getElementById(`v8${type==='usp'?'Usp':'Angle'}Body`);
+  const arrow=document.getElementById(`v8${type==='usp'?'Usp':'Angle'}Arrow`);
+  if(!head||!body)return;
+  const isOpen=body.classList.contains('open');
+  body.classList.toggle('open',!isOpen);
+  head.classList.toggle('open',!isOpen);
+  arrow.textContent=isOpen?'▼':'▲';
+}
+
+// ── ① HOOK EDITOR ──
+let v8CustomHook=null; // null = dùng hook AI
+
+function selectV8Angle(id){
+  document.querySelectorAll('.v8-angle-card').forEach(c=>c.classList.remove('selected'));
+  const card=document.getElementById('v8ac_'+id);
+  if(card)card.classList.add('selected');
+  v8State.selectedAngle=V8_ANGLES.find(a=>a.id===id)||null;
+  const angleChosen=document.getElementById('v8AngleChosen');
+  if(angleChosen&&v8State.selectedAngle)angleChosen.textContent=`${v8State.selectedAngle.icon} ${v8State.selectedAngle.name}`;
+
+  // Hiện hook editor với hook AI gợi ý
+  const wrap=document.getElementById('v8HookEditorWrap');
+  const editor=document.getElementById('v8HookEditor');
+  if(wrap&&editor){
+    wrap.style.display='block';
+    const d=gfd();
+    const aiHook=v8BuildAngleHook(id,d,v8State.usps);
+    editor.value=v8CustomHook||aiHook;
+    editor.dataset.aiHook=aiHook; // lưu hook AI để reset
+  }
+  toast(`🎯 Đã chọn góc: ${v8State.selectedAngle?.name} — Chỉnh hook bên dưới hoặc tạo content ngay`);
+}
+
+function applyCustomHook(){
+  const editor=document.getElementById('v8HookEditor');
+  if(!editor||!editor.value.trim())return toast('⚠️ Nhập hook trước!');
+  v8CustomHook=editor.value.trim();
+  if(v8State.selectedAngle) v8State.selectedAngle.customHook=v8CustomHook;
+  toast('✅ Hook đã được lưu — sẽ dùng khi tạo content');
+}
+
+function resetHookToAI(){
+  v8CustomHook=null;
+  const editor=document.getElementById('v8HookEditor');
+  if(editor){editor.value=editor.dataset.aiHook||'';}
+  if(v8State.selectedAngle) delete v8State.selectedAngle.customHook;
+  toast('🔄 Đã khôi phục hook AI gợi ý');
+}
+
+// ── ② USP THỦ CÔNG ──
+let v8CustomUSPs=[];
+
+function v8AddCustomUSP(){
+  const inp=document.getElementById('v8CustomUsp');
+  const val=(inp?.value||'').trim();
+  if(!val)return toast('⚠️ Nhập USP trước!');
+  if(val.length<5)return toast('⚠️ USP quá ngắn — mô tả rõ hơn nhé!');
+
+  const custom={group:'custom',strength:'strong',title:val,desc:'USP do bạn thêm — điều AI không thể tự biết.',hook:val,isCustom:true};
+  v8CustomUSPs.push(custom);
+  v8State.usps.push(custom);
+  inp.value='';
+
+  // Render vào custom list
+  const list=document.getElementById('v8CustomUspList');
+  if(list){
+    const item=document.createElement('div');
+    item.className='v8-usp-item v8-usp-custom strong';
+    item.style.cssText='margin-top:0';
+    const idx=v8CustomUSPs.length-1;
+    item.innerHTML=`<span class="v8-usp-tag" style="background:rgba(156,110,245,.15);color:var(--pu)">✍️ Của bạn</span>
+      <div class="v8-usp-body" style="flex:1">
+        <h5>${val}</h5>
+        <p style="color:var(--t3)">USP cá nhân — AI sẽ ưu tiên dùng điểm này</p>
+      </div>
+      <button class="btn btn-r btn-xs" onclick="removeCustomUSP(${idx},this.parentElement)" style="flex-shrink:0">✕</button>`;
+    list.appendChild(item);
+  }
+  toast(`✅ Đã thêm USP: "${val.slice(0,30)}..."`);
+}
+
+function removeCustomUSP(idx,el){
+  v8CustomUSPs.splice(idx,1);
+  v8State.usps=v8State.usps.filter(u=>!u.isCustom);
+  v8State.usps.push(...v8CustomUSPs);
+  el?.remove();
+  toast('🗑️ Đã xoá USP');
+}
+
+// ── ③ TONE SLIDER ──
+let v8Tone={style:5,len:5,emo:5};
+
+function updToneLabel(sliderId,labelId){
+  const val=parseInt(document.getElementById(sliderId)?.value||5);
+  const el=document.getElementById(labelId);
+  if(el)el.textContent=val;
+  if(sliderId==='toneStyle')v8Tone.style=val;
+  if(sliderId==='toneLen')  v8Tone.len=val;
+  if(sliderId==='toneEmo')  v8Tone.emo=val;
+}
+
+function getToneContext(){
+  const styleTxt=v8Tone.style<=3?'gần gũi, thân thiện':v8Tone.style>=8?'chuyên nghiệp, lịch sự':'cân bằng';
+  const lenTxt=v8Tone.len<=3?'cực ngắn gọn (dưới 100 chữ)':v8Tone.len>=8?'chi tiết đầy đủ (200+ chữ)':'vừa phải';
+  const emoTxt=v8Tone.emo<=3?'thiên về số liệu, dữ kiện':v8Tone.emo>=8?'thiên về cảm xúc, hình ảnh':'kết hợp lý trí và cảm xúc';
+  return`Tông giọng: ${styleTxt}. Độ dài: ${lenTxt}. Phong cách: ${emoTxt}.`;
+}
+
+// ── ④ LƯU GÓC BÁN CÁ NHÂN ──
+const V8_SAVED_KEY='bds_v8_saved_angles';
+
+function loadSavedAngles(){
+  try{return JSON.parse(localStorage.getItem(V8_SAVED_KEY)||'[]');}catch(e){return[];}
+}
+function saveSavedAngles(arr){
+  try{localStorage.setItem(V8_SAVED_KEY,JSON.stringify(arr));}catch(e){}
+}
+
+function saveCurrentAngle(){
+  if(!v8State.selectedAngle)return toast('⚠️ Chọn góc bán trước!');
+  const d=gfd();
+  const hook=v8CustomHook||v8BuildAngleHook(v8State.selectedAngle.id,d,v8State.usps);
+  const saved=loadSavedAngles();
+  const entry={
+    id:'saved_'+Date.now(),
+    angleId:v8State.selectedAngle.id,
+    icon:v8State.selectedAngle.icon,
+    name:v8State.selectedAngle.name,
+    hook,
+    tone:{...v8Tone},
+    savedAt:new Date().toLocaleString('vi-VN')
+  };
+  // Tránh trùng lặp cùng angle
+  const exists=saved.findIndex(s=>s.angleId===entry.angleId&&s.hook===entry.hook);
+  if(exists>=0)return toast('⚠️ Góc bán + hook này đã được lưu rồi!');
+  saved.unshift(entry);
+  if(saved.length>10)saved.pop(); // giữ tối đa 10
+  saveSavedAngles(saved);
+  renderSavedAngles();
+  toast(`⭐ Đã lưu góc "${v8State.selectedAngle.name}" vào danh sách yêu thích!`);
+}
+
+function renderSavedAngles(){
+  const saved=loadSavedAngles();
+  const wrap=document.getElementById('v8SavedAnglesWrap');
+  const list=document.getElementById('v8SavedAnglesList');
+  if(!wrap||!list)return;
+  if(!saved.length){wrap.style.display='none';return;}
+  wrap.style.display='block';
+  list.innerHTML=saved.map((s,i)=>{
+    const safeHook=s.hook.replace(/'/g,'&#39;').replace(/"/g,'&quot;');
+    const toneJson=JSON.stringify(s.tone).replace(/'/g,'&#39;');
+    const toneLabel=s.tone.style<=3?'Gần gũi':s.tone.style>=8?'Chuyên nghiệp':'Cân bằng';
+    const lenLabel=s.tone.len<=3?'Ngắn':'Chi tiết';
+    const emoLabel=s.tone.emo>=8?'Cảm xúc':'Lý trí';
+    return`<div class="v8-saved-angle" onclick="applySavedAngle('${s.angleId}','${safeHook}','${toneJson}')">
+      <span style="font-size:1.1rem">${s.icon}</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.78rem;font-weight:700;color:var(--tx)">${s.name}</div>
+        <div style="font-size:.67rem;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">"${s.hook}"</div>
+        <div style="font-size:.6rem;color:var(--t3);margin-top:1px">Tông: ${toneLabel} · ${lenLabel} · ${emoLabel}</div>
+      </div>
+      <button class="btn btn-r btn-xs" onclick="event.stopPropagation();deleteSavedAngle(${i})" title="Xoá">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function applySavedAngle(angleId, hook, toneStr){
+  // Chọn góc
+  selectV8Angle(angleId);
+  // Set hook
+  const decodedHook=hook.replace(/&#39;/g,"'").replace(/&quot;/g,'"');
+  v8CustomHook=decodedHook;
+  const editor=document.getElementById('v8HookEditor');
+  if(editor)editor.value=decodedHook;
+  // Parse và set tone sliders
+  let tone={style:5,len:5,emo:5};
+  try{tone=JSON.parse(toneStr.replace(/&#39;/g,"'"));}catch(e){}
+  ['style','len','emo'].forEach(k=>{
+    const key=k.charAt(0).toUpperCase()+k.slice(1);
+    const sl=document.getElementById('tone'+key);
+    const lb=document.getElementById('toneVal'+key);
+    if(sl){sl.value=tone[k]||5;v8Tone[k]=tone[k]||5;}
+    if(lb)lb.textContent=tone[k]||5;
+  });
+  // Mark active
+  document.querySelectorAll('.v8-saved-angle').forEach(el=>el.classList.remove('active'));
+  toast(`⭐ Đã áp dụng góc yêu thích: ${V8_ANGLES.find(a=>a.id===angleId)?.name||angleId}`);
+}
+
+function deleteSavedAngle(idx){
+  const saved=loadSavedAngles();
+  saved.splice(idx,1);
+  saveSavedAngles(saved);
+  renderSavedAngles();
+  toast('🗑️ Đã xoá khỏi danh sách yêu thích');
+}
+
 // ===================== SPIN SELLING =====================
 const SPIN_QUESTIONS=[
   {phase:0,phaseLabel:'S',q:'Hiện tại anh/chị đang ở chỗ thuê hay nhà riêng ạ?',tip:'Xác định tình trạng ở hiện tại — nền tảng cho toàn bộ cuộc trò chuyện.',key:'current_housing'},
@@ -3151,12 +3932,30 @@ function buildSPINKHSelect(){
 
 function onSPINKHChange(){
   const sel=document.getElementById('spin_kh');if(!sel||!sel.value)return;
+  // Lưu dữ liệu KH HIỆN TẠI trước khi chuyển sang KH mới
+  if(spinState.khId)saveSPINState();
   const opt=sel.options[sel.selectedIndex];
   const name=opt.dataset.name||opt.textContent.split('(')[0].trim();
   document.getElementById('spin_khname').value=name;
   spinState.khName=name;spinState.khId=sel.value;
-  try{const s=localStorage.getItem('bds_spin_'+sel.value);if(s){const d=JSON.parse(s);spinState.answers=d.answers||{};spinState.notes=d.notes||{};}else{spinState.answers={};spinState.notes={};}}catch(e){}
-  updSPINPhaseUI();showSPINPhase(0);
+  // Load dữ liệu của KH MỚI từ localStorage (nếu có)
+  try{
+    const saved=localStorage.getItem('bds_spin_'+sel.value);
+    if(saved){
+      const d=JSON.parse(saved);
+      spinState.answers=d.answers||{};
+      spinState.notes=d.notes||{};
+      const answeredCount=Object.values(spinState.answers).filter(v=>v&&v!=='[Bỏ qua]').length;
+      toast(`📂 Đã load dữ liệu KH "${name}" — ${answeredCount} câu đã trả lời`);
+    }else{
+      // KH mới chưa có dữ liệu — reset sạch
+      spinState.answers={};
+      spinState.notes={};
+      toast(`➕ KH mới "${name}" — bắt đầu SPIN từ đầu`);
+    }
+  }catch(e){spinState.answers={};spinState.notes={};}
+  updSPINPhaseUI();
+  showSPINPhase(0);
 }
 
 function updSPINKHName(){spinState.khName=document.getElementById('spin_khname')?.value||'';}

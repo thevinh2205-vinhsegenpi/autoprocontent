@@ -386,6 +386,58 @@ select option{background:var(--bg3)}
 .spin-q-note{width:100%;font-size:.76rem;min-height:60px;resize:vertical}
 .spin-q-answered{font-size:.72rem;color:var(--t2);background:var(--bg3);border-radius:7px;padding:7px 9px;line-height:1.6;white-space:pre-wrap}
 
+
+/* ── V8: DATA VALIDATION ── */
+.v8-val-banner{border-radius:10px;padding:10px 13px;margin-bottom:10px;display:flex;gap:9px;align-items:flex-start;font-size:.76rem;line-height:1.6}
+.v8-val-ok{background:rgba(62,207,142,.08);border:1px solid rgba(62,207,142,.3);color:var(--gr)}
+.v8-val-warn{background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.35);color:var(--ac)}
+.v8-val-err{background:rgba(239,83,80,.1);border:1px solid rgba(239,83,80,.35);color:var(--rd)}
+/* ── V8: VALUE MINING ── */
+.v8-usp-grid{display:grid;gap:6px;margin-top:9px}
+.v8-usp-item{background:var(--bg3);border-radius:8px;padding:9px 11px;display:flex;gap:9px;align-items:flex-start;border-left:3px solid transparent}
+.v8-usp-item.strong{border-left-color:var(--gr)}.v8-usp-item.medium{border-left-color:var(--ac)}.v8-usp-item.weak{border-left-color:var(--border)}
+.v8-usp-tag{font-size:.62rem;font-weight:700;padding:2px 7px;border-radius:8px;flex-shrink:0;margin-top:1px}
+.v8-usp-body h5{font-size:.78rem;font-weight:700;color:var(--tx);margin-bottom:2px}
+.v8-usp-body p{font-size:.71rem;color:var(--t2);line-height:1.5}
+/* ── V8: SALES ANGLE ── */
+.v8-angle-grid{display:grid;gap:7px;margin-top:9px}
+.v8-angle-card{background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;padding:11px 13px;cursor:pointer;transition:.15s}
+.v8-angle-card:hover{border-color:rgba(245,166,35,.4)}.v8-angle-card.primary{border-color:var(--ac);background:rgba(245,166,35,.06)}.v8-angle-card.selected{border-color:var(--gr);background:rgba(62,207,142,.07)}
+.v8-angle-head{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.v8-angle-badge{font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:8px}
+.v8-angle-name{font-size:.82rem;font-weight:700;color:var(--tx)}
+.v8-angle-reason{font-size:.71rem;color:var(--t2);line-height:1.5;margin-bottom:5px}
+.v8-angle-hook{font-size:.72rem;color:var(--ac);font-style:italic;padding:5px 8px;background:rgba(245,166,35,.06);border-radius:6px}
+/* ── V8: PANEL ── */
+.v8-panel-head{display:flex;align-items:center;justify-content:space-between;padding:10px 13px;cursor:pointer;background:var(--card);border:1.5px solid var(--border);border-radius:12px;transition:.15s;user-select:none}
+.v8-panel-head:hover{border-color:rgba(245,166,35,.3)}.v8-panel-head.open{border-radius:12px 12px 0 0;border-bottom-color:transparent}
+.v8-panel-body{background:var(--card);border:1.5px solid var(--border);border-top:none;border-radius:0 0 12px 12px;padding:12px 13px;display:none}
+.v8-panel-body.open{display:block}
+.v8-badge-new{font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:8px;background:rgba(156,110,245,.2);color:var(--pu);vertical-align:middle;margin-left:5px}
+
+/* ── V8 CREATIVE: HOOK EDITOR ── */
+.v8-hook-edit{width:100%;font-size:.78rem;padding:7px 10px;min-height:52px;resize:vertical;border-radius:7px;border:1.5px solid rgba(245,166,35,.3);background:var(--bg3);color:var(--tx);font-family:inherit;transition:.15s;margin-top:5px}
+.v8-hook-edit:focus{border-color:var(--ac);outline:none}
+
+/* ── V8 CREATIVE: USP MANUAL ADD ── */
+.v8-usp-manual{display:flex;gap:6px;margin-top:10px}
+.v8-usp-manual input{flex:1;font-size:.76rem;padding:6px 10px;border-radius:7px;border:1px solid var(--border);background:var(--bg3);color:var(--tx)}
+.v8-usp-manual input:focus{border-color:var(--ac);outline:none}
+.v8-usp-custom{background:rgba(156,110,245,.08);border-left-color:var(--pu)!important}
+
+/* ── V8 CREATIVE: TONE SLIDER ── */
+.v8-tone-row{display:grid;gap:10px;margin-top:10px}
+.v8-tone-item{display:grid;gap:4px}
+.v8-tone-labels{display:flex;justify-content:space-between;font-size:.65rem;color:var(--t3)}
+.v8-tone-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:4px;background:linear-gradient(to right,var(--bl),var(--ac),var(--gr));outline:none;cursor:pointer}
+.v8-tone-slider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--ac);border:2px solid var(--card);box-shadow:0 2px 6px rgba(0,0,0,.3);cursor:pointer}
+.v8-tone-val{font-size:.68rem;color:var(--ac);font-weight:700;text-align:center}
+
+/* ── V8 CREATIVE: SAVED ANGLES ── */
+.v8-saved-angle{background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:9px 11px;display:flex;align-items:center;gap:9px;cursor:pointer;transition:.15s}
+.v8-saved-angle:hover{border-color:rgba(245,166,35,.35)}
+.v8-saved-angle.active{border-color:var(--ac);background:rgba(245,166,35,.06)}
+
 /* MORNING CHECKLIST */
 .ck-item{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:11px 13px;display:flex;align-items:flex-start;gap:10px;margin-bottom:7px;cursor:pointer;transition:.2s;user-select:none}
 .ck-item:hover{border-color:rgba(245,166,35,.35)}
@@ -525,7 +577,7 @@ select option{background:var(--bg3)}
       <span style="background:var(--card);border:1px solid var(--border);color:var(--t3);font-size:.68rem;padding:2px 9px;border-radius:17px;font-weight:600">🌐 Website</span>
     </div>
     <h1>AUTO PRO CONTENT BĐS</h1>
-    <p class="sub">Trợ lý AI tạo nội dung tin đăng đa nền tảng — tối ưu chuyển đổi theo tâm lý khách hàng.<br><span style="color:var(--ac);font-weight:700">v7.0 🔥 Mới: Chiến Thuật 6 Căn · 30 Content · Lịch 30 Ngày Tự Động</span></p>
+    <p class="sub">Trợ lý AI tạo nội dung tin đăng đa nền tảng — tối ưu chuyển đổi theo tâm lý khách hàng.<br><span style="color:var(--ac);font-weight:700">v8.0 🔥 Mới: 6 Nền Tảng · V8 AI Analysis · Chiến Thuật 6 Căn · Lịch 30 Ngày</span></p>
     <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
       <button class="btn btn-p" onclick="nav('sixcan')">🏘️ Chiến Thuật 6 Căn</button>
       <button class="btn btn-s" onclick="nav('gen')">✍️ Tạo Content</button>
@@ -536,7 +588,7 @@ select option{background:var(--bg3)}
   <div class="strow">
     <div class="stc"><div class="stnum" id="stTotal">0</div><div class="stlbl">Content đã tạo</div></div>
     <div class="stc"><div class="stnum" id="stTpl">0</div><div class="stlbl">Templates</div></div>
-    <div class="stc"><div class="stnum">4</div><div class="stlbl">Nền tảng</div></div>
+    <div class="stc"><div class="stnum">6</div><div class="stlbl">Nền tảng</div></div>
     <div class="stc"><div class="stnum" id="stReminders">0</div><div class="stlbl">Nhắc lịch</div></div>
   </div>
   <div class="sec">🏠 WORKFLOW MỚI v7</div>
@@ -567,7 +619,7 @@ select option{background:var(--bg3)}
 
 <!-- GENERATOR -->
 <div class="pg" id="pg-gen">
-  <div class="ptit"><div><h2>✍️ Tạo Content BĐS Đa Nền Tảng</h2><p>1 input → 4 nền tảng → tối ưu tâm lý KH</p></div></div>
+  <div class="ptit"><div><h2>✍️ Tạo Content BĐS Đa Nền Tảng</h2><p>1 input → 6 nền tảng → tối ưu tâm lý KH</p></div></div>
   <div class="cbar">
     <div class="cbi">✍️ Tạo Content</div><span class="cbar-arr">→</span>
     <div class="cbi dim" onclick="nav('sch')">📅 Lịch 7 Ngày</div><span class="cbar-arr">→</span>
@@ -666,12 +718,102 @@ select option{background:var(--bg3)}
       </div>
     </div>
     <div style="display:flex;gap:7px;margin-top:14px;flex-wrap:wrap">
-      <button class="btn btn-p" style="flex:1;justify-content:center" onclick="doGenerate()">🚀 Tạo Content</button>
+      <button class="btn btn-p" style="flex:1;justify-content:center" onclick="v8Analyze()">🔎 Phân Tích V8</button>
+      <button class="btn btn-p" style="flex:1;justify-content:center;background:linear-gradient(135deg,var(--gr),#2da870)" onclick="doGenerate()">🚀 Tạo Content</button>
       <button class="btn btn-s" onclick="saveCRM()">💾 Lưu CRM</button>
       <button class="btn btn-s" onclick="saveTpl()">📌 Lưu Template</button>
       <button class="btn btn-r" onclick="clearGen()">🗑️</button>
     </div>
   </div>
+  <!-- ── V8: VALIDATION BANNER ── -->
+  <div id="v8ValBanner" style="display:none"></div>
+
+  <!-- ── V8: VALUE MINING PANEL ── -->
+  <div id="v8UspPanel" style="display:none;margin-bottom:10px">
+    <div class="v8-panel-head" id="v8UspHead" onclick="toggleV8Panel('usp')">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span>🔎</span>
+        <div>
+          <div style="font-size:.82rem;font-weight:700;color:var(--tx)">Phân Tích Giá Trị BĐS <span class="v8-badge-new">V8 NEW</span></div>
+          <div style="font-size:.67rem;color:var(--t3);margin-top:1px" id="v8UspSummary">USP nổi bật từ dữ liệu</div>
+        </div>
+      </div>
+      <span id="v8UspArrow" style="color:var(--t3);font-size:.8rem">▼</span>
+    </div>
+    <div class="v8-panel-body" id="v8UspBody">
+      <div class="v8-usp-grid" id="v8UspGrid"></div>
+      <!-- ② USP THỦ CÔNG -->
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border)">
+        <div style="font-size:.7rem;font-weight:700;color:var(--pu);margin-bottom:6px">➕ Thêm USP thủ công — điều AI không biết</div>
+        <div style="font-size:.67rem;color:var(--t3);margin-bottom:7px">Hàng xóm tốt, khu an ninh, chủ nhà dễ thương, lịch sử nhà... những chi tiết chỉ anh/chị biết</div>
+        <div class="v8-usp-manual">
+          <input type="text" id="v8CustomUsp" placeholder="VD: Hàng xóm Việt kiều, khu yên tĩnh, chủ nhà bán gấp..." maxlength="120">
+          <button class="btn btn-p btn-sm" onclick="v8AddCustomUSP()">➕ Thêm</button>
+        </div>
+        <div id="v8CustomUspList" style="display:grid;gap:5px;margin-top:7px"></div>
+      </div>
+      <!-- ③ TONE SLIDER -->
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border)">
+        <div style="font-size:.7rem;font-weight:700;color:var(--pu);margin-bottom:8px">🎚️ Tông giọng content — kéo theo phong cách của bạn</div>
+        <div class="v8-tone-row">
+          <div class="v8-tone-item">
+            <div class="v8-tone-labels"><span>😊 Gần gũi</span><span id="toneValStyle" class="v8-tone-val">5</span><span>🎩 Chuyên nghiệp</span></div>
+            <input type="range" class="v8-tone-slider" id="toneStyle" min="1" max="10" value="5" oninput="updToneLabel('toneStyle','toneValStyle')">
+          </div>
+          <div class="v8-tone-item">
+            <div class="v8-tone-labels"><span>✂️ Ngắn gọn</span><span id="toneValLen" class="v8-tone-val">5</span><span>📝 Chi tiết</span></div>
+            <input type="range" class="v8-tone-slider" id="toneLen" min="1" max="10" value="5" oninput="updToneLabel('toneLen','toneValLen')">
+          </div>
+          <div class="v8-tone-item">
+            <div class="v8-tone-labels"><span>📊 Lý trí/Số liệu</span><span id="toneValEmo" class="v8-tone-val">5</span><span>❤️ Cảm xúc</span></div>
+            <input type="range" class="v8-tone-slider" id="toneEmo" min="1" max="10" value="5" oninput="updToneLabel('toneEmo','toneValEmo')">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── V8: SALES ANGLE PANEL ── -->
+  <div id="v8AnglePanel" style="display:none;margin-bottom:10px">
+    <div class="v8-panel-head" id="v8AngleHead" onclick="toggleV8Panel('angle')">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span>🎯</span>
+        <div>
+          <div style="font-size:.82rem;font-weight:700;color:var(--tx)">Góc Bán Đề Xuất <span class="v8-badge-new">V8 NEW</span></div>
+          <div style="font-size:.67rem;color:var(--t3);margin-top:1px" id="v8AngleSummary">AI chọn góc bán tối ưu</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div id="v8AngleChosen" style="font-size:.7rem;color:var(--ac);font-weight:700"></div>
+        <span id="v8AngleArrow" style="color:var(--t3);font-size:.8rem">▼</span>
+      </div>
+    </div>
+    <div class="v8-panel-body" id="v8AngleBody">
+      <!-- ④ GÓC BÁN CÁ NHÂN ĐÃ LƯU -->
+      <div id="v8SavedAnglesWrap" style="display:none;margin-bottom:10px">
+        <div style="font-size:.7rem;font-weight:700;color:var(--ac);margin-bottom:6px">⭐ Góc bán yêu thích của bạn</div>
+        <div id="v8SavedAnglesList" style="display:grid;gap:5px"></div>
+        <div style="border-top:1px solid var(--border);margin:8px 0"></div>
+      </div>
+      <div class="v8-angle-grid" id="v8AngleGrid"></div>
+      <!-- ① HOOK EDITOR -->
+      <div id="v8HookEditorWrap" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+        <div style="font-size:.7rem;font-weight:700;color:var(--pu);margin-bottom:4px">✏️ Chỉnh sửa hook — thêm cá tính của bạn</div>
+        <div style="font-size:.67rem;color:var(--t3);margin-bottom:5px">AI gợi ý bên dưới — anh/chị chỉnh lại theo phong cách riêng</div>
+        <textarea class="v8-hook-edit" id="v8HookEditor" placeholder="Nhập hook câu mở đầu của bạn..." rows="2"></textarea>
+        <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">
+          <button class="btn btn-g btn-sm" onclick="applyCustomHook()">✅ Dùng hook này</button>
+          <button class="btn btn-s btn-sm" onclick="resetHookToAI()">🔄 Dùng lại hook AI</button>
+          <button class="btn btn-b btn-sm" onclick="saveCurrentAngle()">⭐ Lưu góc này</button>
+        </div>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:7px;flex-wrap:wrap">
+        <button class="btn btn-p btn-sm" onclick="applyV8AngleAndGenerate()">🚀 Tạo Content Với Góc Này</button>
+        <button class="btn btn-s btn-sm" onclick="v8ReAnalyze()">🔄 Phân Tích Lại</button>
+      </div>
+    </div>
+  </div>
+
   <div class="ld" id="ldArea"><div class="spin"></div><div class="ldst" id="ldSteps"></div></div>
   <div class="out" id="outArea">
     <div class="ibdg" id="metaTxt"></div>
@@ -680,6 +822,8 @@ select option{background:var(--bg3)}
       <div class="ptab on" onclick="showPlt(this,'fb')">📘 Facebook</div>
       <div class="ptab" onclick="showPlt(this,'zalo')">💬 Zalo</div>
       <div class="ptab" onclick="showPlt(this,'tiktok')">🎵 TikTok</div>
+      <div class="ptab" onclick="showPlt(this,'ig')">📸 Instagram</div>
+      <div class="ptab" onclick="showPlt(this,'threads')">🧵 Threads</div>
       <div class="ptab" onclick="showPlt(this,'web')">🌐 Website</div>
     </div>
     <div id="pltContent"></div>
@@ -689,7 +833,7 @@ select option{background:var(--bg3)}
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;flex-wrap:wrap;gap:6px">
         <div style="font-size:.81rem;font-weight:700;color:var(--tx);display:flex;align-items:center;gap:7px">
           📌 Quản lý đăng tin
-          <span id="trackerProgress" style="font-size:.67rem;font-weight:600;color:var(--t3);background:var(--bg3);border-radius:10px;padding:2px 8px">0/4 nền tảng</span>
+          <span id="trackerProgress" style="font-size:.67rem;font-weight:600;color:var(--t3);background:var(--bg3);border-radius:10px;padding:2px 8px">0/6 nền tảng</span>
         </div>
         <button class="btn btn-r btn-xs" onclick="resetTracker()" title="Reset tất cả">🔄 Reset</button>
       </div>
@@ -737,6 +881,34 @@ select option{background:var(--bg3)}
           </div>
         </div>
 
+        <!-- Instagram -->
+        <div class="tracker-row" id="tr_ig" onclick="togglePosted('ig')">
+          <div class="tr-left">
+            <div class="tr-cb" id="cb_ig"></div>
+            <div>
+              <div class="tr-name">📸 Instagram</div>
+              <div class="tr-time" id="tt_ig">Chưa đăng</div>
+            </div>
+          </div>
+          <div class="tr-note-wrap">
+            <input type="text" id="tn_ig" class="tr-note" placeholder="Link post / Reels..." onclick="event.stopPropagation()" onchange="saveTrackerNote('ig',this.value)">
+          </div>
+        </div>
+
+        <!-- Threads -->
+        <div class="tracker-row" id="tr_threads" onclick="togglePosted('threads')">
+          <div class="tr-left">
+            <div class="tr-cb" id="cb_threads"></div>
+            <div>
+              <div class="tr-name">🧵 Threads</div>
+              <div class="tr-time" id="tt_threads">Chưa đăng</div>
+            </div>
+          </div>
+          <div class="tr-note-wrap">
+            <input type="text" id="tn_threads" class="tr-note" placeholder="Link thread..." onclick="event.stopPropagation()" onchange="saveTrackerNote('threads',this.value)">
+          </div>
+        </div>
+
         <!-- Website -->
         <div class="tracker-row" id="tr_web" onclick="togglePosted('web')">
           <div class="tr-left">
@@ -764,7 +936,7 @@ select option{background:var(--bg3)}
       </div>
       <!-- All done banner -->
       <div id="trackerDone" style="display:none;margin-top:10px;background:linear-gradient(135deg,rgba(62,207,142,.15),rgba(245,166,35,.08));border:1px solid rgba(62,207,142,.4);border-radius:9px;padding:9px 13px;font-size:.78rem;font-weight:700;color:var(--gr);text-align:center">
-        🎉 Đã đăng đủ 4 nền tảng! Content này phủ sóng toàn diện rồi!
+        🎉 Đã đăng đủ 6 nền tảng! Content này phủ sóng toàn diện rồi!
       </div>
     </div>
 
@@ -1119,7 +1291,7 @@ select option{background:var(--bg3)}
   </div>
   <div class="tool-pg" id="tool-objection"><div class="card"><div class="ctit"><span class="dot"></span>🗣️ Kịch Bản Xử Lý Phản Đối</div><div class="fg" style="margin-bottom:10px"><label>🏠 BĐS</label><input type="text" id="obj_prop" placeholder="Nhà phố Q7, 80m², 6.5 tỷ"></div><div class="fg"><label>❓ Phản đối</label><div class="pgr" id="objPills"><div class="pill on" onclick="spill(this,'obj','price')" data-v="price">Sao đắt vậy?</div><div class="pill" onclick="spill(this,'obj','legal')" data-v="legal">Pháp lý chắc?</div><div class="pill" onclick="spill(this,'obj','think')" data-v="think">Suy nghĩ thêm</div><div class="pill" onclick="spill(this,'obj','compare')" data-v="compare">Chỗ khác rẻ</div><div class="pill" onclick="spill(this,'obj','money')" data-v="money">Chưa đủ tiền</div></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doObj()">🗣️ Sinh Kịch Bản</button></div><div id="objOut" class="hidden"></div></div>
   <div class="tool-pg" id="tool-story"><div class="card"><div class="ctit"><span class="dot"></span>📱 Script Story/Reels FB & Zalo</div><div class="fg2"><div class="fg"><label>🏠 BĐS</label><input type="text" id="story_prop" placeholder="Nhà phố Q7, 80m², 6.5 tỷ"></div><div class="fg"><label>⏱️ Thời lượng</label><div class="pgr" style="margin-top:4px"><div class="pill on" onclick="spill(this,'story_dur','15s')" data-v="15s">15 giây</div><div class="pill" onclick="spill(this,'story_dur','30s')" data-v="30s">30 giây</div><div class="pill" onclick="spill(this,'story_dur','60s')" data-v="60s">60s Reels</div></div></div><div class="fg full"><label>📱 Nền tảng</label><div class="pgr" style="margin-top:4px"><div class="pill on" onclick="spill(this,'story_plt','FB Story')" data-v="FB Story">📘 FB Story</div><div class="pill" onclick="spill(this,'story_plt','FB Reels')" data-v="FB Reels">📘 FB Reels</div><div class="pill" onclick="spill(this,'story_plt','Zalo Story')" data-v="Zalo Story">💬 Zalo Story</div></div></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doStory()">📱 Tạo Script</button></div><div id="storyOut" class="hidden"></div></div>
-  <div class="tool-pg" id="tool-hashtag"><div class="card"><div class="ctit"><span class="dot"></span>🏷️ Hashtag Generator BĐS</div><div class="fg2"><div class="fg"><label>🏠 Loại nhà</label><input type="text" id="ht_type" placeholder="Nhà phố, căn hộ..."></div><div class="fg"><label>📍 Khu vực</label><input type="text" id="ht_loc" placeholder="Quận 7, Bình Thạnh..."></div><div class="fg"><label>💰 Phân khúc</label><select id="ht_seg"><option value="mid">Trung cấp (3-7 tỷ)</option><option value="budget">Bình dân (dưới 3 tỷ)</option><option value="high">Cao cấp (7-15 tỷ)</option><option value="luxury">Luxury (trên 15 tỷ)</option></select></div><div class="fg"><label>🎯 Mục đích</label><select id="ht_goal"><option value="sell">Bán nhà</option><option value="rent">Cho thuê</option><option value="invest">Đầu tư</option></select></div><div class="fg full"><label>📱 Nền tảng</label><div class="pgr" style="margin-top:4px"><div class="pill on" onclick="spill(this,'ht_plt','FB')" data-v="FB">📘 Facebook</div><div class="pill" onclick="spill(this,'ht_plt','Zalo')" data-v="Zalo">💬 Zalo</div><div class="pill" onclick="spill(this,'ht_plt','TikTok')" data-v="TikTok">🎵 TikTok</div><div class="pill" onclick="spill(this,'ht_plt','Website')" data-v="Website">🌐 Website</div></div></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doHashtag()">🏷️ Tạo Hashtag</button></div><div id="hashtagOut" class="hidden"></div></div>
+  <div class="tool-pg" id="tool-hashtag"><div class="card"><div class="ctit"><span class="dot"></span>🏷️ Hashtag Generator BĐS</div><div class="fg2"><div class="fg"><label>🏠 Loại nhà</label><input type="text" id="ht_type" placeholder="Nhà phố, căn hộ..."></div><div class="fg"><label>📍 Khu vực</label><input type="text" id="ht_loc" placeholder="Quận 7, Bình Thạnh..."></div><div class="fg"><label>💰 Phân khúc</label><select id="ht_seg"><option value="mid">Trung cấp (3-7 tỷ)</option><option value="budget">Bình dân (dưới 3 tỷ)</option><option value="high">Cao cấp (7-15 tỷ)</option><option value="luxury">Luxury (trên 15 tỷ)</option></select></div><div class="fg"><label>🎯 Mục đích</label><select id="ht_goal"><option value="sell">Bán nhà</option><option value="rent">Cho thuê</option><option value="invest">Đầu tư</option></select></div><div class="fg full"><label>📱 Nền tảng</label><div class="pgr" style="margin-top:4px"><div class="pill on" onclick="spill(this,'ht_plt','FB')" data-v="FB">📘 Facebook</div><div class="pill" onclick="spill(this,'ht_plt','Zalo')" data-v="Zalo">💬 Zalo</div><div class="pill" onclick="spill(this,'ht_plt','TikTok')" data-v="TikTok">🎵 TikTok</div><div class="pill" onclick="spill(this,'ht_plt','Instagram')" data-v="Instagram">📸 Instagram</div><div class="pill" onclick="spill(this,'ht_plt','Threads')" data-v="Threads">🧵 Threads</div><div class="pill" onclick="spill(this,'ht_plt','Website')" data-v="Website">🌐 Website</div></div></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doHashtag()">🏷️ Tạo Hashtag</button></div><div id="hashtagOut" class="hidden"></div></div>
   <div class="tool-pg" id="tool-coldcall"><div class="card"><div class="ctit"><span class="dot"></span>📞 Script Cold Call</div><div class="fg2"><div class="fg"><label>🏠 BĐS</label><input type="text" id="cc_prop" placeholder="Nhà phố Q7, 6.5 tỷ"></div><div class="fg"><label>🧠 Tâm lý KH</label><select id="cc_psy"><option value="Tham">💰 Tham</option><option value="Si">🤔 Si</option><option value="Sân">🔥 Sân</option><option value="Nghi ngờ">🔍 Nghi ngờ</option></select></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doColdCall()">📞 Tạo Script</button></div><div id="ccOut" class="hidden"></div></div>
   <div class="tool-pg" id="tool-checklist"><div class="card"><div class="ctit"><span class="dot"></span>📋 Checklist Pháp Lý BĐS</div><div style="font-size:.76rem;color:var(--t2);margin-bottom:11px">Tặng KH → Tăng uy tín chuyên gia → KH tin tưởng hơn khi mua qua bạn.</div><div class="fg"><label>🏠 Loại BĐS</label><div class="pgr" style="margin-top:4px"><div class="pill on" onclick="spill(this,'cl_type','Nhà phố')" data-v="Nhà phố">Nhà phố</div><div class="pill" onclick="spill(this,'cl_type','Căn hộ')" data-v="Căn hộ">Căn hộ</div><div class="pill" onclick="spill(this,'cl_type','Đất nền')" data-v="Đất nền">Đất nền</div></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doChecklist()">📋 Tạo Checklist</button></div><div id="clOut" class="hidden"></div></div>
   <div class="tool-pg" id="tool-persona">
@@ -1418,7 +1590,7 @@ select option{background:var(--bg3)}
         <option value="">📌 Tất cả trạng thái</option>
         <option value="new">🆕 Chưa đăng nền tảng nào</option>
         <option value="partial">⏳ Đang đăng dở</option>
-        <option value="full">✅ Đủ 4 nền tảng</option>
+        <option value="full">✅ Đủ 6 nền tảng</option>
       </select>
       <!-- Sort -->
       <select id="crmFSort" onchange="filterCRM()" style="font-size:.7rem;padding:3px 7px;border-radius:7px;background:var(--bg3);border:1px solid var(--border);color:var(--t2);height:26px">
