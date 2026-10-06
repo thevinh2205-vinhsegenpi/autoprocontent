@@ -160,17 +160,17 @@ let sc6Data={
 
 // ===================== POST TRACKER =====================
 // State: per content-session, keyed by content ID (timestamp)
-let trackerState = {fb:false,zalo:false,tiktok:false,ig:false,threads:false,web:false};
-let trackerNotes = {fb:'',zalo:'',tiktok:'',ig:'',threads:'',web:''};
-let trackerTimes = {fb:'',zalo:'',tiktok:'',ig:'',threads:'',web:''};
+let trackerState = {fb:false,zalo:false,tiktok:false,web:false};
+let trackerNotes = {fb:'',zalo:'',web:'',tiktok:''};
+let trackerTimes = {fb:'',zalo:'',tiktok:'',web:''};
 let trackerId = 0; // ties tracker to current content
 
 const PLT_LABELS = {fb:'📘 Facebook',zalo:'💬 Zalo',tiktok:'🎵 TikTok',web:'🌐 Website'};
 
 function resetTracker(){
-  trackerState={fb:false,zalo:false,tiktok:false,ig:false,threads:false,web:false};
-  trackerNotes={fb:'',zalo:'',tiktok:'',ig:'',threads:'',web:''};
-  trackerTimes={fb:'',zalo:'',tiktok:'',ig:'',threads:'',web:''};
+  trackerState={fb:false,zalo:false,tiktok:false,web:false};
+  trackerNotes={fb:'',zalo:'',tiktok:'',web:''};
+  trackerTimes={fb:'',zalo:'',tiktok:'',web:''};
   renderTracker();
   toast('🔄 Đã reset trạng thái đăng!');
 }
@@ -194,7 +194,7 @@ function saveTrackerNote(plt,val){
 }
 
 function renderTracker(){
-  const plts=['fb','zalo','tiktok','ig','threads','web'];
+  const plts=['fb','zalo','tiktok','web'];
   let doneCount=0;
   plts.forEach(p=>{
     const row=document.getElementById('tr_'+p);
@@ -215,15 +215,15 @@ function renderTracker(){
     if(tn)tn.value=trackerNotes[p]||'';
   });
   // Update progress
-  const pct=Math.round(doneCount/6*100);
+  const pct=Math.round(doneCount/4*100);
   const prog=document.getElementById('trackerProgress');
   const bar=document.getElementById('trackerBar');
   const pctEl=document.getElementById('trackerPct');
   const done=document.getElementById('trackerDone');
-  if(prog)prog.textContent=doneCount+'/6 nền tảng';
+  if(prog)prog.textContent=doneCount+'/4 nền tảng';
   if(bar)bar.style.width=pct+'%';
   if(pctEl)pctEl.textContent=pct+'%';
-  if(done)done.style.display=doneCount===6?'block':'none';
+  if(done)done.style.display=doneCount===4?'block':'none';
 }
 
 function saveTrackerToCRM(){
@@ -323,7 +323,7 @@ function buildHomeWorkflow(){
     {i:'🏘️',t:'6 Căn',d:'Chọn BĐS',pg:'sixcan'},
     {i:'🔍',t:'Khảo Sát',d:'Thu dữ liệu',pg:'survey'},
     {i:'🏷️',t:'Định Giá',d:'Bóc tách',pg:'valuation'},
-    {i:'✍️',t:'Tạo Content',d:'6 nền tảng',pg:'gen'},
+    {i:'✍️',t:'Tạo Content',d:'4 nền tảng',pg:'gen'},
     {i:'📅',t:'Lịch 30 Ngày',d:'Auto phân bổ',pg:'sixcan'},
     {i:'🎯',t:'Chấm Điểm',d:'Tối ưu',pg:'scr'},
     {i:'🗄️',t:'Lưu CRM',d:'Quản lý',pg:'crm'}
@@ -336,12 +336,15 @@ function buildHomeFeatures(){
   const f=[
     {i:'🔎',t:'Phân Tích V8',d:'Data Validation · AI Value Mining · Sales Angle · Tạo content đúng góc nhìn.',pg:'gen',b:'pu',bl:'V8🆕'},
     {i:'🏘️',t:'Chiến Thuật 6 Căn',d:'6 BĐS thật × 5 tâm lý = 30 content. Lịch 30 ngày. Bao phủ khu vực.',pg:'sixcan',b:'rd',bl:'🔥HOT'},
-    {i:'✍️',t:'Tạo Content',d:'1 input → FB, Zalo, TikTok, Instagram, Threads, Web. 5 tâm lý. 7 công thức.',pg:'gen',b:'or',bl:'CORE'},
+    {i:'✍️',t:'Tạo Content',d:'1 input → FB, Zalo, TikTok, Web. 5 tâm lý. 7 công thức.',pg:'gen',b:'or',bl:'CORE'},
     {i:'📅',t:'Lịch 7 Ngày',d:'Tự động từ content đã tạo. Phân bổ theo ngày + giờ vàng.',pg:'sch',b:'gr',bl:''},
     {i:'🔍',t:'Khảo Sát Nhà',d:'9 bước checklist chuẩn. Tự động sinh báo cáo 5x5.',pg:'survey',b:'gr',bl:''},
     {i:'🏷️',t:'Định Giá BĐS',d:'Bóc tách giá đất + xây dựng. Kết nối tạo content.',pg:'valuation',b:'',bl:''},
     {i:'🎭',t:'Đọc Vị KH',d:'10 câu hỏi xác định tâm lý KH. Gợi ý chiến thuật.',pg:'readkh',b:'bl',bl:''},
     {i:'🔄',t:'SPIN Selling',d:'20 câu hỏi mở 4 giai đoạn · Khám phá KH · Phân tích sẵn sàng mua.',pg:'spin',b:'pu',bl:'NEW'},
+    {i:'🧠',t:'Trắc Nghiệm 3 Tầng',d:'33 câu · Chẩn đoán tư duy & kỹ năng chốt deal · Kế hoạch cải thiện 30 ngày.',pg:'quiz',b:'bl',bl:'NEW'},
+    {i:'⚔️',t:'Sparring Dojo',d:'40 tình huống thực chiến · 4 track · Đếm ngược 30s · Tích XP · Lên đai.',pg:'dojo',b:'rd',bl:'NEW'},
+    {i:'💾',t:'Sao Lưu & Phục Hồi',d:'Xuất JSON · Upload Google Drive · Phục hồi khi đổi máy hoặc xóa cache.',pg:'backup',b:'gr',bl:'Cloud'},
     {i:'🏡',t:'Dẫn Xem Nhà',d:'Kịch bản từng phòng. Tích hợp dữ liệu khảo sát.',pg:'guidetour',b:'',bl:''},
     {i:'💬',t:'Câu Chốt Sale',d:'50+ câu chốt theo tình huống. Copy ngay dùng liền.',pg:'salescripts',b:'rd',bl:'HOT'},
     {i:'🎯',t:'Chấm Điểm',d:'6 tiêu chí 1–10. Gợi ý cải thiện cụ thể.',pg:'scr',b:'',bl:''},
@@ -505,85 +508,9 @@ function mkWB(d,py,ct){
   return`📌 TIÊU ĐỀ SEO:\n${ti[py]||ti['Si']}\n\n📝 META (${meta.length}/160):\n${meta}\n\n## GIỚI THIỆU\n${intro}${angleSection}\n\n## THÔNG TIN\n• ${d.type} | ${d.area} | ${d.loc} | ${d.price}\n\n## ĐIỂM NỔI BẬT\n${highlights}\n\n## LIÊN HỆ\n${ct}\n*Tư vấn vay NH · Xem nhà miễn phí*`;
 }
 
-function mkIG(d,py,frm,gs,ct){
-  const tone=d.v8toneRaw||{style:5,len:5,emo:5};
-  const isShort=tone.len<=3;
-  const isEmo=tone.emo>=7;
-  const isFact=tone.emo<=3;
-
-  // Hook — IG ưu tiên visual + cảm xúc
-  const igHooks={
-    'Tham'   :`💰 ${d.price} cho ${d.type} ${d.area} tại ${d.loc}. Không phải quảng cáo — đây là thật.`,
-    'Sân'    :`${d.type.toUpperCase()} ${d.loc} 📍 ${d.price} 📐 ${d.area} ⚡ Liên hệ ngay`,
-    'Si'     :`Đây có thể là tổ ấm tiếp theo của bạn 🏡`,
-    'Ngạo mạn':`Không phải ai cũng hiểu giá trị của căn này. Và đó là lợi thế của bạn 👑`,
-    'Nghi ngờ':`Pháp lý sạch. Sổ hồng chính chủ. Không lời hứa suông ✅`
-  };
-  const hook=d.v8hook||igHooks[py]||igHooks['Si'];
-  const angleTag=d.v8angle?`\n\n📐 Góc nhìn: ${d.v8angle}`:'';
-
-  // Caption body theo tone
-  const emoLine=isEmo
-    ?`\n\nHãy tưởng tượng bạn thức dậy mỗi sáng trong không gian này — tự do, yên bình, là của mình thật sự 💫`
-    :isFact
-    ?`\n\nGiá/m²: ${d.price&&d.area?Math.round(parseFloat(d.price)*1000/parseFloat(d.area))+'tr':'cạnh tranh so với khu vực'}. Thanh khoản tốt.`
-    :'';
-
-  const body=isShort
-    ?`${hook}\n\n📍 ${d.loc} | 📐 ${d.area} | 💰 ${d.price}\n✅ ${d.pros}${angleTag}`
-    :`${hook}\n\n📍 ${d.loc}\n📐 Diện tích: ${d.area}\n💰 Giá: ${d.price}\n\n✅ ${d.pros}${d.diff?`\n🎯 ${d.diff}`:''}${angleTag}${emoLine}`;
-
-  const cta=gs.includes('Chốt nhanh')
-    ?`\n\n👆 DM ngay hoặc comment "MUỐN XEM" để được liên hệ trong 5 phút!`
-    :gs.includes('Thu lead')
-    ?`\n\n💬 Comment "INFO" để nhận đầy đủ thông tin + ảnh thực tế nhé!`
-    :`\n\n💬 Thích căn này không? Comment hoặc DM mình nhé! 🙏`;
-
-  // Hashtags theo khu vực + loại nhà
-  const loc=d.loc.replace(/\s+/g,'').toLowerCase();
-  const type=d.type.replace(/\s+/g,'').toLowerCase();
-  const hashtags=`\n\n#batdongsan #${type} #${loc} #muaban${type} #nhadep #${type}${loc} #batdongsantphcm #muanhadep #dautu #realestate`;
-
-  return`${body}${cta}\n\n─────────────────\n📞 ${ct}${hashtags}`;
-}
-
-function mkThreads(d,py,gs){
-  const tone=d.v8toneRaw||{style:5,len:5,emo:5};
-  const isShort=tone.len<=3;
-  const isFriendly=tone.style<=4;
-
-  // Threads: text-first, gần gũi, 500 ký tự/thread, dạng thread nối tiếp
-  const opener={
-    'Tham'   :`Tôi có ${d.type} ở ${d.loc} giá ${d.price} mà nghe xong bạn sẽ muốn xem liền. Để tôi kể👇`,
-    'Sân'    :`${d.type} ${d.loc}. ${d.price}. ${d.area}. Pháp lý OK. Xem chưa?`,
-    'Si'     :`Hôm nay tôi muốn chia sẻ một căn nhà mà tôi nghĩ nhiều bạn đang tìm kiếm 🏡`,
-    'Ngạo mạn':`Có những căn nhà không phải ai cũng đủ tầm nhìn để nhận ra giá trị thật của nó.`,
-    'Nghi ngờ':`Tôi biết nhiều bạn đang ngại vì sợ pháp lý lùng bùng. Căn này thì khác.`
-  };
-  const hook=d.v8hook||opener[py]||opener['Si'];
-  const angleNote=d.v8angle?` [Góc: ${d.v8angle}]`:'';
-
-  if(isShort){
-    // Threads ngắn — 1 thread duy nhất
-    return`${hook}${angleNote}\n\n📍 ${d.loc} · 📐 ${d.area} · 💰 ${d.price}\n✅ ${d.pros}\n\n${gs.includes('Chốt nhanh')?'Inbox mình nhé!':'Có câu hỏi gì cứ hỏi mình ở comment 👇'}`;
-  }
-
-  // Threads dài — format thread nối tiếp (1/, 2/, 3/...)
-  const thread1=`${hook}${angleNote}`;
-  const thread2=`📋 Thông tin nhanh:\n\n📍 Khu vực: ${d.loc}\n📐 Diện tích: ${d.area}\n💰 Giá: ${d.price}\n🏠 Loại: ${d.type}`;
-  const thread3=`✅ Điểm nổi bật:\n\n${d.pros.split(',').map(s=>`• ${s.trim()}`).join('\n')}${d.diff?`\n\n🎯 ${d.diff}`:''}`;
-  const thread4=gs.includes('Chốt nhanh')
-    ?`Quan tâm? Inbox hoặc comment "XEM" mình liên hệ lại trong vài phút 🙏${isFriendly?' Chứ đừng để người khác chốt trước nha 😄':''}`
-    :gs.includes('Thu lead')
-    ?`Muốn nhận thêm ảnh thực tế + thông tin chi tiết? Comment "INFO" bên dưới nhé 📩`
-    :`Hỏi gì cứ hỏi mình ở comment — mình trả lời hết! 👇`;
-
-  return`1/ ${thread1}\n\n━━━━━━━━━━━\n2/ ${thread2}\n\n━━━━━━━━━━━\n3/ ${thread3}\n\n━━━━━━━━━━━\n4/ ${thread4}`;
-}
-
 function buildVer(d,py,frm,gs){
   const ct=`📞 ${prof.phone} | Zalo: ${prof.zalo}\n👤 ${prof.name} — ${prof.title}`;
-  return{py,frm,gs,fb:mkFB(d,py,frm,gs,ct),zalo:mkZL(d,py,gs,ct),tiktok:mkTT(d,py,gs,ct),ig:mkIG(d,py,frm,gs,ct),threads:mkThreads(d,py,gs),web:mkWB(d,py,ct)};
+  return{py,frm,gs,fb:mkFB(d,py,frm,gs,ct),zalo:mkZL(d,py,gs,ct),tiktok:mkTT(d,py,gs,ct),web:mkWB(d,py,ct)};
 }
 
 async function doGenerate(){
@@ -629,10 +556,10 @@ async function doGenerate(){
   }
 
   const steps=v5
-    ?['🔍 Phân tích BĐS...','🧠 Xác định 5 tâm lý...','✍️ Tạo FB x5...','💬 Zalo x5...','🎵 TikTok x5...','📸 IG x5...','🧵 Threads x5...','🌐 Web x5...','✅ Hoàn tất!']
+    ?['🔍 Phân tích BĐS...','🧠 Xác định 5 tâm lý...','✍️ Tạo FB x5...','💬 Zalo x5...','🎵 TikTok x5...','🌐 Web x5...','✅ Hoàn tất!']
     :v8State.selectedAngle
-      ?['🔎 Áp dụng góc '+v8State.selectedAngle.name+'...','🧠 Khai thác USP...','✍️ Tạo 6 nền tảng...','✅ Hoàn tất!']
-      :['🔍 Phân tích...','🧠 Xác định tâm lý...','✍️ Tạo 6 nền tảng...','✅ Hoàn tất!'];
+      ?['🔎 Áp dụng góc '+v8State.selectedAngle.name+'...','🧠 Khai thác USP...','✍️ Tạo 4 nền tảng...','✅ Hoàn tất!']
+      :['🔍 Phân tích...','🧠 Xác định tâm lý...','✍️ Tạo 4 nền tảng...','✅ Hoàn tất!'];
 
   document.getElementById('ldArea').classList.add('on');document.getElementById('outArea').classList.remove('on');
   document.getElementById('ldSteps').innerHTML=steps.map((s,i)=>`<div class="lst" id="ls${i}">${s}</div>`).join('');
@@ -662,9 +589,9 @@ async function doGenerate(){
 
   VS=plist.map(p=>buildVer(d8,p,auto?autoFrm(p):frm,gs));VI=0;schedProp=`${d.type} ${d.loc} ${d.price}`;
   logContentCreated(d8);
-  trackerState={fb:false,zalo:false,tiktok:false,ig:false,threads:false,web:false};
-  trackerNotes={fb:'',zalo:'',tiktok:'',ig:'',threads:'',web:''};
-  trackerTimes={fb:'',zalo:'',tiktok:'',ig:'',threads:'',web:''};
+  trackerState={fb:false,zalo:false,tiktok:false,web:false};
+  trackerNotes={fb:'',zalo:'',tiktok:'',web:''};
+  trackerTimes={fb:'',zalo:'',tiktok:'',web:''};
   trackerId=0;
   const banner=document.getElementById('crmEditBanner');if(banner)banner.style.display='none';
   renderOut(auto,gs,v5);
@@ -1419,45 +1346,12 @@ function doStory(){
 function doHashtag(){
   const type=V('ht_type')||'nhà phố',loc=V('ht_loc')||'hcm',seg=document.getElementById('ht_seg').value,goal=document.getElementById('ht_goal').value,plt=pst.ht_plt||'FB';
   document.getElementById('hashtagOut').classList.add('hidden');
-  const typeSlug=type.toLowerCase().replace(/\s+/g,'');
-  const locSlug=loc.toLowerCase().replace(/\s+/g,'');
-  const base=`#${typeSlug} #bds${locSlug} #${goal==='sell'?'bánhà':'cho_thuê_nhà'} #môigiới #bds #nhàđẹp #batdongsan`;
-  const segHt={
-    'budget':'#nhàrẻ #nhàbìnhdân #nhàgiárẻ #nhàdưới3tỷ',
-    'mid':'#nhàtrungcấp #nhà3đến7tỷ #muanha',
-    'high':'#nhàcaocấp #nhàsangtọng #luxuryhome',
-    'luxury':'#luxury #penthouse #villadep #luxuryrealestate'
-  };
-  const platHt={
-    'FB'   :'#facebook #bdsviệtnam #muabánnhà #nhàphố #đầutưbds',
-    'Zalo' :'#zalomôigiới #zalo #muabánnhàzalo',
-    'TikTok':'#tiktokrealestate #nhàtiktok #trendnhà #realestatetiktok #housevideo',
-    'Instagram':'#instarealestate #homeforsale #nhàdep #realestate #instahome #propertyph #homedecor #househunting #dreamhome #realestateinvestment',
-    'Threads':'#threads #threadshome #nhàthreads #realestatethreads #batdongsanthreads',
-    'Website':'#seobds #timkiếmnhà #muanhahanoi #muanhahcm #nhàsănhàng'
-  };
-  // IG thêm emoji-rich format
-  const isIG=plt==='Instagram';
-  const isThreads=plt==='Threads';
+  const base=`#${type.toLowerCase().replace(/\s+/g,'')} #bds${loc.toLowerCase().replace(/\s+/g,'')} #${goal==='sell'?'bánhà':'cho_thuê_nhà'} #môigiới #bds #nhàđẹp`;
+  const segHt={'budget':'#nhàrẻ #nhàbìnhdân #nhàgiárẻ','mid':'#nhàtrungcấp #nhà3đến7tỷ','high':'#nhàcaocấp #nhàsangt rọng','luxury':'#luxury #penthouse #villanhandé'};
+  const platHt={'FB':'#facebook #bdsviệtnam #mualandranh','TikTok':'#tiktokrealestate #nhàtiktok #trendnhà','Zalo':'#zalomôigiới','Website':'#seobds #timkiếmnhà'};
   const hid='ht_'+Date.now();
-  let htTxt=`${base} ${segHt[seg]||''} ${platHt[plt]||''}`;
-  // Threads: không quá nhiều hashtag, chú trọng nội dung
-  if(isThreads)htTxt=`${base.split(' ').slice(0,5).join(' ')} ${platHt['Threads']}`;
-  // IG: thêm set hashtag phong phú
-  if(isIG)htTxt=`${base}\n${segHt[seg]||''}\n${platHt['Instagram']}\n#${locSlug} #${locSlug}realestate #nhà${locSlug}`;
-  document.getElementById('hashtagOut').innerHTML=`<div class="card">
-    <div class="ctit"><span class="dot"></span>🏷️ Hashtag cho ${plt}</div>
-    <div style="background:rgba(156,110,245,.07);border:1px solid rgba(156,110,245,.2);border-radius:8px;padding:8px 11px;margin-bottom:9px;font-size:.69rem;color:var(--t3)">
-      ${isIG?'📸 Instagram: 10-15 hashtag, mix popular + niche':''}
-      ${isThreads?'🧵 Threads: tối đa 5 hashtag, không lạm dụng':''}
-      ${!isIG&&!isThreads?`💡 Dán hashtag vào cuối ${plt === 'TikTok' ? 'video' : 'bài viết'} của bạn`:'' }
-    </div>
-    <div id="${hid}" style="background:var(--bg3);border-radius:8px;padding:12px;font-size:.78rem;color:var(--ac);line-height:1.9;word-break:break-word">${htTxt}</div>
-    <div style="margin-top:8px;display:flex;gap:6px">
-      <button class="btn btn-g btn-sm" onclick="cpEl('${hid}')">📋 Copy</button>
-      <button class="btn btn-r btn-sm" onclick="document.getElementById('hashtagOut').classList.add('hidden')">🗑️</button>
-    </div>
-  </div>`;
+  const htTxt=`${base} ${segHt[seg]||''} ${platHt[plt]||''}`;
+  document.getElementById('hashtagOut').innerHTML=`<div class="card"><div class="ctit"><span class="dot"></span>🏷️ Hashtag cho ${plt}</div><div id="${hid}" style="background:var(--bg3);border-radius:8px;padding:12px;font-size:.78rem;color:var(--ac);line-height:1.9;word-break:break-word">${htTxt}</div><div style="margin-top:8px;display:flex;gap:6px"><button class="btn btn-g btn-sm" onclick="cpEl('${hid}')">📋 Copy</button><button class="btn btn-r btn-sm" onclick="document.getElementById('hashtagOut').classList.add('hidden')">🗑️</button></div></div>`;
   document.getElementById('hashtagOut').classList.remove('hidden');
 }
 
@@ -1865,7 +1759,7 @@ function saveCRM(){
       type:d.type,loc:d.loc,price:d.price,area:d.area,pros:d.pros,
       time:new Date().toLocaleString('vi-VN'),
       vs:VS,
-      posted:{fb:false,zalo:false,tiktok:false,ig:false,threads:false,web:false},
+      posted:{fb:false,zalo:false,tiktok:false,web:false},
       postedTimes:{},postedNotes:{},note:''
     });
     fillCodeAll(code);
@@ -1923,8 +1817,8 @@ function buildCRM(){
   else list.sort((a,b)=>b.id-a.id);
 
   // Update stats
-  const fullCnt=crm.filter(e=>Object.values(e.posted||{}).filter(Boolean).length===6).length;
-  const partCnt=crm.filter(e=>{const c=Object.values(e.posted||{}).filter(Boolean).length;return c>0&&c<6;}).length;
+  const fullCnt=crm.filter(e=>Object.values(e.posted||{}).filter(Boolean).length===4).length;
+  const partCnt=crm.filter(e=>{const c=Object.values(e.posted||{}).filter(Boolean).length;return c>0&&c<4;}).length;
   const newCnt=crm.filter(e=>Object.values(e.posted||{}).filter(Boolean).length===0).length;
   const st=document.getElementById('crmStatTotal');if(st)st.textContent=`Tổng: ${crm.length}`;
   const sf=document.getElementById('crmStatFull');if(sf)sf.textContent=`✅ Đủ 4: ${fullCnt}`;
@@ -1954,7 +1848,7 @@ function buildCRM(){
       return`<tr>
         <td>
           <div style="font-family:'Space Mono',monospace;font-size:.67rem;font-weight:700;color:var(--ac);white-space:nowrap">${hl(e.code||'—')}</div>
-          <div style="width:6px;height:6px;border-radius:50%;background:${statusDot};display:inline-block;margin-top:3px" title="${postedCount}/6 nền tảng"></div>
+          <div style="width:6px;height:6px;border-radius:50%;background:${statusDot};display:inline-block;margin-top:3px" title="${postedCount}/4 nền tảng"></div>
         </td>
         <td><strong style="color:var(--tx);font-size:.77rem">${hl(e.type)}</strong></td>
         <td style="font-size:.75rem">${hl(e.loc)}</td>
@@ -1980,7 +1874,7 @@ function buildCRM(){
 function openCRMDetail(i){
   const e=crm[i];if(!e)return;
   const p=e.posted||{};
-  const plt=[{k:'fb',ic:'📘',nm:'Facebook'},{k:'zalo',ic:'💬',nm:'Zalo'},{k:'tiktok',ic:'🎵',nm:'TikTok'},{k:'ig',ic:'📸',nm:'Instagram'},{k:'threads',ic:'🧵',nm:'Threads'},{k:'web',ic:'🌐',nm:'Website'}];
+  const plt=[{k:'fb',ic:'📘',nm:'Facebook'},{k:'zalo',ic:'💬',nm:'Zalo'},{k:'tiktok',ic:'🎵',nm:'TikTok'},{k:'web',ic:'🌐',nm:'Website'}];
   document.getElementById('crmDetailTitle').textContent=`${e.type} — ${e.loc}`;
   document.getElementById('crmDetailCode').textContent=`Mã căn: ${e.code||'—'}`;
   document.getElementById('crmDetailBody').innerHTML=`
@@ -2043,9 +1937,9 @@ function loadCRM(i){
   ['type','price','area','loc','pros'].forEach(k=>{const el=document.getElementById('i_'+k);if(el)el.value=e[k]||'';});
   VS=e.vs||[];VI=0;
   trackerId=e.id||0;
-  trackerState=e.posted?JSON.parse(JSON.stringify(e.posted)):{fb:false,zalo:false,tiktok:false,ig:false,threads:false,web:false};
-  trackerTimes=e.postedTimes?JSON.parse(JSON.stringify(e.postedTimes)):{fb:'',zalo:'',tiktok:'',ig:'',threads:'',web:''};
-  trackerNotes=e.postedNotes?JSON.parse(JSON.stringify(e.postedNotes)):{fb:'',zalo:'',tiktok:'',ig:'',threads:'',web:''};
+  trackerState=e.posted?JSON.parse(JSON.stringify(e.posted)):{fb:false,zalo:false,tiktok:false,web:false};
+  trackerTimes=e.postedTimes?JSON.parse(JSON.stringify(e.postedTimes)):{fb:'',zalo:'',tiktok:'',web:''};
+  trackerNotes=e.postedNotes?JSON.parse(JSON.stringify(e.postedNotes)):{fb:'',zalo:'',tiktok:'',web:''};
   if(e.code)fillCodeAll(e.code);
   nav('gen');
   updCRMEditBanner(e);
@@ -2359,8 +2253,8 @@ function buildDashboard(){
     const maxWeek=Math.max(...last4weeks.map(w=>w.count),1);
 
     // Platform posted stats
-    const ps={fb:0,zalo:0,tiktok:0,ig:0,threads:0,web:0};
-    crm.forEach(e=>{if(e.posted){['fb','zalo','tiktok','ig','threads','web'].forEach(k=>{if(e.posted[k])ps[k]++;});}});
+    const ps={fb:0,zalo:0,tiktok:0,web:0};
+    crm.forEach(e=>{if(e.posted){['fb','zalo','tiktok','web'].forEach(k=>{if(e.posted[k])ps[k]++;});}});
     const totalPosted=Object.values(ps).reduce((a,b)=>a+b,0);
 
     // Top types
@@ -2444,7 +2338,7 @@ function buildDashboard(){
       ${crm.length?`<div class="card" style="margin-bottom:12px">
         <div class="ctit"><span class="dot"></span>📌 Đăng tin theo nền tảng</div>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:9px">
-          ${[{k:'fb',ic:'📘',nm:'Facebook'},{k:'zalo',ic:'💬',nm:'Zalo'},{k:'tiktok',ic:'🎵',nm:'TikTok'},{k:'ig',ic:'📸',nm:'Instagram'},{k:'threads',ic:'🧵',nm:'Threads'},{k:'web',ic:'🌐',nm:'Website'}].map(p=>`<div style="background:${ps[p.k]>0?'rgba(62,207,142,.1)':'var(--bg3)'};border:1px solid ${ps[p.k]>0?'rgba(62,207,142,.35)':'var(--border)'};border-radius:9px;padding:10px 7px;text-align:center">
+          ${[{k:'fb',ic:'📘',nm:'Facebook'},{k:'zalo',ic:'💬',nm:'Zalo'},{k:'tiktok',ic:'🎵',nm:'TikTok'},{k:'web',ic:'🌐',nm:'Website'}].map(p=>`<div style="background:${ps[p.k]>0?'rgba(62,207,142,.1)':'var(--bg3)'};border:1px solid ${ps[p.k]>0?'rgba(62,207,142,.35)':'var(--border)'};border-radius:9px;padding:10px 7px;text-align:center">
             <div style="font-size:1.3rem">${p.ic}</div>
             <div style="font-weight:900;font-size:1.2rem;color:${ps[p.k]>0?'var(--gr)':'var(--t3)'};font-family:'Space Mono',monospace">${ps[p.k]}</div>
             <div style="font-size:.62rem;color:var(--t3)">${p.nm}</div>
@@ -2487,8 +2381,8 @@ function buildReportData(){
   const lastMonthContent=contentLog.filter(c=>c.month===(thisMonth===1?12:thisMonth-1)&&c.year===(thisMonth===1?thisYear-1:thisYear)).length;
   const thisWeekContent=contentLog.filter(c=>c.week===thisWeek&&c.year===thisYear).length;
   const growthPct=lastMonthContent?Math.round(((thisMonthContent-lastMonthContent)/lastMonthContent)*100):0;
-  const ps={fb:0,zalo:0,tiktok:0,ig:0,threads:0,web:0};
-  crm.forEach(e=>{if(e.posted){['fb','zalo','tiktok','ig','threads','web'].forEach(k=>{if(e.posted[k])ps[k]++;});}});
+  const ps={fb:0,zalo:0,tiktok:0,web:0};
+  crm.forEach(e=>{if(e.posted){['fb','zalo','tiktok','web'].forEach(k=>{if(e.posted[k])ps[k]++;});}});
   const totalPosted=Object.values(ps).reduce((a,b)=>a+b,0);
   const hotKH=(khList||[]).filter(k=>k.label==='hot').length;
   const warmKH=(khList||[]).filter(k=>k.label==='warm').length;
@@ -2531,7 +2425,7 @@ function exportReportTxt(){
   txt+=`• Lịch 30 ngày: ${d.sc6Total} content · Đã đăng: ${d.sc6Posted}\n`;
   txt+=`• Tiến độ: ${d.sc6Total?Math.round(d.sc6Posted/d.sc6Total*100):0}%\n\n`;
   txt+=`🗄️ CRM — 5 TIN GẦN NHẤT\n${'─'.repeat(36)}\n`;
-  d.recentCRM.forEach((e,i)=>{const pc=Object.values(e.posted||{}).filter(Boolean).length;txt+=`${i+1}. [${e.code||'—'}] ${e.type} — ${e.loc} — ${e.price} (${pc}/6 nền tảng)\n`;});
+  d.recentCRM.forEach((e,i)=>{const pc=Object.values(e.posted||{}).filter(Boolean).length;txt+=`${i+1}. [${e.code||'—'}] ${e.type} — ${e.loc} — ${e.price} (${pc}/4 nền tảng)\n`;});
   txt+=`\n${line}\n${myName} — ${myTitle} | 📞 ${myPhone}\n#aihockiemtien · AUTO PRO CONTENT BĐS v7\n`;
   if(!prof.name)toast('⚠️ Chưa điền Hồ Sơ — báo cáo thiếu thông tin cá nhân!');
   dlTxt(txt,`bao-cao-${d.monthName.replace(' ','-')}-${d.thisYear}.txt`);
@@ -2612,7 +2506,7 @@ function copyReportToClipboard(){
 • Tổng content: ${d.totalContent}
 • ${d.monthName}: ${d.thisMonthContent}${d.growthPct!==0?` (${d.growthPct>0?'+':''}${d.growthPct}% vs tháng trước)`:''}
 • Tuần này: ${d.thisWeekContent}
-• Đăng: 📘${d.ps.fb} 💬${d.ps.zalo} 🎵${d.ps.tiktok} 📸${d.ps.ig} 🧵${d.ps.threads} 🌐${d.ps.web}
+• Đăng: 📘${d.ps.fb} 💬${d.ps.zalo} 🎵${d.ps.tiktok} 🌐${d.ps.web}
 
 🎯 KHÁCH HÀNG
 • 🔴 Nóng: ${d.hotKH} · 🟡 Ấm: ${d.warmKH} · ✅ Chốt: ${d.doneKH}
@@ -2844,7 +2738,7 @@ function nav(id){
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   const pg=document.getElementById('pg-'+id);if(pg)pg.classList.add('on');
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
-  const mp={home:'🏠',gen:'✍️',sch:'📅',scr:'🎯',ab:'⚡',remix:'🔁',survey:'🔍',valuation:'🏷️',readkh:'🎭',guidetour:'🏡',salescripts:'💬',tools:'🔧',cmp:'📊',fs:'🔮',handbook:'📚',tpl:'📌',crm:'🗄️',ag:'🤖',earn:'💰',charity:'❤️',prof:'👤',reminder:'⏰',dashboard:'📊',guide:'❓',sixcan:'🏘️',morning:'☀️',calendar:'📅',khlabels:'🎯',timeline:'📋',spin:'🔄'};
+  const mp={home:'🏠',gen:'✍️',sch:'📅',scr:'🎯',ab:'⚡',remix:'🔁',survey:'🔍',valuation:'🏷️',readkh:'🎭',guidetour:'🏡',salescripts:'💬',tools:'🔧',cmp:'📊',fs:'🔮',handbook:'📚',tpl:'📌',crm:'🗄️',ag:'🤖',earn:'💰',charity:'❤️',prof:'👤',reminder:'⏰',dashboard:'📊',guide:'❓',sixcan:'🏘️',morning:'☀️',calendar:'📅',khlabels:'🎯',timeline:'📋',spin:'🔄',quiz:'🧠',dojo:'⚔️',backup:'💾'};
   document.querySelectorAll('.ni').forEach(n=>{const ic=n.querySelector('.ic');if(ic&&ic.textContent.trim()===mp[id])n.classList.add('on');});
   const sb=document.getElementById('sb');if(sb&&sb.classList.contains('mob'))sb.classList.remove('mob');
   window.scrollTo&&window.scrollTo(0,0);
@@ -2859,6 +2753,9 @@ function nav(id){
   if(id==='sixcan')initSixCan();
   if(id==='handbook')buildHBExtra();
   if(id==='spin'){buildSPINKHSelect();if(!document.getElementById('spinQArea').innerHTML)showSPINPhase(0);}
+  if(id==='quiz'&&!quizState.started){resetQuiz();}
+  if(id==='dojo'){dojoInitBelt();}
+  if(id==='backup'){openBackupModal();nav('home');return;}
 }
 
 // ===================== CHIẾN THUẬT 6 CĂN =====================
@@ -2887,7 +2784,7 @@ const SC_GOLDEN_HOURS = {
   T2:'8:00 & 20:00', T3:'19:00–21:00', T4:'12:00 & 20:00',
   T5:'8:00 & 17:00', T6:'12:00–22:00', T7:'9:00–21:00', CN:'10:00–20:00'
 };
-const SC_PLT_LABELS = {fb:'📘 FB',zalo:'💬 Zalo',tiktok:'🎵 TikTok',ig:'📸 IG',threads:'🧵 Threads',web:'🌐 Web'};
+const SC_PLT_LABELS = {fb:'📘 FB',zalo:'💬 Zalo',tiktok:'🎵 TikTok',web:'🌐 Web'};
 const SC_PLT_PRIORITY = {T2:'fb',T3:'tiktok',T4:'fb',T5:'zalo',T6:'fb',T7:'fb',CN:'zalo'};
 
 // ── Load / Save ──
@@ -3882,6 +3779,1501 @@ function deleteSavedAngle(idx){
   saveSavedAngles(saved);
   renderSavedAngles();
   toast('🗑️ Đã xoá khỏi danh sách yêu thích');
+}
+
+// ===================== QUIZ 3 TẦNG =====================
+const QUIZ_DATA={
+  level1:[
+    // NHÓM A: TƯ DUY NỀN TẢNG
+    {id:'l1_01',group:'A',skill:'Định vị vai trò',q:'Bạn định nghĩa vai trò của mình trong giao dịch BĐS là gì?',opts:[{k:'A',t:'Người bán — nhiệm vụ là chốt deal nhanh nhất có thể'},{k:'B',t:'Cầu nối — giúp 2 bên gặp nhau và hoàn thành giao dịch'},{k:'C',t:'Chuyên gia tư vấn — giúp KH ra quyết định đúng'},{k:'D',t:'Nhân viên dịch vụ — KH yêu cầu gì thì làm đó'}],correct:'C',explain:'Vai trò Chuyên gia tư vấn tạo ra giá trị lâu dài, xây dựng niềm tin và tỷ lệ referral cao nhất. KH trả phí cho sự hiểu biết của bạn, không phải cho việc bạn đưa họ đi xem nhà.',score:1},
+    {id:'l1_02',group:'A',skill:'Tư duy dài hạn',q:'Khi KH từ chối sau 3 lần gặp, bạn thường làm gì?',opts:[{k:'A',t:'Dừng liên hệ — không muốn làm phiền'},{k:'B',t:'Gọi thêm 1-2 lần nữa rồi xóa số'},{k:'C',t:'Chuyển sang chế độ "nuôi dưỡng" — gửi thông tin giá trị định kỳ'},{k:'D',t:'Hỏi thẳng lý do từ chối để điều chỉnh'}],correct:'C',explain:'80% deal chốt từ lần follow-up thứ 5-12. "Nuôi dưỡng" KH bằng thông tin giá trị (thị trường, pháp lý, lãi suất) giữ bạn trong tâm trí KH cho đến khi họ sẵn sàng.',score:1},
+    {id:'l1_03',group:'A',skill:'Tư duy phục vụ',q:'Điều nào dưới đây thể hiện tư duy môi giới chuyên nghiệp nhất?',opts:[{k:'A',t:'Luôn ưu tiên căn nhà có hoa hồng cao để giới thiệu trước'},{k:'B',t:'Giới thiệu căn phù hợp nhất với nhu cầu KH dù hoa hồng thấp hơn'},{k:'C',t:'Thuyết phục KH mua nhanh vì "sắp có người khác đặt cọc"'},{k:'D',t:'Chỉ làm việc với KH có ngân sách cao'}],correct:'B',explain:'Tư duy phục vụ thật sự tạo ra referral và repeat business. 1 giao dịch tốt dẫn đến 3-5 referral. 1 giao dịch sai tư vấn phá hủy toàn bộ danh tiếng.',score:1},
+    {id:'l1_04',group:'A',skill:'Nhận biết điểm nghẽn',q:'Điểm nghẽn phổ biến nhất khiến môi giới không chốt được deal là gì?',opts:[{k:'A',t:'Thiếu sản phẩm tốt để giới thiệu'},{k:'B',t:'KH không đủ tiền'},{k:'C',t:'Không hiểu đúng nhu cầu thật sự của KH'},{k:'D',t:'Giá thị trường quá cao'}],correct:'C',explain:'Nghiên cứu cho thấy 73% deal thất bại vì môi giới không khám phá đúng nhu cầu ẩn của KH. KH nói "muốn nhà 3 phòng ngủ" nhưng nhu cầu thật là "muốn chỗ cho ba mẹ ở cùng".',score:1},
+    {id:'l1_05',group:'A',skill:'Tư duy giá trị',q:'Khi KH nói "em tư vấn sai, nhà đó có vấn đề", phản ứng đúng là?',opts:[{k:'A',t:'Bảo vệ bản thân — giải thích tại sao mình không sai'},{k:'B',t:'Xin lỗi ngay dù chưa biết sai ở đâu'},{k:'C',t:'Lắng nghe cụ thể vấn đề, thừa nhận nếu sai, đề xuất giải pháp'},{k:'D',t:'Chuyển chủ đề sang căn nhà khác'}],correct:'C',explain:'Phản ứng chuyên nghiệp = Lắng nghe → Thừa nhận → Giải pháp. Không bảo vệ bản thân khi chưa hiểu rõ vấn đề. Không xin lỗi mù quáng. Tập trung vào giải pháp.',score:1},
+    // NHÓM B: KỸ NĂNG KHÁM PHÁ KH
+    {id:'l1_06',group:'B',skill:'Đặt câu hỏi mở',q:'Câu hỏi nào tốt nhất để mở đầu cuộc trò chuyện với KH mới?',opts:[{k:'A',t:'"Anh/chị đang tìm nhà bao nhiêu tiền?"'},{k:'B',t:'"Anh/chị đang tìm nhà ở khu nào?"'},{k:'C',t:'"Điều gì quan trọng nhất với anh/chị khi chọn nhà?"'},{k:'D',t:'"Anh/chị có thể mua nhà ngay bây giờ không?"'}],correct:'C',explain:'Câu hỏi về GIÁ TRỊ mở ra toàn bộ bức tranh nhu cầu của KH. Câu hỏi về giá/khu vực chỉ thu thập thông tin bề mặt. "Điều quan trọng nhất" khám phá motivation thật sự.',score:1},
+    {id:'l1_07',group:'B',skill:'Lắng nghe chủ động',q:'Khi KH nói "tôi muốn nhà gần trường học", bước tiếp theo là?',opts:[{k:'A',t:'Gợi ý ngay các khu vực gần trường'},{k:'B',t:'Hỏi thêm: "Anh/chị đang nghĩ đến trường nào cụ thể? Và bé mấy tuổi?"'},{k:'C',t:'Ghi chú lại và chuyển sang câu hỏi về ngân sách'},{k:'D',t:'Giải thích các trường tốt ở từng khu vực'}],correct:'B',explain:'Lắng nghe chủ động = Nghe → Đào sâu → Xác nhận. Không nhảy vào giải pháp ngay. Câu hỏi "trường nào + bé mấy tuổi" tiết lộ cả timeline mua nhà và độ ưu tiên.',score:1},
+    {id:'l1_08',group:'B',skill:'Phân tích tâm lý',q:'KH xem nhà 5 lần không chốt, luôn nói "để suy nghĩ thêm". Nguyên nhân khả năng cao nhất là?',opts:[{k:'A',t:'Họ chưa tìm được nhà phù hợp'},{k:'B',t:'Họ chưa đủ tiền'},{k:'C',t:'Họ có lo ngại chưa được giải quyết — pháp lý, vị trí, hoặc quyết định của người thứ 3'},{k:'D',t:'Họ đang chờ giá giảm'}],correct:'C',explain:'"Để suy nghĩ thêm" = có objection chưa được nói ra. Thường là: chưa thuyết phục được người ra quyết định (vợ/chồng/bố mẹ), lo ngại pháp lý chưa dám hỏi thẳng, hoặc không đủ ngân sách nhưng xấu hổ nói.',score:1},
+    {id:'l1_09',group:'B',skill:'Xác định người quyết định',q:'Khi KH đi xem nhà một mình, bạn nên làm gì?',opts:[{k:'A',t:'Tư vấn bình thường như thể họ có thể quyết định ngay'},{k:'B',t:'Hỏi: "Anh/chị thường bàn bạc với ai trước khi ra quyết định lớn?"'},{k:'C',t:'Đề nghị họ đưa người thân đến xem cùng lần sau'},{k:'D',t:'Cả B và C đều đúng'}],correct:'D',explain:'Xác định người ra quyết định thật sự là bước quan trọng. Nếu vợ/chồng không có mặt, mọi thỏa thuận đều tạm thời. Vừa hỏi để biết, vừa đề nghị họ đến cùng lần sau.',score:1},
+    {id:'l1_10',group:'B',skill:'Timeline mua',q:'Cách nào tốt nhất để xác định KH có thật sự muốn mua không?',opts:[{k:'A',t:'Hỏi: "Anh/chị có đủ tiền mặt không?"'},{k:'B',t:'Hỏi: "Anh/chị đang xem ở những chỗ nào khác?"'},{k:'C',t:'Hỏi: "Nếu tìm được căn hoàn hảo hôm nay, anh/chị có thể đặt cọc trong tuần này không?"'},{k:'D',t:'Đề nghị họ đặt cọc 10 triệu để giữ chỗ'}],correct:'C',explain:'Câu hỏi về "đặt cọc trong tuần này" lộ ra ngay: (1) Tài chính đã sẵn sàng chưa, (2) Quyết tâm thật sự, (3) Rào cản cuối cùng. Người thật sự muốn mua sẽ trả lời rõ ràng.',score:1},
+    // NHÓM C: KỸ NĂNG XỬ LÝ PHẢN ĐỐI
+    {id:'l1_11',group:'C',skill:'Xử lý giá cao',q:'KH nói "nhà này đắt quá". Phản hồi hiệu quả nhất là?',opts:[{k:'A',t:'"Anh/chị thấy đắt so với cái gì ạ?"'},{k:'B',t:'"Giá này đã là giá tốt nhất khu vực rồi ạ"'},{k:'C',t:'"Để em xin chủ giảm giá xem thế nào"'},{k:'D',t:'"Đắt nhưng mà chất lượng xứng đáng"'}],correct:'A',explain:'"Đắt so với cái gì?" là câu hỏi vàng. KH nói đắt vì: (1) So với căn khác họ xem, (2) So với ngân sách, (3) So với kỳ vọng giá trị. Biết được lý do mới xử lý được đúng.',score:1},
+    {id:'l1_12',group:'C',skill:'Xử lý chần chừ',q:'KH nói "để tháng sau mua, lúc đó thị trường sẽ rõ hơn". Bạn làm gì?',opts:[{k:'A',t:'Đồng ý và hẹn gặp lại tháng sau'},{k:'B',t:'Giải thích tại sao mua ngay bây giờ tốt hơn'},{k:'C',t:'Hỏi: "Điều gì khiến anh/chị nghĩ tháng sau thị trường sẽ thuận lợi hơn?"'},{k:'D',t:'Tạo urgency: "Căn này sắp có người khác mua rồi"'}],correct:'C',explain:'Hỏi lý do cụ thể của sự chần chừ. Không phải thuyết phục bằng lý lẽ của bạn — mà khai thác lý lẽ của họ để tự phản biện. Tạo urgency giả tạo phá hủy niềm tin.',score:1},
+    {id:'l1_13',group:'C',skill:'Xử lý pháp lý',q:'KH lo lắng về pháp lý căn nhà. Bước đầu tiên bạn làm là?',opts:[{k:'A',t:'Trấn an: "Pháp lý căn này hoàn toàn OK ạ"'},{k:'B',t:'Đưa ra tất cả giấy tờ bạn có'},{k:'C',t:'Hỏi cụ thể: "Anh/chị đang lo về vấn đề pháp lý nào ạ?"'},{k:'D',t:'Đề nghị họ tự đến UBND kiểm tra'}],correct:'C',explain:'Lo ngại pháp lý rất đa dạng: sổ hồng, quy hoạch, tranh chấp, xây dựng trái phép... Phải biết họ lo cái gì cụ thể mới giải quyết được đúng. Trấn an chung chung không hiệu quả.',score:1},
+    {id:'l1_14',group:'C',skill:'Đọc ngôn ngữ cơ thể',q:'KH xem nhà và liên tục chụp ảnh nhiều góc, hỏi chi tiết về điện nước. Điều này có nghĩa là?',opts:[{k:'A',t:'Họ đang so sánh với căn khác'},{k:'B',t:'Họ đang có interest cao — đang "sống thử" trong không gian này bằng tâm trí'},{k:'C',t:'Họ là người cẩn thận, chưa chắc có ý định mua'},{k:'D',t:'Họ đang tìm lý do để từ chối'}],correct:'B',explain:'Chụp ảnh nhiều + hỏi chi tiết vận hành = tín hiệu mua mạnh. Họ đang hình dung cuộc sống trong nhà đó. Đây là lúc chuyển từ "giới thiệu" sang "giúp họ quyết định".',score:1},
+    {id:'l1_15',group:'C',skill:'Xử lý so sánh',q:'KH nói "căn bên cạnh rẻ hơn 300 triệu". Bạn phản hồi thế nào?',opts:[{k:'A',t:'Giải thích tại sao căn này tốt hơn căn bên cạnh'},{k:'B',t:'"Anh/chị đã xem căn đó chưa? Và anh/chị thấy điểm khác biệt lớn nhất là gì?"'},{k:'C',t:'Đề nghị chủ nhà giảm giá 200 triệu để cạnh tranh'},{k:'D',t:'"300 triệu không nhiều so với giá trị căn này ạ"'}],correct:'B',explain:'Hỏi để KH tự so sánh — họ sẽ tự nhận ra sự khác biệt và giải thích cho bạn tại sao căn này đáng giá hơn. Tự thuyết phục bao giờ cũng hiệu quả hơn bị thuyết phục.',score:1},
+    // NHÓM D: KỸ NĂNG CHỐT DEAL
+    {id:'l1_16',group:'D',skill:'Nhận biết tín hiệu chốt',q:'Tín hiệu nào mạnh nhất cho thấy KH đã sẵn sàng chốt?',opts:[{k:'A',t:'Họ hỏi về giá'},{k:'B',t:'Họ hỏi: "Nếu mua thì thủ tục như thế nào?"'},{k:'C',t:'Họ xem nhà lần thứ 2'},{k:'D',t:'Họ bảo rằng họ thích căn này'}],correct:'B',explain:'Hỏi về thủ tục = đang hình dung quá trình sở hữu. Đây là tín hiệu chốt mạnh nhất — họ không còn hỏi "có nên mua không" mà đang hỏi "mua như thế nào". Chuyển ngay sang bước chốt.',score:1},
+    {id:'l1_17',group:'D',skill:'Câu chốt hiệu quả',q:'Câu chốt deal nào hiệu quả nhất trong tình huống KH đang phân vân giữa 2 căn?',opts:[{k:'A',t:'"Anh/chị nên chốt căn này vì nó tốt hơn"'},{k:'B',t:'"Nếu không mua bây giờ sẽ mất cơ hội"'},{k:'C',t:'"Trong 2 căn này, căn nào phù hợp hơn với kế hoạch của anh/chị?"'},{k:'D',t:'"Đặt cọc căn nào trước đi, sau có thể đổi ý"'}],correct:'C',explain:'Câu hỏi lựa chọn (A hoặc B thay vì Có hoặc Không) là kỹ thuật chốt kinh điển. KH đang chọn TRONG 2 CĂN của bạn, không phải chọn CÓ MUA KHÔNG. Tâm lý "chọn cái tốt hơn" thay "có nên mua không".',score:1},
+    {id:'l1_18',group:'D',skill:'Xử lý sau chốt',q:'Sau khi KH đồng ý đặt cọc, việc quan trọng nhất cần làm ngay là gì?',opts:[{k:'A',t:'Cảm ơn và giải thích thủ tục đặt cọc'},{k:'B',t:'Xác nhận lại quyết định của KH và củng cố niềm tin vào quyết định đó'},{k:'C',t:'Liên hệ chủ nhà báo tin'},{k:'D',t:'Tính hoa hồng và lên kế hoạch chi tiêu'}],correct:'B',explain:'Sau chốt = buyer\'s remorse (hối tiếc sau mua) có thể xảy ra. Việc đầu tiên: củng cố quyết định — "Anh/chị đã ra quyết định đúng đắn. Căn này có [điểm mạnh phù hợp nhu cầu]. Em sẽ đồng hành đến khi nhận nhà."',score:1},
+    {id:'l1_19',group:'D',skill:'Pipeline quản lý',q:'Tỷ lệ chuyển đổi từ KH quan tâm → đặt cọc của bạn là 10%. Để cải thiện, bước nào quan trọng nhất?',opts:[{k:'A',t:'Tăng số lượng KH mới tiếp cận'},{k:'B',t:'Cải thiện kỹ năng khám phá nhu cầu ở giai đoạn đầu'},{k:'C',t:'Giảm giá nhà để dễ chốt hơn'},{k:'D',t:'Tăng số lần follow-up mỗi KH'}],correct:'B',explain:'Điểm rò rỉ lớn nhất trong pipeline thường ở giai đoạn KHÁM PHÁ. Nếu không hiểu đúng nhu cầu → giới thiệu sai nhà → KH không có lý do để chốt. Fix ở đầu phễu, không phải cuối.',score:1},
+    {id:'l1_20',group:'D',skill:'Tư duy số liệu',q:'Để đạt 2 deal/tháng với tỷ lệ chuyển đổi 10%, bạn cần bao nhiêu KH tiếp cận mỗi tháng?',opts:[{k:'A',t:'10 KH'},{k:'B',t:'20 KH'},{k:'C',t:'50 KH'},{k:'D',t:'100 KH'}],correct:'B',explain:'2 deal ÷ 10% = 20 KH cần tiếp cận. Đây là tư duy ngược từ mục tiêu. Biết con số này giúp bạn lên kế hoạch content, cold call, referral cụ thể thay vì làm việc theo cảm tính.',score:1}
+  ],
+  level2:[
+    {id:'l2_01',skill:'Xử lý tình huống thực',q:'KH: "Tôi thích căn này nhưng vợ tôi chưa đồng ý. Vợ tôi bảo khu này không an toàn cho trẻ em." Bạn làm gì?',opts:[{k:'A',t:'Giải thích khu vực này an toàn với số liệu thực tế'},{k:'B',t:'Đề nghị KH thuyết phục vợ và gặp lại sau'},{k:'C',t:'"Chị có thể đến xem cùng để em trả lời trực tiếp những băn khoăn không ạ? Và em sẽ chuẩn bị thông tin về an toàn khu vực để chị tham khảo"'},{k:'D',t:'Gợi ý căn nhà ở khu khác an toàn hơn'}],correct:'C',explain:'Người ra quyết định (vợ) chưa được thuyết phục và chưa có mặt. Không thuyết phục người không có mặt. Phải đưa người ra quyết định vào cuộc chơi + chuẩn bị data để đánh trực tiếp vào objection "không an toàn".',score:1},
+    {id:'l2_02',skill:'Xử lý giá phút chót',q:'KH đã đồng ý mua, đang làm hợp đồng thì nói: "Tôi nghĩ lại, giảm thêm 200 triệu thì tôi ký ngay." Bạn làm gì?',opts:[{k:'A',t:'Đồng ý giảm để không mất deal'},{k:'B',t:'Kiên quyết giữ giá và giải thích lại giá trị'},{k:'C',t:'Hỏi: "Anh/chị có thể chia sẻ điều gì khiến anh/chị đưa ra con số 200 triệu không? Để em hiểu mình có thể làm gì giúp anh/chị"'},{k:'D',t:'Nói sẽ hỏi chủ nhà và hẹn trả lời sau'}],correct:'C',explain:'Last-minute negotiation thường có lý do ẩn: ngân sách thật sự chỉ đến đó, hoặc họ đang test xem bạn có thể nhân nhượng không. Phải hiểu lý do trước khi nhượng bộ bất kỳ điều gì.',score:1},
+    {id:'l2_03',skill:'Quản lý kỳ vọng',q:'KH muốn nhà 4 phòng ngủ, khu trung tâm, dưới 5 tỷ. Thực tế không có căn nào đáp ứng đủ 3 tiêu chí. Bạn làm gì?',opts:[{k:'A',t:'Tìm căn gần nhất và hy vọng KH chấp nhận'},{k:'B',t:'Nói thẳng: "Với ngân sách này ở khu vực đó thì tối đa 3 phòng ngủ ạ"'},{k:'C',t:'Hỏi: "Trong 3 tiêu chí này, tiêu chí nào anh/chị có thể linh hoạt nhất?" rồi giải thích thực tế thị trường'},{k:'D',t:'Đề nghị KH tăng ngân sách lên 7 tỷ'}],correct:'C',explain:'Kỳ vọng không thực tế phải được quản lý từ sớm. Nhưng không phủ nhận thẳng — hỏi để KH tự xác định priority. Sau đó giải thích thực tế thị trường dựa trên priority của họ.',score:1},
+    {id:'l2_04',skill:'Xử lý KH so sánh online',q:'KH đưa link từ trang web bất động sản và nói: "Tôi thấy giá khu này chỉ 50 triệu/m2, sao căn này 70 triệu?" Bạn làm gì?',opts:[{k:'A',t:'Giải thích tại sao căn này đáng giá 70 triệu/m2'},{k:'B',t:'Thừa nhận có sự chênh lệch và hẹn kiểm tra lại'},{k:'C',t:'"Em biết thông tin đó ạ. Anh/chị cho em biết căn đó ở địa chỉ cụ thể nào, em tra ngay tình trạng pháp lý và tại sao giá khác nhau."'},{k:'D',t:'Nói giá online thường không chính xác'}],correct:'C',explain:'Không bác bỏ thông tin KH. Không trốn tránh. Chủ động tra cứu ngay — thường sẽ tìm ra lý do hợp lý (khác diện tích, khác pháp lý, khác tầng). Nếu thật sự đắt hơn, hãy thừa nhận và giải thích giá trị thêm.',score:1},
+    {id:'l2_05',skill:'Xử lý KH cò kè',q:'KH trả giá thấp hơn 15% so với giá niêm yết. Chủ nhà không muốn giảm. Bạn làm gì để giữ 2 bên?',opts:[{k:'A',t:'Nói với KH rằng chủ không giảm và để họ quyết định'},{k:'B',t:'Tìm điểm chung: thương lượng thêm về điều khoản thanh toán, đồ nội thất, hoặc timeline thay vì chỉ tập trung vào giá'},{k:'C',t:'Khuyên chủ nên giảm giá vì thị trường đang khó'},{k:'D',t:'Để 2 bên tự thương lượng trực tiếp'}],correct:'B',explain:'Khi giá không nhúc nhích, tìm value khác để thỏa thuận: thanh toán nhanh, không cần sửa chữa, linh hoạt ngày bàn giao, tặng nội thất... Đây là vai trò sáng tạo của môi giới — không chỉ truyền tin.',score:1},
+    {id:'l2_06',skill:'Tái kích hoạt KH cũ',q:'KH từ 6 tháng trước từ chối mua. Cách nào tốt nhất để tái kích hoạt?',opts:[{k:'A',t:'Gọi điện chào hỏi và hỏi họ có muốn mua lại không'},{k:'B',t:'Gửi thông tin một căn nhà mới phù hợp với nhu cầu họ từng chia sẻ, kèm bối cảnh thị trường thay đổi'},{k:'C',t:'Gửi tin nhắn: "Bên em đang có chương trình ưu đãi đặc biệt"'},{k:'D',t:'Đợi họ tự liên hệ lại'}],correct:'B',explain:'Tái kích hoạt hiệu quả = Relevance (đúng nhu cầu) + Timing (thị trường đổi) + Value (thông tin hữu ích). Không gọi chào hỏi chung chung. Không spam chương trình ưu đãi. Cho thấy bạn vẫn nhớ nhu cầu cụ thể của họ.',score:1},
+    {id:'l2_07',skill:'Xử lý deal sắp vỡ',q:'2 ngày trước khi ký công chứng, KH báo: "Tôi đổi ý, không mua nữa." Bạn làm gì đầu tiên?',opts:[{k:'A',t:'Nhắc họ về điều khoản phạt cọc'},{k:'B',t:'Hỏi ngay: "Anh/chị có thể chia sẻ điều gì xảy ra không? Em muốn hiểu để có thể giúp"'},{k:'C',t:'Liên hệ chủ nhà báo tình hình'},{k:'D',t:'Đề nghị lùi ngày ký để KH có thêm thời gian suy nghĩ'}],correct:'B',explain:'Đừng nhảy vào giải pháp hay áp lực ngay. Hỏi để hiểu LÝ DO THẬT SỰ trước. 70% trường hợp "đổi ý" có lý do cụ thể có thể giải quyết được: tài chính, thông tin mới về nhà, mâu thuẫn gia đình...',score:1},
+    {id:'l2_08',skill:'Xây dựng trust',q:'KH mới gặp lần đầu, hỏi thẳng: "Bạn làm môi giới bao lâu rồi? Đã từng bán được nhà chưa?" Bạn trả lời thế nào nếu bạn mới vào nghề?',opts:[{k:'A',t:'Nói dối về kinh nghiệm để tạo ấn tượng'},{k:'B',t:'"Em mới vào nghề được 6 tháng nhưng em cam kết sẽ làm việc với sự chuẩn bị kỹ lưỡng nhất. Em có thể chia sẻ với anh/chị những gì em đã làm cho các KH gần đây..."'},{k:'C',t:'Lảng tránh câu hỏi và chuyển sang giới thiệu nhà'},{k:'D',t:'Xin lỗi vì chưa có kinh nghiệm và đề nghị giảm phí'}],correct:'B',explain:'Trung thực về kinh nghiệm + bù đắp bằng commitment và bằng chứng cụ thể. Không nói dối — sẽ bị phát hiện sau. Không xin lỗi về kinh nghiệm — thay vào đó, chuyển sang những gì bạn CÓ THỂ làm.',score:1},
+    {id:'l2_09',skill:'Đàm phán win-win',q:'Chủ nhà muốn bán 6 tỷ. KH chỉ có 5.5 tỷ. Cách nào sáng tạo nhất để close deal?',opts:[{k:'A',t:'Yêu cầu chủ giảm 500 triệu'},{k:'B',t:'Yêu cầu KH tăng ngân sách'},{k:'C',t:'Khám phá: chủ nhà cần gì NGOÀI tiền? (thời gian bàn giao linh hoạt, thanh toán nhanh, không sửa chữa...) và KH có thể offer gì?'},{k:'D',t:'Đề nghị chia đôi phần chênh lệch'}],correct:'C',explain:'Đàm phán sáng tạo = tìm ra điều mỗi bên THẬT SỰ cần. Chủ có thể cần bàn giao nhanh hơn là giá cao. KH có thể thanh toán nhanh bù cho giá. Môi giới tài ba tìm ra điểm giao thoa.',score:1},
+    {id:'l2_10',skill:'Referral chủ động',q:'KH vừa chốt deal thành công và rất hài lòng. Thời điểm nào tốt nhất để xin referral?',opts:[{k:'A',t:'Ngay sau khi ký hợp đồng đặt cọc'},{k:'B',t:'Sau khi bàn giao nhà xong và họ đã ổn định'},{k:'C',t:'Trong vòng 48-72h sau khi ký công chứng — khi cảm xúc tích cực đang cao nhất'},{k:'D',t:'Sau 1 tháng khi họ đã ở quen nhà mới'}],correct:'C',explain:'48-72h sau công chứng = đỉnh cảm xúc tích cực. Họ hào hứng kể với bạn bè về nhà mới. Đây là lúc xin referral tự nhiên nhất: "Anh/chị có ai trong circle đang tìm nhà không? Em muốn phục vụ người thân của anh/chị với cùng sự tận tâm."',score:1}
+  ],
+  level3:[
+    {id:'l3_01',skill:'Tự phản tư',q:'Nhìn lại 3 deal gần nhất bạn KHÔNG chốt được — điểm chung nào bạn nhận ra ở bản thân (không phải ở KH hay thị trường)?',placeholder:'Hãy trung thực với bản thân. Đây là bước đầu tiên để thay đổi thật sự...'},
+    {id:'l3_02',skill:'Điểm mạnh cốt lõi',q:'Điều gì bạn làm TỐT HƠN hầu hết các môi giới khác? Và tại sao bạn chưa khai thác hết điểm mạnh đó?',placeholder:'Nghĩ về feedback từ KH, từ đồng nghiệp, hoặc những lúc bạn cảm thấy tự tin nhất...'},
+    {id:'l3_03',skill:'Kế hoạch cải thiện',q:'Dựa trên kết quả bài test này, 1 kỹ năng bạn sẽ cam kết cải thiện trong 30 ngày tới là gì? Và bạn sẽ làm gì cụ thể mỗi ngày?',placeholder:'Cam kết cụ thể: kỹ năng gì, hành động gì mỗi ngày, cách đo lường kết quả...'}
+  ]
+};
+
+// Nhóm kỹ năng để phân tích
+const QUIZ_SKILL_GROUPS={
+  'Tư duy nền tảng':['l1_01','l1_02','l1_03','l1_04','l1_05'],
+  'Khám phá KH':['l1_06','l1_07','l1_08','l1_09','l1_10'],
+  'Xử lý phản đối':['l1_11','l1_12','l1_13','l1_14','l1_15'],
+  'Chốt deal':['l1_16','l1_17','l1_18','l1_19','l1_20'],
+  'Tình huống thực':['l2_01','l2_02','l2_03','l2_04','l2_05','l2_06','l2_07','l2_08','l2_09','l2_10']
+};
+
+let quizState={
+  started:false,
+  currentLevel:0,   // 0=L1, 1=L2, 2=L3
+  currentQ:0,       // index trong level hiện tại
+  answers:{},       // {questionId: selectedKey}
+  l3Answers:{},     // {questionId: text}
+  score:0,
+  maxScore:30,
+  showingExplain:false
+};
+
+function startQuiz(){
+  quizState={started:true,currentLevel:0,currentQ:0,answers:{},l3Answers:{},score:0,maxScore:30,showingExplain:false};
+  document.getElementById('quizStartWrap').style.display='none';
+  document.getElementById('quizResultArea').style.display='none';
+  renderQuizQuestion();
+}
+
+function getQByState(){
+  const levels=[QUIZ_DATA.level1,QUIZ_DATA.level2,QUIZ_DATA.level3];
+  const level=levels[quizState.currentLevel];
+  return level?level[quizState.currentQ]:null;
+}
+
+function getTotalQ(){return QUIZ_DATA.level1.length+QUIZ_DATA.level2.length+QUIZ_DATA.level3.length;}
+function getGlobalQIdx(){
+  const offs=[0,QUIZ_DATA.level1.length,QUIZ_DATA.level1.length+QUIZ_DATA.level2.length];
+  return offs[quizState.currentLevel]+quizState.currentQ;
+}
+
+function renderQuizQuestion(){
+  const q=getQByState();
+  if(!q){
+    // Chuyển level
+    if(quizState.currentLevel<2){
+      quizState.currentLevel++;
+      quizState.currentQ=0;
+      updQuizLevelTabs();
+      renderQuizQuestion();
+    } else {
+      showQuizResult();
+    }
+    return;
+  }
+  quizState.showingExplain=false;
+  updQuizProgress();
+  updQuizLevelTabs();
+
+  const isL3=quizState.currentLevel===2;
+  const lvlColors=['var(--bl)','var(--pu)','var(--gr)'];
+  const lvlLabels=['Level 1 · Nhận thức','Level 2 · Tình huống','Level 3 · Tự phản tư'];
+  const lvlBg=['rgba(76,156,245,.12)','rgba(156,110,245,.12)','rgba(62,207,142,.12)'];
+  const lc=lvlColors[quizState.currentLevel];
+  const ll=lvlLabels[quizState.currentLevel];
+  const lb=lvlBg[quizState.currentLevel];
+
+  const area=document.getElementById('quizQArea');
+  if(!area)return;
+
+  if(isL3){
+    // Level 3: text area
+    const saved=quizState.l3Answers[q.id]||'';
+    area.innerHTML=`<div class="quiz-q-card">
+      <div class="quiz-q-num">
+        <span style="font-family:'Space Mono',monospace;font-weight:700;color:${lc}">Câu ${getGlobalQIdx()+1}/${getTotalQ()}</span>
+        <span class="quiz-q-level" style="background:${lb};color:${lc}">${ll}</span>
+        <span style="font-size:.62rem;color:var(--t3)">${q.skill}</span>
+      </div>
+      <div class="quiz-q-text">${q.q}</div>
+      <textarea class="quiz-textarea" id="quizL3Text" placeholder="${q.placeholder||'Nhập câu trả lời của bạn...'}" rows="5">${saved}</textarea>
+      <div class="quiz-nav-row">
+        ${quizState.currentQ>0||quizState.currentLevel>0?`<button class="btn btn-s btn-sm" onclick="quizPrev()">← Quay lại</button>`:'<div></div>'}
+        <button class="btn btn-p btn-sm" onclick="quizL3Next()">
+          ${getGlobalQIdx()<getTotalQ()-1?'Tiếp theo →':'🎯 Xem kết quả'}
+        </button>
+      </div>
+    </div>`;
+  } else {
+    // Level 1 & 2: trắc nghiệm
+    const answered=quizState.answers[q.id];
+    area.innerHTML=`<div class="quiz-q-card" id="quizCard">
+      <div class="quiz-q-num">
+        <span style="font-family:'Space Mono',monospace;font-weight:700;color:${lc}">Câu ${getGlobalQIdx()+1}/${getTotalQ()}</span>
+        <span class="quiz-q-level" style="background:${lb};color:${lc}">${ll}</span>
+        <span style="font-size:.62rem;color:var(--t3)">${q.skill}</span>
+      </div>
+      <div class="quiz-q-text">${q.q}</div>
+      <div class="quiz-opts">
+        ${q.opts.map(o=>{
+          let cls='quiz-opt';
+          if(answered){
+            if(o.k===q.correct)cls+=' correct';
+            else if(o.k===answered)cls+=' wrong';
+          } else if(quizState.answers[q.id]===o.k)cls+=' selected';
+          return`<div class="${cls}" onclick="${answered?'':'selectQuizOpt(\''+q.id+'\',\''+o.k+'\')'}" id="qopt_${o.k}">
+            <div class="quiz-opt-key">${o.k}</div>
+            <div>${o.t}</div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="quiz-explain" id="quizExplain" ${answered?'style="display:block"':''}>
+        ${answered?`<strong style="color:${answered===q.correct?'var(--gr)':'var(--rd)'}">${answered===q.correct?'✅ Chính xác!':'❌ Chưa đúng.'}</strong> ${q.explain}`:''}
+      </div>
+      <div class="quiz-nav-row">
+        ${quizState.currentQ>0||quizState.currentLevel>0?`<button class="btn btn-s btn-sm" onclick="quizPrev()">← Quay lại</button>`:'<div></div>'}
+        ${answered?`<button class="btn btn-p btn-sm" onclick="quizNext()">Tiếp theo →</button>`:`<div style="font-size:.72rem;color:var(--t3)">Chọn đáp án để tiếp tục</div>`}
+      </div>
+    </div>`;
+  }
+}
+
+function selectQuizOpt(qid,key){
+  const q=getQByState();
+  if(!q||quizState.answers[q.id])return; // đã trả lời rồi
+  quizState.answers[qid]=key;
+  if(key===q.correct)quizState.score+=q.score||1;
+  // Highlight options
+  q.opts.forEach(o=>{
+    const el=document.getElementById('qopt_'+o.k);
+    if(!el)return;
+    if(o.k===q.correct)el.classList.add('correct');
+    else if(o.k===key)el.classList.add('wrong');
+    el.style.cursor='default';
+  });
+  // Show explain
+  const exp=document.getElementById('quizExplain');
+  if(exp){
+    exp.innerHTML=`<strong style="color:${key===q.correct?'var(--gr)':'var(--rd)'}">${key===q.correct?'✅ Chính xác!':'❌ Chưa đúng.'}</strong> ${q.explain}`;
+    exp.classList.add('show');
+  }
+  // Show next button
+  const nav=document.querySelector('.quiz-nav-row');
+  if(nav){
+    const lastBtn=nav.querySelector('div:last-child');
+    if(lastBtn&&lastBtn.tagName==='DIV')
+      lastBtn.outerHTML=`<button class="btn btn-p btn-sm" onclick="quizNext()">Tiếp theo →</button>`;
+  }
+  updQuizProgress();
+  updScoreDisplay();
+}
+
+function quizNext(){
+  const levels=[QUIZ_DATA.level1,QUIZ_DATA.level2,QUIZ_DATA.level3];
+  const level=levels[quizState.currentLevel];
+  if(quizState.currentQ<level.length-1){
+    quizState.currentQ++;
+    renderQuizQuestion();
+  } else if(quizState.currentLevel<2){
+    quizState.currentLevel++;
+    quizState.currentQ=0;
+    updQuizLevelTabs();
+    renderQuizQuestion();
+  } else {
+    showQuizResult();
+  }
+}
+
+function quizL3Next(){
+  const ta=document.getElementById('quizL3Text');
+  const q=getQByState();
+  if(q&&ta)quizState.l3Answers[q.id]=ta.value;
+  const level=QUIZ_DATA.level3;
+  if(quizState.currentQ<level.length-1){
+    quizState.currentQ++;
+    renderQuizQuestion();
+  } else {
+    showQuizResult();
+  }
+}
+
+function quizPrev(){
+  if(quizState.currentQ>0){
+    quizState.currentQ--;
+  } else if(quizState.currentLevel>0){
+    quizState.currentLevel--;
+    const levels=[QUIZ_DATA.level1,QUIZ_DATA.level2,QUIZ_DATA.level3];
+    quizState.currentQ=levels[quizState.currentLevel].length-1;
+  }
+  updQuizLevelTabs();
+  renderQuizQuestion();
+}
+
+function updQuizProgress(){
+  const total=getTotalQ();
+  const cur=getGlobalQIdx();
+  const pct=Math.round((cur/total)*100);
+  const fill=document.getElementById('quizProgressFill');
+  if(fill)fill.style.width=pct+'%';
+  const counter=document.getElementById('quizQCounter');
+  if(counter)counter.textContent=`Câu ${cur+1}/${total}`;
+  updScoreDisplay();
+}
+
+function updScoreDisplay(){
+  const el=document.getElementById('quizScoreDisplay');
+  const lv=quizState.currentLevel;
+  if(el)el.textContent=lv<2?`Điểm: ${quizState.score}/30`:'Hoàn thiện phản tư';
+}
+
+function updQuizLevelTabs(){
+  [0,1,2].forEach(i=>{
+    const tab=document.getElementById('qltab'+i);
+    if(!tab)return;
+    tab.className='quiz-ltab';
+    if(i<quizState.currentLevel)tab.classList.add('done');
+    else if(i===quizState.currentLevel)tab.classList.add('active');
+  });
+}
+
+function showQuizResult(){
+  document.getElementById('quizQArea').innerHTML='';
+  document.getElementById('quizProgressFill').style.width='100%';
+  document.getElementById('quizQCounter').textContent='Hoàn thành!';
+  [0,1,2].forEach(i=>{const t=document.getElementById('qltab'+i);if(t){t.className='quiz-ltab done';}});
+
+  const score=quizState.score;
+  const pct=Math.round(score/30*100);
+
+  // Rating
+  const rating=score>=27?{label:'🏆 Chuyên gia Elite',color:'var(--gold)',desc:'Top 5% môi giới. Tư duy và kỹ năng ở mức xuất sắc. Tập trung vào scale và mentoring người khác.'}
+    :score>=22?{label:'⭐ Chuyên nghiệp cao',color:'var(--gr)',desc:'Nền tảng vững, kỹ năng tốt. Cần mài giũa thêm ở những tình huống phức tạp.'}
+    :score>=16?{label:'📈 Đang phát triển',color:'var(--bl)',desc:'Có tiềm năng rõ ràng. Tập trung vào 1-2 kỹ năng yếu nhất để breakthrough.'}
+    :score>=10?{label:'🌱 Cần củng cố nền tảng',color:'var(--ac)',desc:'Nền tảng cần được xây dựng lại. Đầu tư vào đào tạo cơ bản trước khi scaling.'}
+    :{label:'❓ Mới bắt đầu',color:'var(--rd)',desc:'Hãy coi đây là điểm xuất phát. Mỗi ngày cải thiện 1% và theo dõi tiến trình.'};
+
+  // Skill group analysis
+  const skillScores={};
+  Object.entries(QUIZ_SKILL_GROUPS).forEach(([group,ids])=>{
+    const maxPts=ids.length;
+    const gotPts=ids.filter(id=>quizState.answers[id]===[...QUIZ_DATA.level1,...QUIZ_DATA.level2].find(q=>q.id===id)?.correct).length;
+    skillScores[group]={got:gotPts,max:maxPts,pct:Math.round(gotPts/maxPts*100)};
+  });
+
+  // Tìm điểm yếu nhất
+  const weakest=Object.entries(skillScores).sort((a,b)=>a[1].pct-b[1].pct).slice(0,2).map(e=>e[0]);
+  const strongest=Object.entries(skillScores).sort((a,b)=>b[1].pct-a[1].pct).slice(0,1).map(e=>e[0]);
+
+  // L3 answers summary
+  const l3Html=QUIZ_DATA.level3.map(q=>
+    quizState.l3Answers[q.id]?`<div style="margin-bottom:12px"><div style="font-size:.72rem;font-weight:700;color:var(--gr);margin-bottom:4px">💭 ${q.skill}</div><div style="font-size:.78rem;color:var(--t2);line-height:1.65;background:var(--bg3);border-radius:8px;padding:9px 11px;border-left:3px solid var(--gr)">${quizState.l3Answers[q.id]}</div></div>`:''
+  ).join('');
+
+  const rptId='quiz_rpt_'+Date.now();
+  document.getElementById('quizResultArea').style.display='block';
+  document.getElementById('quizResultArea').innerHTML=`
+    <div class="quiz-result">
+      <div class="quiz-result-score" style="color:${rating.color}">${score}<span style="font-size:1.5rem;color:var(--t3)">/30</span></div>
+      <div class="quiz-result-label" style="color:${rating.color}">${rating.label}</div>
+      <div style="font-size:.8rem;color:rgba(255,255,255,.55);max-width:500px;margin:0 auto 20px;line-height:1.7">${rating.desc}</div>
+      <div style="background:rgba(255,255,255,.05);border-radius:10px;height:8px;max-width:400px;margin:0 auto 24px;overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,${rating.color},var(--pu));border-radius:10px;transition:width 1s"></div>
+      </div>
+
+      <div class="quiz-skill-grid">
+        ${Object.entries(skillScores).map(([g,s])=>{
+          const isWeak=weakest.includes(g);
+          const isStrong=strongest.includes(g);
+          const barColor=s.pct>=80?'var(--gr)':s.pct>=60?'var(--bl)':s.pct>=40?'var(--ac)':'var(--rd)';
+          return`<div class="quiz-skill-card">
+            <div style="font-size:.72rem;font-weight:700;color:rgba(255,255,255,.75);margin-bottom:2px">
+              ${isStrong?'💪 ':''}${isWeak?'⚠️ ':''}${g}
+            </div>
+            <div style="font-size:.68rem;color:rgba(255,255,255,.35);margin-bottom:6px">${s.got}/${s.max} câu đúng</div>
+            <div class="quiz-skill-bar"><div class="quiz-skill-fill" style="width:${s.pct}%;background:${barColor}"></div></div>
+            ${isWeak?`<div style="font-size:.63rem;color:var(--ac);margin-top:5px">⚡ Ưu tiên cải thiện</div>`:''}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    ${weakest.length?`<div class="card" style="margin-top:14px">
+      <div class="ctit"><span class="dot" style="background:var(--ac)"></span>🎯 Kế hoạch cải thiện 30 ngày</div>
+      ${weakest.map((w,i)=>`<div style="background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.2);border-radius:10px;padding:12px 14px;margin-bottom:9px">
+        <div style="font-weight:700;font-size:.82rem;color:var(--ac);margin-bottom:5px">Tuần ${i*2+1}-${i*2+2}: ${w}</div>
+        <div style="font-size:.76rem;color:var(--t2);line-height:1.65">
+          ${w==='Tư duy nền tảng'?'• Đọc lại 3 deal thất bại gần nhất và ghi ra 1 điều bạn sẽ làm khác<br>• Hàng ngày hỏi: "Hôm nay mình phục vụ KH hay phục vụ hoa hồng?"':
+            w==='Khám phá KH'?'• Thực hành SPIN questions với 5 KH tiếp theo<br>• Sau mỗi cuộc gặp, ghi lại: "Nhu cầu ẩn của KH này là gì?"':
+            w==='Xử lý phản đối'?'• Lập danh sách 10 objection phổ biến và câu trả lời chuẩn<br>• Role-play xử lý phản đối với đồng nghiệp 15 phút/ngày':
+            w==='Chốt deal'?'• Học thuộc 5 câu chốt deal và áp dụng trong tuần này<br>• Track tín hiệu mua của từng KH và đánh giá timing':
+            '• Xem lại 5 tình huống thực từ bài test và viết lại cách bạn sẽ xử lý<br>• Tìm mentor để role-play các tình huống khó'}
+        </div>
+      </div>`).join('')}
+    </div>`:''}
+
+    ${l3Html?`<div class="card" style="margin-top:14px">
+      <div class="ctit"><span class="dot" style="background:var(--gr)"></span>💭 Tự phản tư của bạn</div>
+      ${l3Html}
+    </div>`:''}
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+      <button class="btn btn-p btn-sm" id="${rptId}" onclick="cpTxt(buildQuizReport())">📋 Copy báo cáo</button>
+      <button class="btn btn-g btn-sm" onclick="saveQuizToHistory()">💾 Lưu lịch sử</button>
+      <button class="btn btn-s btn-sm" onclick="resetQuiz()">🔄 Làm lại bài test</button>
+    </div>`;
+
+  // Scroll to result
+  setTimeout(()=>document.getElementById('quizResultArea').scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+
+function buildQuizReport(){
+  const score=quizState.score;
+  let r=`TRẮC NGHIỆM TƯ DUY & KỸ NĂNG CHỐT DEAL\n${'='.repeat(44)}\nNgày: ${new Date().toLocaleString('vi-VN')}\nĐiểm: ${score}/30\n\n`;
+  r+=`KẾT QUẢ THEO KỸ NĂNG:\n${'─'.repeat(30)}\n`;
+  Object.entries(QUIZ_SKILL_GROUPS).forEach(([g,ids])=>{
+    const got=ids.filter(id=>quizState.answers[id]===[...QUIZ_DATA.level1,...QUIZ_DATA.level2].find(q=>q.id===id)?.correct).length;
+    r+=`${g}: ${got}/${ids.length}\n`;
+  });
+  r+=`\nTỰ PHẢN TƯ:\n${'─'.repeat(30)}\n`;
+  QUIZ_DATA.level3.forEach(q=>{if(quizState.l3Answers[q.id])r+=`${q.skill}:\n${quizState.l3Answers[q.id]}\n\n`;});
+  r+=`${'='.repeat(44)}\nAUTO PRO CONTENT BĐS v8 · #aihockiemtien`;
+  return r;
+}
+
+function saveQuizToHistory(){
+  try{
+    const hist=JSON.parse(localStorage.getItem('bds_quiz_history')||'[]');
+    hist.unshift({date:new Date().toISOString(),score:quizState.score,answers:{...quizState.answers}});
+    if(hist.length>10)hist.pop();
+    localStorage.setItem('bds_quiz_history',JSON.stringify(hist));
+    toast('✅ Đã lưu kết quả vào lịch sử!');
+  }catch(e){toast('⚠️ Không thể lưu!');}
+}
+
+function resetQuiz(){
+  quizState={started:false,currentLevel:0,currentQ:0,answers:{},l3Answers:{},score:0,maxScore:30,showingExplain:false};
+  document.getElementById('quizResultArea').style.display='none';
+  document.getElementById('quizQArea').innerHTML='';
+  document.getElementById('quizStartWrap').style.display='block';
+  document.getElementById('quizProgressFill').style.width='0%';
+  document.getElementById('quizQCounter').textContent='Câu 1/33';
+  document.getElementById('quizScoreDisplay').textContent='Điểm: 0/30';
+  [0,1,2].forEach(i=>{const t=document.getElementById('qltab'+i);if(t){t.className='quiz-ltab'+(i===0?' active':'');}});
+  updQuizLevelTabs();
+}
+
+// ===================== SPARRING DOJO =====================
+
+// ── Belt system ──
+const DOJO_BELTS=[
+  {name:'Đai Trắng',icon:'🥋',color:'#fff',xpMin:0,xpMax:100},
+  {name:'Đai Vàng',icon:'🟡',color:'#f5a623',xpMin:100,xpMax:300},
+  {name:'Đai Xanh',icon:'🔵',color:'#4c9cf5',xpMin:300,xpMax:600},
+  {name:'Đai Đỏ',icon:'🔴',color:'#ef5350',xpMin:600,xpMax:1000},
+  {name:'Đai Đen',icon:'⚫',color:'#1a1e2e',xpMin:1000,xpMax:9999}
+];
+
+// ── Scenario database ──
+const DOJO_SCENARIOS={
+  objection:[
+    {id:'obj01',diff:'easy',sit:'KH xem nhà lần 2, có vẻ thích nhưng đột nhiên nói:',kh:'"Giá này cao quá, bên kia rẻ hơn 500 triệu."',opts:[{k:'A',t:'Giải thích tại sao căn này xứng đáng với mức giá đó',correct:false,fb:'Giải thích 1 chiều ít hiệu quả. KH cần tự đi đến kết luận.'},
+    {k:'B',t:'"Anh/chị đã xem căn bên kia chưa? Em muốn biết anh/chị so sánh dựa trên điểm gì?"',correct:true,fb:'✅ Hỏi để hiểu cơ sở so sánh. Thường sẽ lộ ra: căn bên kia kém hơn về pháp lý/vị trí/diện tích.'},
+    {k:'C',t:'"Để em xin chủ giảm giá xem thế nào"',correct:false,fb:'Nhượng bộ ngay không cần thiết. Chưa biết lý do thật sự tại sao KH nói đắt.'},
+    {k:'D',t:'"Rẻ hơn nhưng chắc gì đã tốt hơn"',correct:false,fb:'Phán xét căn của đối thủ khi chưa biết thông tin — thiếu chuyên nghiệp.'}],xp:10},
+    {id:'obj02',diff:'easy',sit:'KH đang điền form đặt cọc, đột nhiên dừng lại và nói:',kh:'"Khoan đã, tôi cần suy nghĩ thêm."',opts:[{k:'A',t:'Tạo áp lực: "Hôm nay là hạn chót, căn này có người khác cũng đang hỏi"',correct:false,fb:'Urgency giả tạo = phá vỡ niềm tin nếu KH phát hiện.'},
+    {k:'B',t:'"Dĩ nhiên, anh/chị cứ thoải mái"',correct:false,fb:'Đồng ý thụ động mà không hiểu lý do = bỏ lỡ cơ hội giải quyết objection.'},
+    {k:'C',t:'"Anh/chị đang còn băn khoăn về điều gì? Em muốn giúp anh/chị ra quyết định tự tin nhất có thể"',correct:true,fb:'✅ Hỏi thẳng vào objection ẩn. Không phán xét, không áp lực — tạo không gian an toàn để KH nói thật.'},
+    {k:'D',t:'"Được rồi, khi nào anh/chị suy nghĩ xong thì gọi cho em"',correct:false,fb:'Không chủ động = mất KH. Phải khám phá lý do chần chừ ngay bây giờ.'}],xp:10},
+    {id:'obj03',diff:'medium',sit:'KH xem nhà 3 lần, lần nào cũng khen nhưng vợ chưa xem. KH nói:',kh:'"Vợ tôi đang bận, mình tôi quyết định được."',opts:[{k:'A',t:'Chốt ngay khi KH còn hứng',correct:false,fb:'Rủi ro cao: vợ không đồng ý → hủy cọc → mất deal + mất uy tín với chủ nhà.'},
+    {k:'B',t:'"Anh thật sự có thể quyết định mà không cần hỏi vợ không? Nhiều trường hợp sau này chị ấy không hài lòng sẽ ảnh hưởng đến việc ở."',correct:true,fb:'✅ Thách thức nhẹ nhàng để KH tự nhận ra rủi ro. Mục tiêu: đưa người ra quyết định thật sự vào cuộc.'},
+    {k:'C',t:'Đề nghị đặt cọc có điều kiện: trong 3 ngày nếu vợ không đồng ý thì hoàn cọc',correct:false,fb:'Giải pháp này có thể làm phức tạp thêm. Tốt hơn là giải quyết ngay vấn đề "người ra quyết định".'},
+    {k:'D',t:'Gọi cho chủ nhà hỏi có thể giữ nhà thêm vài ngày cho KH',correct:false,fb:'Giải quyết sai vấn đề. Vấn đề không phải thời gian — mà là người ra quyết định chưa có mặt.'}],xp:15},
+    {id:'obj04',diff:'medium',sit:'KH nghe xong thông tin pháp lý, bỗng nhiên im lặng rồi hỏi:',kh:'"Sổ hồng này có chắc không? Tôi nghe nói khu này hay có tranh chấp."',opts:[{k:'A',t:'Trấn an ngay: "Sổ hồng này hoàn toàn sạch, anh/chị yên tâm đi"',correct:false,fb:'Trấn an không có bằng chứng = lời nói gió bay. KH vẫn lo ngại.'},
+    {k:'B',t:'"Anh/chị nghe thông tin đó từ đâu? Và anh/chị muốn kiểm tra những gì cụ thể?"',correct:true,fb:'✅ Hỏi nguồn thông tin để biết lo ngại cụ thể, sau đó cung cấp bằng chứng có mục tiêu. Đây mới là xử lý pháp lý chuyên nghiệp.'},
+    {k:'C',t:'Đưa ra tất cả giấy tờ pháp lý ngay lập tức',correct:false,fb:'Đưa quá nhiều tài liệu khi chưa biết KH lo gì cụ thể = overwhelm và confuse thêm.'},
+    {k:'D',t:'Đề nghị cùng đến UBND kiểm tra ngay hôm nay',correct:false,fb:'Hành động tốt nhưng còn quá sớm — cần biết họ lo ngại điều gì cụ thể trước.'}],xp:15},
+    {id:'obj05',diff:'hard',sit:'KH vừa nhận được offer từ căn khác. Họ gọi cho bạn và nói:',kh:'"Tôi có căn khác đang xem xét, rẻ hơn 800 triệu. Tôi cần bạn giải thích tại sao tôi nên chọn căn của bạn thay vì căn kia."',opts:[{k:'A',t:'Liệt kê ngay các điểm mạnh của căn nhà đang tư vấn',correct:false,fb:'Tự bào chữa mà không biết căn kia có gì = không thuyết phục.'},
+    {k:'B',t:'"Em hiểu. Trước khi em trả lời, anh/chị có thể cho em biết căn kia có những điểm gì anh/chị thấy hấp dẫn không? Em cần so sánh đúng điểm."',correct:true,fb:'✅ Hoàn hảo. Biết được điểm hấp dẫn của đối thủ → so sánh có mục tiêu → highlight điểm căn của bạn tốt hơn ở đúng khía cạnh KH quan tâm.'},
+    {k:'C',t:'"800 triệu rẻ hơn thường có vấn đề. Anh/chị nên cẩn thận với căn đó."',correct:false,fb:'Phán xét đối thủ khi chưa có thông tin = thiếu chuyên nghiệp và thiếu cơ sở.'},
+    {k:'D',t:'Đề nghị giảm giá 500 triệu để cạnh tranh',correct:false,fb:'Nhượng bộ giá khi chưa cần thiết. Có thể deal vẫn win được mà không cần giảm giá.'}],xp:20},
+    {id:'obj06',diff:'easy',sit:'Cuộc gặp đầu tiên. KH nói:',kh:'"Tôi không thích làm việc với môi giới, toàn bị ép giá."',opts:[{k:'A',t:'Xin lỗi về những trải nghiệm xấu và hứa sẽ không làm vậy',correct:false,fb:'Xin lỗi điều bạn không làm = thiếu tự tin và không giải quyết được lo ngại cốt lõi.'},
+    {k:'B',t:'"Anh/chị đã từng làm việc với môi giới và gặp tình huống không tốt chưa? Em muốn nghe để hiểu anh/chị cần gì khác."',correct:true,fb:'✅ Hỏi để hiểu bad experience cụ thể. Sau đó định vị mình khác với những gì họ đã gặp — bằng hành động cụ thể, không phải lời hứa.'},
+    {k:'C',t:'Giải thích cách làm việc của bạn khác với những môi giới khác',correct:false,fb:'Chưa biết họ gặp vấn đề gì — giải thích trước = đáp án chưa có câu hỏi.'},
+    {k:'D',t:'"Tôi hiểu. Nếu anh/chị không muốn làm việc với môi giới thì tôi không thể giúp được."',correct:false,fb:'Bỏ cuộc quá sớm. Objection này rất phổ biến và hoàn toàn có thể xử lý được.'}],xp:10},
+    {id:'obj07',diff:'medium',sit:'KH nói với giọng dứt khoát sau khi xem nhà xong:',kh:'"Nhà này không có nội thất, tôi sẽ phải tốn thêm ít nhất 200 triệu để hoàn thiện."',opts:[{k:'A',t:'"Đúng rồi, anh/chị sẽ cần đầu tư thêm nhưng bù lại được chọn nội thất theo sở thích."',correct:true,fb:'✅ Thừa nhận thực tế (không phủ nhận) + reframe thành lợi thế (tự chọn). Sau đó có thể tính toán cụ thể tổng chi phí vs nhà đã có nội thất cũ.'},
+    {k:'B',t:'Đề nghị thương lượng với chủ để tặng kèm nội thất',correct:false,fb:'Không sai nhưng chưa chắc chủ đồng ý. Tốt hơn là trả lời objection trước, sau đó mới dùng nội thất như công cụ đàm phán.'},
+    {k:'C',t:'Giải thích rằng 200 triệu không nhiều so với tổng giá trị căn nhà',correct:false,fb:'"Không nhiều" là đánh giá chủ quan của bạn, không phải của KH. Tránh phủ nhận cảm nhận của họ.'},
+    {k:'D',t:'Giới thiệu sang căn khác đã có đủ nội thất',correct:false,fb:'Bỏ cuộc với căn này quá sớm. KH có thể chỉ đang thương lượng.'}],xp:15},
+    {id:'obj08',diff:'hard',sit:'Sau 5 lần xem nhà và gần đến bước ký hợp đồng, KH bỗng nói:',kh:'"Tôi muốn giảm thêm 300 triệu nữa. Không thì thôi."',opts:[{k:'A',t:'Đồng ý giảm để không mất deal sau nhiều lần follow-up',correct:false,fb:'Nhượng bộ không có điều kiện = KH học được rằng áp lực cuối cùng có hiệu quả với bạn. Lần sau họ sẽ làm lại.'},
+    {k:'B',t:'"Anh/chị đưa ra con số 300 triệu dựa trên điều gì? Em muốn hiểu để có thể làm gì đó thực sự có ích."',correct:true,fb:'✅ Không phản ứng phòng thủ, không đồng ý ngay. Hỏi để hiểu cơ sở của con số đó — có thể là tài chính thật sự hoặc chỉ là thử xem bạn có nhượng không.'},
+    {k:'C',t:'Nhờ chủ nhà gặp trực tiếp để giải thích',correct:false,fb:'Đưa 2 bên gặp nhau khi đang căng thẳng = rủi ro deal vỡ. Môi giới phải xử lý được tình huống này.'},
+    {k:'D',t:'"300 triệu là không thể được, giá này đã là thấp nhất rồi."',correct:false,fb:'Đóng cửa đối thoại = KH đi thật. Luôn phải hiểu LÝ DO trước khi nói không.'}],xp:20},
+    {id:'obj09',diff:'easy',sit:'KH nhìn quanh nhà và nói:',kh:'"Hướng nhà này xấu, không hợp tuổi tôi theo phong thủy."',opts:[{k:'A',t:'Giải thích rằng phong thủy không có cơ sở khoa học',correct:false,fb:'Bác bỏ niềm tin của KH = mất tin tưởng ngay lập tức. Không bao giờ tranh luận về niềm tin cá nhân.'},
+    {k:'B',t:'"Anh/chị sinh năm nào? Để em tìm hiểu xem thực sự hướng này có hợp không, hoặc có cách hóa giải không."',correct:true,fb:'✅ Tôn trọng niềm tin + chủ động tìm giải pháp. Nhiều thầy phong thủy có thể hóa giải hoặc xác nhận không vấn đề. Không phủ nhận, không bỏ qua.'},
+    {k:'C',t:'Giới thiệu căn khác có hướng phù hợp hơn',correct:false,fb:'Bỏ cuộc quá nhanh. Nhiều trường hợp phong thủy có thể được tư vấn và hóa giải.'},
+    {k:'D',t:'"Hướng nhà không quan trọng bằng vị trí và giá cả"',correct:false,fb:'Phủ nhận điều KH coi trọng = họ cảm thấy không được tôn trọng.'}],xp:10},
+    {id:'obj10',diff:'hard',sit:'KH là nhà đầu tư, sau khi nghe pitch xong, họ hỏi thẳng:',kh:'"ROI của căn này thực sự là bao nhiêu? Đừng nói con số đẹp cho tôi nghe."',opts:[{k:'A',t:'Đưa ra con số ROI tốt nhất có thể để gây ấn tượng',correct:false,fb:'Số ROI thổi phồng = mất uy tín khi KH tự tính hoặc thực tế không đạt.'},
+    {k:'B',t:'Tính toán ROI thực tế dựa trên giá thuê thị trường, chi phí vận hành và giá mua — bao gồm cả kịch bản xấu',correct:true,fb:'✅ Nhà đầu tư chuyên nghiệp MUỐN thấy phân tích thực tế kể cả kịch bản xấu. Trung thực + đầy đủ = uy tín dài hạn. Đây là lúc công cụ ROI trong app của bạn phát huy tác dụng.'},
+    {k:'C',t:'Nói rằng bạn không thể đảm bảo ROI vì phụ thuộc nhiều yếu tố',correct:false,fb:'Né tránh = không có giá trị gì cho nhà đầu tư. Phải đưa ra phân tích cụ thể.'},
+    {k:'D',t:'Kể câu chuyện một nhà đầu tư khác đã thu lợi tốt từ khu vực này',correct:false,fb:'Testimonial có giá trị nhưng chưa trả lời câu hỏi cụ thể của họ. Phải trả lời trực tiếp trước.'}],xp:20},
+    {id:'obj11',diff:'medium',sit:'KH vừa xem nhà xong, tỏ ra thích thú nhưng nói:',kh:'"Tôi cần nghĩ thêm 1 tuần."',opts:[{k:'A',t:'"Được, anh/chị suy nghĩ xong thì liên hệ em."',correct:false,fb:'Thụ động = bỏ lỡ cơ hội khám phá lý do thật sự. Và 1 tuần thường không có deadline cụ thể.'},
+    {k:'B',t:'"1 tuần để suy nghĩ về điều gì cụ thể nhất, anh/chị?"',correct:true,fb:'✅ Câu hỏi này lộ ra: pháp lý? Tài chính? Người thân chưa đồng ý? Sau đó xử lý đúng vấn đề thay vì chờ đợi mơ hồ.'},
+    {k:'C',t:'Tạo urgency: "Tuần tới chủ nhà có thể tăng giá hoặc bán cho người khác"',correct:false,fb:'Urgency giả tạo phá hủy niềm tin. Chỉ dùng urgency thật sự có thật.'},
+    {k:'D',t:'Đề nghị giảm 100 triệu nếu quyết định trong 3 ngày',correct:false,fb:'Nhượng bộ giá không cần thiết khi vấn đề chưa chắc là giá.'}],xp:15},
+    {id:'obj12',diff:'hard',sit:'Chủ nhà và KH đang đàm phán qua bạn. Chủ không chịu giảm. KH vừa nhắn:',kh:'"Nếu chủ không giảm 200 triệu, tôi sẽ đi xem chỗ khác cuối tuần này."',opts:[{k:'A',t:'Gọi ngay cho chủ nhà và van xin họ giảm giá để giữ deal',correct:false,fb:'Van xin chủ nhà mà không có lý lẽ = mất uy tín với chủ. Phải có chiến lược.'},
+    {k:'B',t:'Nói với KH rằng chủ không giảm và để họ quyết định',correct:false,fb:'Buông xuôi = không làm tròn vai trò môi giới. Phải tìm điểm giao thoa sáng tạo.'},
+    {k:'C',t:'Tìm xem chủ nhà có điều gì có thể linh hoạt ngoài giá (nội thất, ngày bàn giao, thanh toán) để đề xuất cho KH',correct:true,fb:'✅ Đàm phán sáng tạo = tìm giá trị ngoài tiền. Chủ có thể tặng nội thất, linh hoạt ngày, hay cho thanh toán chậm — những thứ KH cũng thấy valuable mà chủ không tốn nhiều.'},
+    {k:'D',t:'Hỏi KH có thể tăng ngân sách thêm 100 triệu không',correct:false,fb:'Hỏi KH tăng ngân sách khi deal đang căng thẳng = đẩy họ ra xa hơn.'}],xp:20}
+  ],
+  closing:[
+    {id:'cls01',diff:'easy',sit:'KH vừa xem xong lần 2, hỏi nhiều câu về thủ tục. Đây là tín hiệu gì?',kh:'"Nếu tôi muốn mua thì làm thủ tục thế nào?"',opts:[{k:'A',t:'Giải thích đầy đủ toàn bộ quy trình mua nhà',correct:false,fb:'Chưa cần giải thích đầy đủ ngay — hãy chốt ý định trước, giải thích chi tiết sau.'},
+    {k:'B',t:'"Đây là tín hiệu anh/chị đã sẵn sàng rồi đó. Em hướng dẫn từng bước — bước đầu tiên là đặt cọc. Anh/chị có thể thực hiện bước đó trong tuần này không?"',correct:true,fb:'✅ Nhận diện tín hiệu mua + chuyển thẳng sang hành động cụ thể. Hỏi về khả năng thực hiện tạo ra commitment ngay.'},
+    {k:'C',t:'Gửi email tóm tắt toàn bộ quy trình để họ xem',correct:false,fb:'Quá thụ động. Lúc này phải giữ momentum — không phải chờ họ đọc email.'},
+    {k:'D',t:'"Để em hỏi lại xem chủ nhà có đồng ý không đã"',correct:false,fb:'Lạc đề. Câu hỏi đang hỏi về thủ tục — focus vào việc chốt ý định trước.'}],xp:10},
+    {id:'cls02',diff:'medium',sit:'KH phân vân giữa 2 căn bạn đang tư vấn. Họ hỏi:',kh:'"Anh nghĩ tôi nên chọn căn nào?"',opts:[{k:'A',t:'Nói thẳng: "Em nghĩ anh/chị nên chọn căn A vì..."',correct:false,fb:'Đưa ra recommendation của bạn trước khi biết priority của KH = có thể sai.'},
+    {k:'B',t:'"Dựa trên những gì anh/chị chia sẻ, em thấy căn A phù hợp hơn với [nhu cầu cụ thể]. Anh/chị thấy điều đó có đúng không?"',correct:true,fb:'✅ Recommend dựa trên nhu cầu của HỌNG, không phải của bạn. Kết thúc bằng câu hỏi xác nhận = họ tự confirm thay vì bị thuyết phục.'},
+    {k:'C',t:'Đưa ra bảng so sánh chi tiết 2 căn',correct:false,fb:'Bảng so sánh có thể hữu ích nhưng không phải cách chốt. Phải đi đến recommendation cuối cùng.'},
+    {k:'D',t:'"Anh/chị thích cái nào hơn thì chọn cái đó thôi"',correct:false,fb:'Tránh né recommendation = không thêm giá trị gì. KH hỏi vì muốn expert opinion của bạn.'}],xp:15},
+    {id:'cls03',diff:'hard',sit:'KH đã đồng ý giá, nhưng đang trì hoãn ký hợp đồng đặt cọc. Bạn hỏi vì sao, KH nói:',kh:'"Tôi cần chờ lương tháng sau."',opts:[{k:'A',t:'Chờ đến tháng sau và giữ liên lạc',correct:false,fb:'Chờ 1 tháng = rủi ro cao. Nhiều thứ có thể thay đổi: chủ tìm được buyer khác, KH đổi ý, thị trường biến động.'},
+    {k:'B',t:'"Số tiền đặt cọc thường bao nhiêu % có thể thương lượng không? Và anh/chị hiện có thể dùng nguồn nào tạm thời không?"',correct:true,fb:'✅ Khám phá xem đặt cọc bao nhiêu là feasible ngay bây giờ + tìm nguồn vốn thay thế (mượn gia đình, rút tiết kiệm ngắn hạn). Đặt cọc ít hơn để giữ chỗ thường OK với nhiều chủ.'},
+    {k:'C',t:'Thuyết phục chủ nhà chờ 1 tháng',correct:false,fb:'Chủ nhà khó chịu khi phải chờ lâu mà không chắc KH có mua không. Cần giải pháp cụ thể hơn.'},
+    {k:'D',t:'"Nếu không có tiền cọc thì khó giữ nhà lắm"',correct:false,fb:'Nói hiển nhiên mà không đề xuất giải pháp = không hữu ích.'}],xp:20},
+    {id:'cls04',diff:'easy',sit:'KH vừa gật đầu đồng ý mua. Bạn nên làm gì tiếp theo?',kh:'"OK, tôi mua. Bây giờ thì sao?"',opts:[{k:'A',t:'Vui mừng và cảm ơn KH đã tin tưởng',correct:false,fb:'Vui là đúng nhưng chưa đủ — phải chuyển momentum ngay thành hành động cụ thể.'},
+    {k:'B',t:'"Tuyệt vời! Bước đầu tiên là ký thỏa thuận đặt cọc. Anh/chị có thể đến văn phòng công chứng chiều nay hoặc sáng mai không?"',correct:true,fb:'✅ Củng cố quyết định + đề xuất bước tiếp theo cụ thể với thời hạn rõ ràng. Giữ momentum = không để có thời gian hối tiếc.'},
+    {k:'C',t:'Gọi ngay cho chủ nhà báo tin vui',correct:false,fb:'Gọi chủ sau — ưu tiên xử lý KH trước. Giữ họ trong trạng thái committed.'},
+    {k:'D',t:'Gửi tóm tắt tất cả thông tin qua email để họ lưu',correct:false,fb:'Email sau — bây giờ phải hành động ngay khi quyết định còn nóng.'}],xp:10},
+    {id:'cls05',diff:'medium',sit:'KH có vẻ thích nhưng không chủ động. Bạn dùng câu chốt nào?',kh:'"Nhà này cũng tạm được."',opts:[{k:'A',t:'"Tạm được nghĩa là sao ạ? Anh/chị cảm thấy thiếu điều gì?"',correct:true,fb:'✅ "Tạm được" = objection ẩn. Đào sâu vào đó thay vì bỏ qua. Biết được điểm thiếu mới có thể giải quyết.'},
+    {k:'B',t:'"Em nghĩ căn này hơn tạm được đó anh/chị."',correct:false,fb:'Tranh luận với cảm nhận của KH = không hiệu quả.'},
+    {k:'C',t:'"Nếu tạm được mà giá tốt thì cũng đáng mua lắm ạ."',correct:false,fb:'Hợp lý hóa bằng giá = không giải quyết được vấn đề KH chưa thích đủ.'},
+    {k:'D',t:'Giới thiệu ngay căn khác tốt hơn',correct:false,fb:'Bỏ cuộc quá nhanh. "Tạm được" không có nghĩa là từ chối — cần khám phá thêm.'}],xp:15},
+    {id:'cls06',diff:'hard',sit:'KH vừa đặt cọc xong và đang ký giấy. Đột nhiên họ nói:',kh:'"Tôi đột nhiên lo quá, không biết có đúng không."',opts:[{k:'A',t:'Nói "Đây là cảm giác bình thường khi mua nhà, ai cũng vậy"',correct:false,fb:'Chung chung quá. KH cần được củng cố cụ thể, không phải bị phủ nhận cảm xúc bằng câu trả lời template.'},
+    {k:'B',t:'"Anh/chị lo về điều gì cụ thể? Hãy nói ra để em giúp anh/chị rõ ràng hơn trước khi ký."',correct:true,fb:'✅ Đừng vội trấn an — hãy nghe LO LẮNG CỤ THỂ trước. Nếu lo lắng có cơ sở, giải quyết ngay. Nếu không, mới củng cố quyết định với lý do phù hợp.'},
+    {k:'C',t:'Nhắc lại tất cả điểm mạnh của căn nhà',correct:false,fb:'Liệt kê ưu điểm khi KH đang lo lắng = cảm giác bị thuyết phục chứ không được hỗ trợ.'},
+    {k:'D',t:'Nói: "Anh/chị đã quyết định rồi, ký đi thôi"',correct:false,fb:'Ép ký khi KH đang có nghi ngờ = rủi ro hủy cọc sau. Tệ hơn là tạo ác cảm dài hạn.'}],xp:20},
+    {id:'cls07',diff:'easy',sit:'KH đang ngồi với bạn và hỏi về điều khoản đặt cọc:',kh:'"Nếu tôi đặt cọc mà sau đổi ý thì sao?"',opts:[{k:'A',t:'Giải thích đầy đủ quy trình phạt cọc theo luật',correct:false,fb:'Giải thích phạt cọc ngay = vô tình đặt KH vào mindset "mình sẽ đổi ý". Không phải thời điểm tốt.'},
+    {k:'B',t:'"Điều gì khiến anh/chị lo mình sẽ đổi ý ạ?" — sau đó giải quyết lo ngại đó',correct:true,fb:'✅ Câu hỏi này reveal ra lo ngại ẩn: pháp lý? Tài chính? Người thân chưa đồng ý? Giải quyết lo ngại đó thì tự nhiên không cần hỏi về đổi ý nữa.'},
+    {k:'C',t:'Trấn an: "Anh/chị sẽ không đổi ý đâu, căn này tốt lắm"',correct:false,fb:'Trấn an rỗng tuếch. Không có cơ sở nào cho lời trấn an này.'},
+    {k:'D',t:'"Mình đặt cọc ít thôi, 50 triệu thôi để an tâm"',correct:false,fb:'Giảm cọc không giải quyết lo ngại. Chỉ làm giảm commitment mà thôi.'}],xp:10},
+    {id:'cls08',diff:'hard',sit:'KH là doanh nhân bận rộn, luôn nói "bận quá không có thời gian". Bạn cần chốt trong cuộc gặp này:',kh:'"Tôi thích căn này nhưng thực sự không có thời gian lo thủ tục."',opts:[{k:'A',t:'"Em sẽ xử lý toàn bộ thủ tục cho anh/chị, anh/chị chỉ cần ký khi cần."',correct:true,fb:'✅ Remove friction = chốt deal. Với KH bận, rào cản không phải tiền hay sự thích — mà là TIME và EFFORT. Offer full service = giải quyết đúng vấn đề.'},
+    {k:'B',t:'Gửi tóm tắt thủ tục qua email để họ review',correct:false,fb:'Email thêm việc cho người bận. Ngược lại với mục tiêu.'},
+    {k:'C',t:'Lên lịch gặp lại khi họ rảnh hơn',correct:false,fb:'"Rảnh hơn" của doanh nhân bận rộn = không bao giờ. Phải giải quyết friction ngay bây giờ.'},
+    {k:'D',t:'Giải thích rằng thủ tục thực ra rất đơn giản',correct:false,fb:'Phủ nhận lo ngại của KH. "Đơn giản" với bạn nhưng không với người không quen thuộc với BĐS.'}],xp:20},
+    {id:'cls09',diff:'medium',sit:'KH vừa gặp bạn và nói thẳng:',kh:'"Tôi đang xem 3 căn khác nhau. Sẽ quyết định sau 2 tuần."',opts:[{k:'A',t:'Chờ 2 tuần và giữ liên lạc thân thiện',correct:false,fb:'Thụ động = bị so sánh với 3 môi giới khác mà không có lợi thế gì.'},
+    {k:'B',t:'"Trong 2 tuần đó em sẽ là người cung cấp thông tin thị trường mới nhất cho anh/chị mỗi tuần để anh/chị có đủ dữ liệu ra quyết định tốt nhất."',correct:true,fb:'✅ Positioning khác biệt ngay lập tức. Không cạnh tranh về sản phẩm — cạnh tranh về giá trị thông tin. KH sẽ nhớ đến bạn nhất khi ra quyết định.'},
+    {k:'C',t:'Hỏi 3 căn kia là ở đâu để biết mình đang cạnh tranh với ai',correct:false,fb:'Thông tin tốt nhưng không phải ưu tiên. Phải differentiate bản thân trước.'},
+    {k:'D',t:'"2 tuần thị trường có thể thay đổi nhiều lắm, nên quyết định sớm."',correct:false,fb:'Urgency chưa có cơ sở cụ thể = nghe như câu bán hàng thông thường.'}],xp:15},
+    {id:'cls10',diff:'hard',sit:'Deal gần xong, nhưng chủ nhà đột ngột tăng giá 200 triệu so với thỏa thuận ban đầu. KH đang rất tức giận và nói:',kh:'"Anh môi giới làm gì vậy? Tôi phí thời gian."',opts:[{k:'A',t:'Xin lỗi KH và đổ lỗi cho chủ nhà',correct:false,fb:'Đổ lỗi người khác trước mặt KH = thiếu chuyên nghiệp. Giải quyết vấn đề trước, rồi mới giải thích sau.'},
+    {k:'B',t:'Thừa nhận đây là tình huống khó + ngay lập tức gọi cho chủ nhà để giải quyết trước mặt KH, với cam kết rõ ràng về bước tiếp theo',correct:true,fb:'✅ Không trốn, không đổ lỗi — hành động ngay. Gọi cho chủ trước mặt KH = minh bạch và quyết đoán. Đây là lúc năng lực đàm phán của môi giới được thể hiện.'},
+    {k:'C',t:'Thuyết phục KH rằng 200 triệu không đáng kể so với giá trị nhà',correct:false,fb:'Phủ nhận tức giận hợp lý của KH. 200 triệu là số tiền lớn và deal đã có thỏa thuận.'},
+    {k:'D',t:'Đề nghị giảm hoa hồng để bù đắp phần giá tăng',correct:false,fb:'Hy sinh hoa hồng = giải pháp cuối cùng, không phải đầu tiên. Và nó không giải quyết được vấn đề gốc rễ.'}],xp:20}
+  ],
+  discovery:[
+    {id:'dis01',diff:'easy',sit:'Gặp KH lần đầu tại một buổi mở bán. KH đến hỏi chung chung về căn hộ. Câu hỏi đầu tiên của bạn là gì?',kh:'"Cho tôi hỏi về căn hộ ở đây một chút."',opts:[{k:'A',t:'"Anh/chị đang tìm căn mấy phòng ngủ?"',correct:false,fb:'Câu hỏi về tính năng sản phẩm — chưa hiểu nhu cầu gốc.'},
+    {k:'B',t:'"Anh/chị đang tìm nhà để ở hay đầu tư? Và lý do tìm ở thời điểm này là gì?"',correct:true,fb:'✅ 2 câu hỏi mở đồng thời khám phá mục đích và timing. Biết WHY trước, sau mới đến WHAT.'},
+    {k:'C',t:'"Ngân sách của anh/chị khoảng bao nhiêu?"',correct:false,fb:'Hỏi tiền ngay lần đầu gặp = tạo áp lực, cảm giác bị đánh giá.'},
+    {k:'D',t:'Giới thiệu ngay các căn đang bán và giá',correct:false,fb:'Chưa biết họ cần gì, đã giới thiệu sản phẩm = tỷ lệ match thấp.'}],xp:10},
+    {id:'dis02',diff:'medium',sit:'KH nói họ muốn nhà gần trường. Câu hỏi tiếp theo hay nhất là:',kh:'"Tôi muốn nhà gần trường học."',opts:[{k:'A',t:'"Anh/chị đang nghĩ đến khu vực nào?"',correct:false,fb:'Nhảy vào giải pháp (địa lý) khi chưa hiểu đủ nhu cầu.'},
+    {k:'B',t:'"Bé nhà mình mấy tuổi và đang học trường nào ạ? Điều đó sẽ giúp em tìm vị trí chính xác nhất."',correct:true,fb:'✅ Đào sâu: tuổi bé = timeline, trường cụ thể = vị trí chính xác. 2 thông tin này quan trọng hơn nhiều so với "khu vực".'},
+    {k:'C',t:'"Gần trường tức là trong vòng bao km ạ?"',correct:false,fb:'Hỏi parameter kỹ thuật khi chưa biết context. KH chưa chắc đã có số km trong đầu.'},
+    {k:'D',t:'Gợi ý ngay các khu vực gần trường tốt',correct:false,fb:'Chưa biết trường nào — gợi ý sai trường = mất thêm thời gian.'}],xp:15},
+    {id:'dis03',diff:'easy',sit:'KH nói họ "chỉ xem cho biết". Bạn làm gì?',kh:'"Tôi chỉ xem thử thôi, chưa có kế hoạch mua."',opts:[{k:'A',t:'OK, cứ xem thoải mái rồi có câu hỏi gì thì hỏi',correct:false,fb:'Thụ động = bỏ lỡ cơ hội qualify KH.'},
+    {k:'B',t:'"Xem cho biết là bước đầu tiên đấy. Anh/chị đang ở tình huống thế nào hiện tại — thuê nhà hay đã có nhà?"',correct:true,fb:'✅ Normalize hành động "xem thử" + ngay lập tức qualify tình huống hiện tại. "Xem thử" đôi khi là facade của người đang thật sự tìm kiếm nhưng chưa tự thừa nhận.'},
+    {k:'C',t:'Giới thiệu những căn đẹp nhất để tạo ấn tượng',correct:false,fb:'Chưa biết tiêu chí của họ, đẹp theo bạn chưa chắc đẹp theo họ.'},
+    {k:'D',t:'"Bao giờ anh/chị mới có kế hoạch mua?"',correct:false,fb:'Hỏi timeline khi KH chưa sẵn sàng thảo luận về việc mua = áp lực không cần thiết.'}],xp:10},
+    {id:'dis04',diff:'hard',sit:'KH vừa kể xong nhu cầu của họ — vợ muốn gần nhà mẹ đẻ, chồng muốn gần công ty, con cần gần trường tốt. Bạn làm gì?',kh:'"Vợ tôi muốn ở Quận 3, tôi làm ở Bình Thạnh, con tôi học ở Quận 1."',opts:[{k:'A',t:'Tìm căn ở vị trí trung tâm giữa 3 địa điểm đó',correct:false,fb:'Giải pháp địa lý thuần túy bỏ qua yếu tố quan trọng nhất: ai ra quyết định và ưu tiên nào cao nhất.'},
+    {k:'B',t:'"Trong 3 ưu tiên đó — vợ gần nhà mẹ, anh gần công ty, con gần trường — nếu chỉ có thể đáp ứng 2 thì anh/chị sẽ hy sinh điều nào?"',correct:true,fb:'✅ Câu hỏi priority này: (1) reveal ai ra quyết định thật sự, (2) xác định được deal-breaker vs nice-to-have, (3) cho phép bạn tìm đúng nhà. Đây là câu hỏi SPIN cấp cao nhất.'},
+    {k:'C',t:'Hỏi thêm về ngân sách để lọc khu vực',correct:false,fb:'Chưa đến lúc hỏi ngân sách khi conflict về địa điểm chưa được giải quyết.'},
+    {k:'D',t:'Thuyết phục cả 2 vợ chồng rằng Bình Thạnh là vị trí tốt nhất',correct:false,fb:'Đưa ra recommendation khi chưa hiểu đủ priority = rủi ro cao.'}],xp:20},
+    {id:'dis05',diff:'medium',sit:'KH nói họ cần mua nhà gấp. Câu hỏi quan trọng nhất tiếp theo là:',kh:'"Tôi cần mua nhà trong vòng 1 tháng."',opts:[{k:'A',t:'"Ngân sách của anh/chị là bao nhiêu?"',correct:false,fb:'Ngân sách quan trọng nhưng chưa phải quan trọng nhất lúc này.'},
+    {k:'B',t:'"Điều gì khiến timeline là 1 tháng? Đây là deadline cứng hay có thể linh hoạt?"',correct:true,fb:'✅ Timeline có lý do. Biết lý do = biết áp lực thật sự = biết cách phục vụ tốt nhất. Deadline cứng (hết hợp đồng thuê, chuyển công tác) vs linh hoạt ảnh hưởng toàn bộ chiến lược tư vấn.'},
+    {k:'C',t:'Liệt kê ngay các căn available trong tháng này',correct:false,fb:'Chưa biết tiêu chí, liệt kê available sẽ waste thời gian cả 2.'},
+    {k:'D',t:'"1 tháng hơi gấp, thường mua nhà mất 2-3 tháng."',correct:false,fb:'Phủ nhận timeline của KH thay vì tìm hiểu nguyên nhân và xem có thể làm được không.'}],xp:15},
+    {id:'dis06',diff:'easy',sit:'KH im lặng trong 2 phút sau khi bạn giới thiệu xong. Bạn làm gì?',kh:'[KH im lặng, nhìn ra cửa sổ]',opts:[{k:'A',t:'Tiếp tục nói thêm về những điểm tốt của căn nhà',correct:false,fb:'Nói thêm khi KH đang suy nghĩ = interrupt quá trình ra quyết định của họ.'},
+    {k:'B',t:'Im lặng theo — cho họ không gian suy nghĩ, sau 30 giây mới hỏi nhẹ nhàng "Anh/chị đang suy nghĩ về điều gì?"',correct:true,fb:'✅ Im lặng là kỹ năng. Cho KH không gian suy nghĩ = tôn trọng. Sau 30 giây hỏi nhẹ nhàng = mời họ chia sẻ mà không áp lực.'},
+    {k:'C',t:'"Anh/chị có thắc mắc gì không?"',correct:false,fb:'Câu hỏi yes/no đóng không khai thác được gì nhiều.'},
+    {k:'D',t:'Hỏi ngay: "Anh/chị nghĩ sao về căn này?"',correct:false,fb:'Quá sớm. Cho họ suy nghĩ trước khi hỏi đánh giá.'}],xp:10},
+    {id:'dis07',diff:'hard',sit:'Bạn đang khám phá nhu cầu KH. Họ nói muốn "nhà đẹp, giá tốt, vị trí thuận tiện". Bạn phản ứng thế nào?',kh:'"Tôi muốn nhà đẹp, giá hợp lý, và vị trí tiện lợi."',opts:[{k:'A',t:'Ghi chú lại và đi tìm nhà theo tiêu chí đó',correct:false,fb:'"Đẹp, hợp lý, tiện lợi" là những từ không thể define được — ai cũng nói vậy. Bạn sẽ tìm được nhà gì với tiêu chí này?'},
+    {k:'B',t:'"Em muốn hiểu cụ thể hơn: khi anh/chị nói đẹp là đẹp như thế nào? Giá hợp lý theo anh/chị là khoảng bao nhiêu? Và tiện lợi nghĩa là gần đâu?"',correct:true,fb:'✅ Tiêu chí mơ hồ = không thể tìm được nhà phù hợp. Phải define từng tiêu chí thành con số và địa điểm cụ thể. Đây là kỹ năng discovery quan trọng nhất.'},
+    {k:'C',t:'Hỏi về ngân sách để lọc trước',correct:false,fb:'Ngân sách quan trọng nhưng vẫn chưa giải quyết được vấn đề tiêu chí mơ hồ.'},
+    {k:'D',t:'Giới thiệu 3 căn với mức giá khác nhau để KH so sánh',correct:false,fb:'Chưa có tiêu chí cụ thể = giới thiệu sản phẩm kiểu may mắn.'}],xp:20},
+    {id:'dis08',diff:'medium',sit:'KH đã nói chuyện với bạn 20 phút nhưng chưa tiết lộ ngân sách. Cách nào hỏi ngân sách tự nhiên nhất?',kh:'[Sau 20 phút nói chuyện về nhu cầu nhà ở]',opts:[{k:'A',t:'"Ngân sách của anh/chị là bao nhiêu?"',correct:false,fb:'Hỏi thẳng quá, có thể gây áp lực — đặc biệt sau khi đã nói chuyện 20 phút mà chưa hỏi.'},
+    {k:'B',t:'"Để em giúp anh/chị tìm đúng hơn — thường anh/chị đang nghĩ đến mức đầu tư khoảng bao nhiêu cho căn nhà này?"',correct:true,fb:'✅ Frame câu hỏi ngân sách như một cách để phục vụ tốt hơn, không phải để qualify/loại trừ. "Mức đầu tư" thay vì "ngân sách" nghe professional hơn.'},
+    {k:'C',t:'Đề xuất một căn nhà cụ thể và xem phản ứng của họ về giá',correct:false,fb:'Test giá thông qua sản phẩm = mất thêm thời gian và có thể làm họ cảm thấy bị manipulate.'},
+    {k:'D',t:'Hỏi họ đang vay ngân hàng hay mua tiền mặt',correct:false,fb:'Câu hỏi hữu ích nhưng chưa biết ngân sách tổng thể trước.'}],xp:15},
+    {id:'dis09',diff:'easy',sit:'KH vừa kể về căn nhà họ đang thuê và những bất tiện. Bạn làm gì?',kh:'"Nhà đang thuê chật chội lắm, phòng khách nhỏ, thiếu phòng cho ba mẹ khi sang chơi."',opts:[{k:'A',t:'Ghi chú tiêu chí: cần phòng khách rộng và phòng phụ cho ba mẹ',correct:false,fb:'Ghi chú là tốt nhưng thiếu — chưa explore xem còn pain point nào khác.'},
+    {k:'B',t:'"Em nghe thấy 2 vấn đề: phòng khách nhỏ và thiếu phòng cho ba mẹ. Còn điều gì khác về nhà hiện tại anh/chị muốn thay đổi không?"',correct:true,fb:'✅ Xác nhận những gì đã nghe (active listening) + mở rộng để tìm thêm pain point. Thường KH nêu vài vấn đề đầu tiên là "bề mặt" — những vấn đề sâu hơn cần được đào ra.'},
+    {k:'C',t:'Giới thiệu ngay căn có phòng khách rộng và đủ phòng ngủ',correct:false,fb:'Chưa biết đầy đủ tiêu chí, giới thiệu sớm có thể miss những yếu tố quan trọng khác.'},
+    {k:'D',t:'"Anh/chị cần bao nhiêu phòng ngủ?"',correct:false,fb:'Câu hỏi đóng và hơi abrupt — chưa explore đủ trước khi chuyển sang số phòng.'}],xp:10},
+    {id:'dis10',diff:'hard',sit:'Sau 30 phút khám phá nhu cầu, bạn nhận ra KH muốn quá nhiều thứ với ngân sách không đủ. Bạn làm gì?',kh:'"Tôi muốn nhà 4 phòng, trung tâm, dưới 4 tỷ, sổ hồng, gần trường tốt."',opts:[{k:'A',t:'Đồng ý tìm và hy vọng có căn nào đó phù hợp',correct:false,fb:'Tìm kiếm không thể có = lãng phí thời gian và tạo kỳ vọng sai.'},
+    {k:'B',t:'Thẳng thắn chia sẻ thực tế thị trường: không có căn nào đáp ứng tất cả 5 tiêu chí với ngân sách này, sau đó giúp KH xác định 3 tiêu chí không thể thiếu',correct:true,fb:'✅ Trung thực về thực tế thị trường là trách nhiệm của chuyên gia. Sau đó dùng kỹ thuật priority: "Nếu chỉ giữ 3 trong 5 tiêu chí, đâu là 3 không thể bỏ?" — giúp KH tự ra quyết định.'},
+    {k:'C',t:'Hỏi xem họ có thể tăng ngân sách không',correct:false,fb:'Hỏi tăng ngân sách trước khi giải thích tại sao = có vẻ chỉ muốn bán đắt hơn.'},
+    {k:'D',t:'Gợi ý khu vực khác rẻ hơn để đáp ứng ngân sách',correct:false,fb:'Đưa ra giải pháp khi chưa biết KH sẵn sàng đánh đổi điều nào.'}],xp:20}
+  ],
+  negotiation:[
+    {id:'neg01',diff:'easy',sit:'Chủ nhà hỏi bạn nghĩ KH có trả đến giá của họ không. Bạn trả lời thế nào?',kh:'"Bạn môi giới có biết KH sẽ trả đến giá tôi chưa?"',opts:[{k:'A',t:'Tiết lộ giá cao nhất KH đã nói để chủ tin tưởng',correct:false,fb:'Vi phạm nguyên tắc bảo mật thông tin KH = mất tin tưởng từ phía KH nếu họ biết.'},
+    {k:'B',t:'"Em không thể tiết lộ thông tin của KH, nhưng em có thể nói rằng họ đang cân nhắc nghiêm túc ở mức giá này."',correct:true,fb:'✅ Giữ bảo mật thông tin KH + vẫn cho chủ đủ thông tin để cảm thấy tự tin. Môi giới chuyên nghiệp không ép giá bằng cách leak thông tin.'},
+    {k:'C',t:'"KH nói giá này cao nhưng vẫn đang xem xét."',correct:false,fb:'Vô tình leak thông tin KH = giảm vị thế đàm phán của KH.'},
+    {k:'D',t:'"Thị trường đang tốt, chủ nên giữ giá."',correct:false,fb:'Không trả lời câu hỏi + đưa ra advice không cần thiết.'}],xp:10},
+    {id:'neg02',diff:'medium',sit:'KH offer thấp hơn 15% so với giá chủ. Cả 2 bên đều không muốn nhường. Bạn làm gì?',kh:'"Tôi sẽ không trả cao hơn 5.5 tỷ. Chủ nhà đang đòi 6.5 tỷ."',opts:[{k:'A',t:'Khuyên KH tăng thêm vì nhà này xứng đáng',correct:false,fb:'Bảo vệ chủ nhà = mất KH. Phải tìm giải pháp cho cả 2 bên.'},
+    {k:'B',t:'Khám phá xem chủ nhà cần gì ngoài giá và KH có thể offer gì ngoài tiền, sau đó xây dựng package deal sáng tạo',correct:true,fb:'✅ 1 tỷ gap không thể bridge chỉ bằng giá. Tìm value layers khác: thanh toán nhanh, không sửa chữa, bàn giao linh hoạt, nội thất... Đây là kỹ năng đàm phán của môi giới tài năng.'},
+    {k:'C',t:'Nói với chủ rằng giá thị trường thực tế chỉ 5.8 tỷ',correct:false,fb:'Chỉ nên chia sẻ thông tin thị trường nếu có data cụ thể và được cả 2 bên đồng ý. Không dùng để ép giá.'},
+    {k:'D',t:'Đề nghị chia đôi phần chênh lệch: giá 6 tỷ',correct:false,fb:'Chia đôi thường không phải là giải pháp tốt nhất — và bạn chưa có mandate từ cả 2 bên để đưa ra con số này.'}],xp:15},
+    {id:'neg03',diff:'hard',sit:'Đang đàm phán, KH bỗng im lặng sau khi nghe counter-offer của chủ. Bạn (đang ở giữa) phải làm gì?',kh:'[KH im lặng 1 phút sau khi nghe chủ counter 6.2 tỷ thay vì 6.5 tỷ]',opts:[{k:'A',t:'Lấp đầy im lặng bằng cách giải thích thêm về giá trị của căn nhà',correct:false,fb:'Lấp im lặng bằng thông tin = interrupt quá trình suy nghĩ của KH, và có thể nghe như bạn đang bênh chủ.'},
+    {k:'B',t:'Để KH im lặng — đừng nói gì. Im lặng là vũ khí trong đàm phán.',correct:true,fb:'✅ Im lặng chiến lược. KH đang tính toán hoặc chuẩn bị counter. Người nói trước sau im lặng thường là người yếu thế hơn. Kiên nhẫn là kỹ năng đàm phán.'},
+    {k:'C',t:'Hỏi KH: "Anh/chị thấy sao về mức giá đó?"',correct:false,fb:'Hỏi ngay = không để KH có không gian suy nghĩ. Nên chờ thêm 30-60 giây.'},
+    {k:'D',t:'Gọi cho chủ nhà để báo cáo tình hình',correct:false,fb:'Gọi ngay trong tình huống này = thiếu chuyên nghiệp và làm KH mất tự nhiên.'}],xp:20},
+    {id:'neg04',diff:'medium',sit:'Chủ nhà nói không giảm giá thêm nữa. KH đang cân nhắc. Bạn hỏi chủ:',kh:'"Tôi đã xuống đến đây rồi. Không giảm thêm nữa."',opts:[{k:'A',t:'"Nếu không giảm giá, chủ có thể tặng kèm nội thất hoặc linh hoạt thêm về ngày bàn giao không?"',correct:true,fb:'✅ Khi giá đã cứng, tìm value khác. Nội thất/bàn giao linh hoạt thường ít tốn kém hơn với chủ nhưng có giá trị cao với KH.'},
+    {k:'B',t:'Chấp nhận và báo lại KH rằng chủ không giảm',correct:false,fb:'Bỏ cuộc quá sớm. Còn nhiều đòn bẩy khác có thể dùng.'},
+    {k:'C',t:'Giải thích cho chủ tại sao nên giảm thêm',correct:false,fb:'Chủ đã nói không — tiếp tục thuyết phục sẽ tạo ma sát. Tốt hơn là tìm giải pháp sáng tạo.'},
+    {k:'D',t:'Đề nghị bù phần chênh lệch từ hoa hồng của bạn',correct:false,fb:'Hy sinh hoa hồng = biện pháp cuối cùng. Và nó tạo precedent xấu.'}],xp:15},
+    {id:'neg05',diff:'easy',sit:'KH hỏi: "Chủ nhà thực sự cần tiền gấp không?" Bạn trả lời thế nào?',kh:'"Chủ nhà có cần tiền gấp không? Tôi muốn biết để biết có thể trả thấp hơn không."',opts:[{k:'A',t:'Chia sẻ nếu bạn biết chủ đang kẹt tiền',correct:false,fb:'Tiết lộ thông tin tài chính của chủ = vi phạm bảo mật. KH sẽ lợi dụng điều này để ép giá quá đáng.'},
+    {k:'B',t:'"Em không thể chia sẻ thông tin cá nhân của chủ nhà. Điều tôi có thể nói là mức giá hiện tại là giá thị trường hợp lý."',correct:true,fb:'✅ Bảo vệ thông tin cả 2 phía = tạo niềm tin lâu dài. Đồng thời anchor về giá trị thị trường.'},
+    {k:'C',t:'"Chủ không cần gấp nên khó thương lượng lắm."',correct:false,fb:'Tiết lộ thông tin một cách gián tiếp + đóng cửa đàm phán không cần thiết.'},
+    {k:'D',t:'"Anh/chị cứ trả giá thử xem chủ có chấp nhận không."',correct:false,fb:'Approach kiểu may rủi không chuyên nghiệp.'}],xp:10},
+    {id:'neg06',diff:'hard',sit:'Deal gần xong. KH bỗng dùng chiến thuật "deadline giả": nói họ cần quyết định trong 2 tiếng không thì mua căn khác. Bạn làm gì?',kh:'"Tôi có 2 tiếng để quyết định vì tôi đang xem xét căn khác song song."',opts:[{k:'A',t:'Báo ngay cho chủ để tạo áp lực quyết định',correct:false,fb:'Chưa xác minh deadline có thật không. Tạo áp lực giả cho chủ = có thể gây phản ứng ngược.'},
+    {k:'B',t:'Bình tĩnh xác nhận: "Em ghi nhận. Để em liên hệ với chủ nhà ngay. Trong 2 tiếng có thể khó hoàn tất pháp lý nhưng em sẽ cố gắng xác nhận ý định nhanh nhất có thể."',correct:true,fb:'✅ Không bị panic, không bị manipulate. Acknowledge deadline + set realistic expectation + take action. Qua đó cũng test xem deadline có thật không — nếu thật sự gấp, họ sẽ flexible về thủ tục.'},
+    {k:'C',t:'Nói với KH rằng 2 tiếng là không đủ và cần ít nhất 24 tiếng',correct:false,fb:'Từ chối điều kiện của KH mà không tìm giải pháp = đẩy họ đi.'},
+    {k:'D',t:'Tin vào deadline và làm tất cả có thể trong 2 tiếng',correct:false,fb:'Panic xử lý gấp mà không xác minh deadline có thật = dễ bị manipulate và dễ sai sót.'}],xp:20},
+    {id:'neg07',diff:'medium',sit:'Hai bên đã thỏa thuận xong về giá. Chủ đột nhiên yêu cầu thêm 1 điều khoản mới:',kh:'"Tôi muốn thêm điều khoản: KH phải đặt cọc thêm 10% trong vòng 3 ngày."',opts:[{k:'A',t:'Đồng ý và báo KH về điều khoản mới',correct:false,fb:'Deal đã thỏa thuận không thể tự ý thêm điều khoản mà không có sự đồng ý của KH.'},
+    {k:'B',t:'Hỏi chủ lý do của điều khoản mới, sau đó discuss với KH và tìm compromise',correct:true,fb:'✅ Thêm điều khoản sau thỏa thuận = signal của lo ngại ẩn từ phía chủ (lo KH bùng cọc?). Hiểu lý do → tìm giải pháp thỏa mãn cả 2. Không tự ý accept hay reject thay cho KH.'},
+    {k:'C',t:'Từ chối yêu cầu của chủ vì deal đã thỏa thuận xong',correct:false,fb:'Từ chối thẳng mà không hiểu lý do = có thể làm chủ cảm thấy không tin tưởng và deal vỡ.'},
+    {k:'D',t:'Tìm cách giúp KH có thêm tiền cọc trong 3 ngày',correct:false,fb:'Chưa xác nhận KH có chấp nhận điều kiện này không — đừng giải quyết vấn đề chưa được đồng ý.'}],xp:15},
+    {id:'neg08',diff:'hard',sit:'Sau khi bạn submit offer của KH, chủ nhà phản hồi với giá counter cao hơn KH kỳ vọng. KH nổi giận và nói:',kh:'"Chủ nhà điên à? Tôi không mua nữa."',opts:[{k:'A',t:'Đồng cảm với KH và đồng ý rằng chủ đang đòi cao',correct:false,fb:'Chỉ trích chủ nhà trước mặt KH = thiếu chuyên nghiệp và phá vỡ mối quan hệ với chủ.'},
+    {k:'B',t:'"Em hiểu anh/chị thất vọng. Đây không phải là kết quả em mong đợi. Trước khi quyết định, em muốn hỏi: nếu giá xuống đến X — con số reasonable với cả 2 bên — anh/chị có muốn tiếp tục không?"',correct:true,fb:'✅ Acknowledge cảm xúc + không panic + test xem KH có thật sự muốn căn này không. Nếu họ vẫn muốn, có cơ sở để quay lại đàm phán với chủ.'},
+    {k:'C',t:'Giải thích tại sao chủ counter cao',correct:false,fb:'Giải thích cho chủ khi KH đang giận = bảo vệ chủ không đúng lúc.'},
+    {k:'D',t:'Đề nghị ngay giới thiệu căn khác tốt hơn',correct:false,fb:'Từ bỏ căn này và deal đang diễn ra quá nhanh. Còn cơ hội để giải quyết.'}],xp:20}
+  ]
+};
+
+let dojoState={
+  track:null,
+  scenarios:[],
+  current:0,
+  score:0,
+  correct:0,
+  wrong:0,
+  combo:1,
+  streak:[],
+  timeLeft:30,
+  timer:null,
+  answered:false,
+  totalXP:0
+};
+
+const DOJO_XP_KEY='bds_dojo_xp';
+
+function dojoLoadXP(){try{return parseInt(localStorage.getItem(DOJO_XP_KEY)||'0');}catch(e){return 0;}}
+function dojoSaveXP(xp){try{localStorage.setItem(DOJO_XP_KEY,String(xp));}catch(e){}}
+
+function dojoBeltFromXP(xp){
+  for(let i=DOJO_BELTS.length-1;i>=0;i--){
+    if(xp>=DOJO_BELTS[i].xpMin)return DOJO_BELTS[i];
+  }
+  return DOJO_BELTS[0];
+}
+
+function dojoInitBelt(){
+  const xp=dojoLoadXP();
+  dojoState.totalXP=xp;
+  const belt=dojoBeltFromXP(xp);
+  const next=DOJO_BELTS[Math.min(DOJO_BELTS.indexOf(belt)+1,DOJO_BELTS.length-1)];
+  const prog=next?((xp-belt.xpMin)/(next.xpMin-belt.xpMin)*100):100;
+  const bi=document.getElementById('dojoBeltIcon');
+  const bn=document.getElementById('dojoBeltName');
+  const bd=document.getElementById('dojoBeltDesc');
+  const bf=document.getElementById('dojoXPFill');
+  const tx=document.getElementById('dojoTotalXP');
+  if(bi)bi.textContent=belt.icon;
+  if(bn)bn.textContent=belt.name;
+  if(bd)bd.textContent=`${xp} XP · ${next&&next!==belt?'Cần '+next.xpMin+' XP để lên '+next.name:'Đai cao nhất!'}`;
+  if(bf){bf.style.width=Math.min(prog,100)+'%';bf.style.background=belt.color;}
+  if(tx)tx.textContent=xp;
+}
+
+function selectDojoTrack(track){
+  dojoState.track=track;
+  document.querySelectorAll('.dojo-track').forEach(t=>t.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  // Shuffle scenarios
+  const scenarios=[...DOJO_SCENARIOS[track]].sort(()=>Math.random()-.5);
+  dojoState.scenarios=scenarios;
+  dojoState.current=0;
+  dojoState.score=0;
+  dojoState.correct=0;
+  dojoState.wrong=0;
+  dojoState.combo=1;
+  dojoState.streak=new Array(Math.min(5,scenarios.length)).fill(false);
+  dojoState.answered=false;
+  // Show HUD + arena
+  const hud=document.getElementById('dojoHUD');
+  const arena=document.getElementById('dojoArena');
+  const streakBar=document.getElementById('dojoStreakBar');
+  if(hud)hud.style.display='flex';
+  if(arena)arena.style.display='block';
+  if(streakBar)streakBar.style.display='flex';
+  document.getElementById('dojoResultArea').style.display='none';
+  updDojoStreak();
+  renderDojoScenario();
+  toast(`⚔️ Bắt đầu track: ${event.currentTarget.querySelector('.dojo-track-name').textContent}!`);
+}
+
+function renderDojoScenario(){
+  const sc=dojoState.scenarios[dojoState.current];
+  if(!sc)return dojoShowResult();
+  dojoState.answered=false;
+  // Update HUD
+  document.getElementById('hudRound').textContent=dojoState.current+1;
+  document.getElementById('hudScore').textContent=dojoState.score;
+  document.getElementById('hudCombo').textContent='x'+dojoState.combo;
+  document.getElementById('hudCorrect').textContent=dojoState.correct;
+  document.getElementById('hudWrong').textContent=dojoState.wrong;
+  // Difficulty badge
+  const diffEl=document.getElementById('dojoDiffLabel');
+  const diffMap={easy:{t:'⭐ Cơ bản',c:'rgba(62,207,142,.15)',tc:'var(--gr)'},medium:{t:'⭐⭐ Trung bình',c:'rgba(245,166,35,.15)',tc:'var(--ac)'},hard:{t:'⭐⭐⭐ Khó',c:'rgba(239,83,80,.15)',tc:'var(--rd)'}};
+  const dm=diffMap[sc.diff]||diffMap.easy;
+  if(diffEl){diffEl.textContent=dm.t;diffEl.style.background=dm.c;diffEl.style.color=dm.tc;}
+  // Situation + KH says
+  document.getElementById('dojoSitText').textContent=sc.sit;
+  document.getElementById('dojoKHSays').textContent=sc.kh;
+  // Track label
+  const trackLabels={objection:'🛡️ Xử lý Phản đối',closing:'🎯 Chốt Deal',discovery:'🔍 Khám phá KH',negotiation:'🤝 Đàm phán'};
+  const tl=document.getElementById('dojoTrackLabel');
+  if(tl)tl.textContent=trackLabels[dojoState.track]||dojoState.track;
+  // Options
+  const optsEl=document.getElementById('dojoOpts');
+  if(optsEl){
+    optsEl.innerHTML=sc.opts.map(o=>`<div class="dojo-opt" id="dojo_opt_${o.k}" onclick="selectDojoOpt('${o.k}')">
+      <div class="dojo-opt-key">${o.k}</div>
+      <div>${o.t}</div>
+    </div>`).join('');
+  }
+  // Clear feedback
+  const fb=document.getElementById('dojoFeedback');
+  if(fb){fb.textContent='';fb.className='dojo-feedback';}
+  // Hide next button
+  const nb=document.getElementById('dojoNextBtn');
+  if(nb)nb.style.display='none';
+  const nav=document.getElementById('dojoNavBtns');
+  if(nav)nav.style.display='flex';
+  // Start timer
+  dojoStartTimer(sc);
+}
+
+function dojoStartTimer(sc){
+  if(dojoState.timer)clearInterval(dojoState.timer);
+  dojoState.timeLeft=30;
+  const timerEl=document.getElementById('dojoTimer');
+  const fillEl=document.getElementById('dojoTimerFill');
+  const lblEl=document.getElementById('dojoTimerLabel');
+  dojoState.timer=setInterval(()=>{
+    dojoState.timeLeft--;
+    const pct=dojoState.timeLeft/30*100;
+    if(timerEl){
+      timerEl.textContent=dojoState.timeLeft;
+      timerEl.className='dojo-timer'+(dojoState.timeLeft>15?' ok':dojoState.timeLeft>7?' warn':' danger');
+    }
+    if(fillEl){
+      const col=dojoState.timeLeft>15?'var(--gr)':dojoState.timeLeft>7?'var(--ac)':'var(--rd)';
+      fillEl.style.width=pct+'%';
+      fillEl.style.background=col;
+    }
+    if(lblEl)lblEl.textContent=dojoState.timeLeft>0?`Phản xạ trong ${dojoState.timeLeft} giây`:'⏰ Hết giờ!';
+    if(dojoState.timeLeft<=0){
+      clearInterval(dojoState.timer);
+      if(!dojoState.answered)dojoTimeout(sc);
+    }
+  },1000);
+}
+
+function selectDojoOpt(key){
+  if(dojoState.answered)return;
+  clearInterval(dojoState.timer);
+  dojoState.answered=true;
+  const sc=dojoState.scenarios[dojoState.current];
+  const isCorrect=sc.opts.find(o=>o.k===key)?.correct===true;
+  // Highlight options
+  sc.opts.forEach(o=>{
+    const el=document.getElementById('dojo_opt_'+o.k);
+    if(!el)return;
+    el.classList.add('disabled');
+    if(o.k===key&&isCorrect)el.classList.add('selected-correct');
+    else if(o.k===key&&!isCorrect)el.classList.add('selected-wrong');
+    else if(o.correct)el.classList.add('show-correct');
+  });
+  // Feedback
+  const fb=document.getElementById('dojoFeedback');
+  const opt=sc.opts.find(o=>o.k===key);
+  if(fb){
+    fb.innerHTML=opt?.fb||'';
+    fb.className='dojo-feedback show '+(isCorrect?'correct':'wrong');
+  }
+  if(isCorrect){
+    const bonus=dojoState.timeLeft>20?'⚡ Phản xạ xuất sắc! ':dojoState.timeLeft>10?'👍 Tốt! ':'';
+    const xpEarned=Math.round(sc.xp*dojoState.combo*(dojoState.timeLeft>20?1.5:dojoState.timeLeft>10?1.2:1));
+    dojoState.score+=xpEarned;
+    dojoState.correct++;
+    dojoState.combo=Math.min(dojoState.combo+1,4);
+    dojoState.streak[dojoState.current%5]=true;
+    if(fb)fb.innerHTML=`${bonus}<strong style="color:var(--gr)">+${xpEarned} XP</strong> (Combo x${dojoState.combo-1})<br><br>${opt?.fb||''}`;
+    document.getElementById('dojoArena').classList.add('gold-flash');
+    setTimeout(()=>document.getElementById('dojoArena').classList.remove('gold-flash'),1000);
+  } else {
+    dojoState.wrong++;
+    dojoState.combo=1;
+    dojoState.streak[dojoState.current%5]=false;
+    document.getElementById('dojoArena').classList.add('shake');
+    setTimeout(()=>document.getElementById('dojoArena').classList.remove('shake'),400);
+  }
+  updDojoStreak();
+  document.getElementById('hudScore').textContent=dojoState.score;
+  document.getElementById('hudCombo').textContent='x'+dojoState.combo;
+  document.getElementById('hudCorrect').textContent=dojoState.correct;
+  document.getElementById('hudWrong').textContent=dojoState.wrong;
+  // Show next button
+  const nb=document.getElementById('dojoNextBtn');
+  if(nb)nb.style.display='block';
+}
+
+function dojoTimeout(sc){
+  dojoState.answered=true;
+  dojoState.wrong++;
+  dojoState.combo=1;
+  dojoState.streak[dojoState.current%5]=false;
+  sc.opts.forEach(o=>{
+    const el=document.getElementById('dojo_opt_'+o.k);
+    if(!el)return;
+    el.classList.add('disabled');
+    if(o.correct)el.classList.add('show-correct');
+  });
+  const fb=document.getElementById('dojoFeedback');
+  const correctOpt=sc.opts.find(o=>o.correct);
+  if(fb){
+    fb.innerHTML=`⏰ <strong style="color:var(--ac)">Hết giờ!</strong> Đáp án đúng là <strong>${correctOpt?.k}</strong>.<br><br>${correctOpt?.fb||''}`;
+    fb.className='dojo-feedback show timeout';
+  }
+  document.getElementById('dojoArena').classList.add('shake');
+  setTimeout(()=>document.getElementById('dojoArena').classList.remove('shake'),400);
+  updDojoStreak();
+  document.getElementById('hudCombo').textContent='x'+dojoState.combo;
+  document.getElementById('hudWrong').textContent=dojoState.wrong;
+  const nb=document.getElementById('dojoNextBtn');
+  if(nb)nb.style.display='block';
+}
+
+function dojoNext(){
+  dojoState.current++;
+  if(dojoState.current>=dojoState.scenarios.length)dojoShowResult();
+  else renderDojoScenario();
+}
+
+function dojoQuit(){
+  if(dojoState.timer)clearInterval(dojoState.timer);
+  dojoShowResult();
+}
+
+function updDojoStreak(){
+  for(let i=0;i<5;i++){
+    const dot=document.getElementById('sdot'+i);
+    if(!dot)continue;
+    dot.className='dojo-streak-dot'+(dojoState.streak[i]?' on':'');
+  }
+}
+
+function dojoShowResult(){
+  if(dojoState.timer)clearInterval(dojoState.timer);
+  document.getElementById('dojoArena').style.display='none';
+  document.getElementById('dojoHUD').style.display='none';
+  document.getElementById('dojoStreakBar').style.display='none';
+  // Save XP
+  const newXP=dojoLoadXP()+dojoState.score;
+  dojoSaveXP(newXP);
+  dojoState.totalXP=newXP;
+  dojoInitBelt();
+  const total=dojoState.current;
+  const acc=total>0?Math.round(dojoState.correct/total*100):0;
+  const rating=acc>=80?{l:'🏆 Xuất sắc',c:'var(--gr)'}:acc>=60?{l:'👍 Tốt',c:'var(--bl)'}:acc>=40?{l:'📈 Khá',c:'var(--ac)'}:{l:'💪 Cần luyện thêm',c:'var(--rd)'};
+  document.getElementById('dojoResultArea').style.display='block';
+  document.getElementById('dojoResultArea').innerHTML=`
+    <div class="card" style="margin-bottom:12px">
+      <div class="dojo-result">
+        <div class="dojo-result-score">+${dojoState.score} <span style="font-size:1.2rem">XP</span></div>
+        <div style="font-size:1rem;font-weight:700;color:${rating.c};margin-bottom:10px">${rating.l}</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:360px;margin:0 auto 20px">
+          <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:1.4rem;font-weight:900;color:var(--gr)">${dojoState.correct}</div>
+            <div style="font-size:.62rem;color:var(--t3)">Đúng</div>
+          </div>
+          <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:1.4rem;font-weight:900;color:var(--rd)">${dojoState.wrong}</div>
+            <div style="font-size:.62rem;color:var(--t3)">Sai/Timeout</div>
+          </div>
+          <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:1.4rem;font-weight:900;color:var(--ac)">${acc}%</div>
+            <div style="font-size:.62rem;color:var(--t3)">Độ chính xác</div>
+          </div>
+        </div>
+        <div style="font-size:.78rem;color:var(--t2);margin-bottom:20px">Total XP: <strong style="color:var(--ac)">${newXP}</strong></div>
+        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+          <button class="btn btn-p btn-sm" onclick="selectDojoTrack(dojoState.track)">🔄 Luyện lại</button>
+          <button class="btn btn-s btn-sm" onclick="dojoBackToMenu()">📋 Đổi track</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function dojoBackToMenu(){
+  document.getElementById('dojoResultArea').style.display='none';
+  document.getElementById('dojoHUD').style.display='none';
+  document.getElementById('dojoStreakBar').style.display='none';
+  document.getElementById('dojoArena').style.display='none';
+  document.querySelectorAll('.dojo-track').forEach(t=>t.classList.remove('active'));
+  dojoStopSpeech();
+}
+
+// ── TẦNG 3: WEB SPEECH API + WEB AUDIO SYNTHESIZER ──
+
+// Web Audio context (lazy init để tránh lỗi autoplay policy)
+let _dojoAC=null;
+function getDojoAC(){
+  if(!_dojoAC){try{_dojoAC=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+  return _dojoAC;
+}
+
+// Tạo âm thanh bằng Web Audio API — không cần file MP3
+function dojoPlaySound(type){
+  const ac=getDojoAC();
+  if(!ac)return;
+  try{
+    const osc=ac.createOscillator();
+    const gain=ac.createGain();
+    osc.connect(gain);
+    gain.connect(ac.destination);
+    const now=ac.currentTime;
+    if(type==='tick'){
+      osc.type='sine';osc.frequency.setValueAtTime(800,now);
+      gain.gain.setValueAtTime(0.08,now);gain.gain.exponentialRampToValueAtTime(0.001,now+0.06);
+      osc.start(now);osc.stop(now+0.06);
+    } else if(type==='tick_urgent'){
+      osc.type='square';osc.frequency.setValueAtTime(1000,now);
+      gain.gain.setValueAtTime(0.12,now);gain.gain.exponentialRampToValueAtTime(0.001,now+0.08);
+      osc.start(now);osc.stop(now+0.08);
+    } else if(type==='correct'){
+      // 2 nốt ngân trong trẻo
+      osc.type='sine';
+      osc.frequency.setValueAtTime(523,now);
+      osc.frequency.setValueAtTime(659,now+0.12);
+      gain.gain.setValueAtTime(0.18,now);gain.gain.exponentialRampToValueAtTime(0.001,now+0.5);
+      osc.start(now);osc.stop(now+0.5);
+    } else if(type==='gold'){
+      // Hợp âm khải hoàn 4 nốt
+      [523,659,784,1047].forEach((f,i)=>{
+        const o2=ac.createOscillator(),g2=ac.createGain();
+        o2.connect(g2);g2.connect(ac.destination);
+        o2.type='sine';o2.frequency.setValueAtTime(f,now+i*0.1);
+        g2.gain.setValueAtTime(0.15,now+i*0.1);
+        g2.gain.exponentialRampToValueAtTime(0.001,now+i*0.1+0.4);
+        o2.start(now+i*0.1);o2.stop(now+i*0.1+0.4);
+      });
+      return;
+    } else if(type==='wrong'){
+      osc.type='sawtooth';osc.frequency.setValueAtTime(200,now);
+      osc.frequency.exponentialRampToValueAtTime(100,now+0.3);
+      gain.gain.setValueAtTime(0.15,now);gain.gain.exponentialRampToValueAtTime(0.001,now+0.3);
+      osc.start(now);osc.stop(now+0.3);
+    } else if(type==='timeout'){
+      osc.type='sine';osc.frequency.setValueAtTime(400,now);
+      osc.frequency.exponentialRampToValueAtTime(150,now+0.6);
+      gain.gain.setValueAtTime(0.2,now);gain.gain.exponentialRampToValueAtTime(0.001,now+0.6);
+      osc.start(now);osc.stop(now+0.6);
+    }
+  }catch(e){}
+}
+
+// Web Speech API — giọng nói KH
+let _dojoUtterance=null;
+let dojoAutoSpeak=false;
+
+function dojoGetViVoice(){
+  if(!window.speechSynthesis)return null;
+  const voices=window.speechSynthesis.getVoices();
+  // Ưu tiên giọng vi-VN
+  return voices.find(v=>v.lang==='vi-VN')||voices.find(v=>v.lang.startsWith('vi'))||voices[0]||null;
+}
+
+function dojoSpeakKH(text){
+  if(!window.speechSynthesis)return toast('⚠️ Trình duyệt không hỗ trợ đọc giọng nói');
+  window.speechSynthesis.cancel();
+  const utt=new SpeechSynthesisUtterance(text);
+  utt.lang='vi-VN';
+  utt.rate=0.92;
+  utt.pitch=1.05;
+  const voice=dojoGetViVoice();
+  if(voice)utt.voice=voice;
+  _dojoUtterance=utt;
+  window.speechSynthesis.speak(utt);
+}
+
+function dojoStopSpeech(){
+  if(window.speechSynthesis)window.speechSynthesis.cancel();
+}
+
+// Gọi sau khi chọn option — phát âm thanh phù hợp
+const _origSelectDojoOpt=selectDojoOpt;
+function selectDojoOpt(key){
+  if(dojoState.answered)return;
+  // Dừng giọng nói KH nếu đang đọc
+  dojoStopSpeech();
+  clearInterval(dojoState.timer);
+  dojoState.answered=true;
+  const sc=dojoState.scenarios[dojoState.current];
+  const isCorrect=sc.opts.find(o=>o.k===key)?.correct===true;
+  // Highlight options
+  sc.opts.forEach(o=>{
+    const el=document.getElementById('dojo_opt_'+o.k);
+    if(!el)return;
+    el.classList.add('disabled');
+    if(o.k===key&&isCorrect)el.classList.add('selected-correct');
+    else if(o.k===key&&!isCorrect)el.classList.add('selected-wrong');
+    else if(o.correct)el.classList.add('show-correct');
+  });
+  // Âm thanh + XP
+  const xpEarned=Math.round(sc.xp*dojoState.combo*(dojoState.timeLeft>20?1.5:dojoState.timeLeft>10?1.2:1));
+  if(isCorrect){
+    if(dojoState.timeLeft>20)dojoPlaySound('gold');
+    else dojoPlaySound('correct');
+    dojoState.score+=xpEarned;
+    dojoState.correct++;
+    dojoState.combo=Math.min(dojoState.combo+1,4);
+    dojoState.streak[dojoState.current%5]=true;
+    const fb=document.getElementById('dojoFeedback');
+    const opt=sc.opts.find(o=>o.k===key);
+    const bonus=dojoState.timeLeft>20?'⚡ Phản xạ xuất sắc! ':dojoState.timeLeft>10?'👍 Tốt! ':'';
+    if(fb){
+      fb.innerHTML=`${bonus}<strong style="color:var(--gr)">+${xpEarned} XP</strong> (Combo x${dojoState.combo-1})<br><br>${opt?.fb||''}`;
+      fb.className='dojo-feedback show correct';
+    }
+    document.getElementById('dojoArena')?.classList.add('gold-flash');
+    setTimeout(()=>document.getElementById('dojoArena')?.classList.remove('gold-flash'),1000);
+  } else {
+    dojoPlaySound('wrong');
+    dojoState.wrong++;
+    dojoState.combo=1;
+    dojoState.streak[dojoState.current%5]=false;
+    const fb=document.getElementById('dojoFeedback');
+    const opt=sc.opts.find(o=>o.k===key);
+    const correctOpt=sc.opts.find(o=>o.correct);
+    if(fb){
+      fb.innerHTML=`❌ <strong style="color:var(--rd)">Chưa đúng.</strong> Đáp án tốt nhất là <strong>${correctOpt?.k}</strong>.<br><br>${opt?.fb||''}`;
+      fb.className='dojo-feedback show wrong';
+    }
+    document.getElementById('dojoArena')?.classList.add('shake');
+    setTimeout(()=>document.getElementById('dojoArena')?.classList.remove('shake'),400);
+  }
+  updDojoStreak();
+  document.getElementById('hudScore').textContent=dojoState.score;
+  document.getElementById('hudCombo').textContent='x'+dojoState.combo;
+  document.getElementById('hudCorrect').textContent=dojoState.correct;
+  document.getElementById('hudWrong').textContent=dojoState.wrong;
+  const nb=document.getElementById('dojoNextBtn');
+  if(nb)nb.style.display='block';
+}
+
+// Override renderDojoScenario để thêm nút loa + auto-speak
+const _origRenderDojoScenario=renderDojoScenario;
+function renderDojoScenario(){
+  const sc=dojoState.scenarios[dojoState.current];
+  if(!sc)return dojoShowResult();
+  dojoState.answered=false;
+  dojoStopSpeech();
+  // Update HUD
+  document.getElementById('hudRound').textContent=dojoState.current+1;
+  document.getElementById('hudScore').textContent=dojoState.score;
+  document.getElementById('hudCombo').textContent='x'+dojoState.combo;
+  document.getElementById('hudCorrect').textContent=dojoState.correct;
+  document.getElementById('hudWrong').textContent=dojoState.wrong;
+  const diffEl=document.getElementById('dojoDiffLabel');
+  const diffMap={easy:{t:'⭐ Cơ bản',c:'rgba(62,207,142,.15)',tc:'var(--gr)'},medium:{t:'⭐⭐ Trung bình',c:'rgba(245,166,35,.15)',tc:'var(--ac)'},hard:{t:'⭐⭐⭐ Khó',c:'rgba(239,83,80,.15)',tc:'var(--rd)'}};
+  const dm=diffMap[sc.diff]||diffMap.easy;
+  if(diffEl){diffEl.textContent=dm.t;diffEl.style.background=dm.c;diffEl.style.color=dm.tc;}
+  document.getElementById('dojoSitText').textContent=sc.sit;
+  // KH voice box với nút loa
+  const khBox=document.getElementById('dojoKHSays');
+  if(khBox)khBox.textContent=sc.kh;
+  // Thêm nút 🔊 vào KH box
+  const khWrap=khBox?.parentElement;
+  if(khWrap){
+    // Remove old button nếu có
+    const old=khWrap.querySelector('.dojo-speak-btn');
+    if(old)old.remove();
+    const btn=document.createElement('button');
+    btn.className='dojo-kh-voice dojo-speak-btn';
+    btn.innerHTML='🔊 Nghe Giọng Khách';
+    btn.onclick=()=>{dojoSpeakKH(sc.kh);getDojoAC();};
+    khWrap.insertBefore(btn,khBox);
+  }
+  const trackLabels={objection:'🛡️ Xử lý Phản đối',closing:'🎯 Chốt Deal',discovery:'🔍 Khám phá KH',negotiation:'🤝 Đàm phán'};
+  const tl=document.getElementById('dojoTrackLabel');
+  if(tl)tl.textContent=trackLabels[dojoState.track]||dojoState.track;
+  const optsEl=document.getElementById('dojoOpts');
+  if(optsEl){
+    optsEl.innerHTML=sc.opts.map(o=>`<div class="dojo-opt" id="dojo_opt_${o.k}" onclick="selectDojoOpt('${o.k}')">
+      <div class="dojo-opt-key">${o.k}</div>
+      <div>${o.t}</div>
+    </div>`).join('');
+  }
+  const fb=document.getElementById('dojoFeedback');
+  if(fb){fb.textContent='';fb.className='dojo-feedback';}
+  const nb=document.getElementById('dojoNextBtn');
+  if(nb)nb.style.display='none';
+  const nav=document.getElementById('dojoNavBtns');
+  if(nav)nav.style.display='flex';
+  dojoStartTimer(sc);
+  // Auto-speak nếu bật
+  if(dojoAutoSpeak)setTimeout(()=>dojoSpeakKH(sc.kh),600);
+}
+
+// Override dojoStartTimer để thêm âm thanh tick
+const _origDojoStartTimer=dojoStartTimer;
+function dojoStartTimer(sc){
+  if(dojoState.timer)clearInterval(dojoState.timer);
+  dojoState.timeLeft=30;
+  const timerEl=document.getElementById('dojoTimer');
+  const fillEl=document.getElementById('dojoTimerFill');
+  const lblEl=document.getElementById('dojoTimerLabel');
+  dojoState.timer=setInterval(()=>{
+    dojoState.timeLeft--;
+    const pct=dojoState.timeLeft/30*100;
+    if(timerEl){
+      timerEl.textContent=dojoState.timeLeft;
+      timerEl.className='dojo-timer'+(dojoState.timeLeft>15?' ok':dojoState.timeLeft>7?' warn':' danger');
+    }
+    if(fillEl){
+      const col=dojoState.timeLeft>15?'var(--gr)':dojoState.timeLeft>7?'var(--ac)':'var(--rd)';
+      fillEl.style.width=pct+'%';fillEl.style.background=col;
+    }
+    if(lblEl)lblEl.textContent=dojoState.timeLeft>0?`Phản xạ trong ${dojoState.timeLeft} giây`:'⏰ Hết giờ!';
+    // Âm thanh tick
+    if(dojoState.timeLeft<=3&&dojoState.timeLeft>0)dojoPlaySound('tick_urgent');
+    else if(dojoState.timeLeft<=10&&dojoState.timeLeft>0)dojoPlaySound('tick');
+    if(dojoState.timeLeft<=0){
+      clearInterval(dojoState.timer);
+      if(!dojoState.answered)dojoTimeout(sc);
+    }
+  },1000);
+}
+
+// Override dojoTimeout để thêm âm thanh
+const _origDojoTimeout=dojoTimeout;
+function dojoTimeout(sc){
+  dojoStopSpeech();
+  dojoPlaySound('timeout');
+  dojoState.answered=true;
+  dojoState.wrong++;
+  dojoState.combo=1;
+  dojoState.streak[dojoState.current%5]=false;
+  sc.opts.forEach(o=>{
+    const el=document.getElementById('dojo_opt_'+o.k);
+    if(!el)return;
+    el.classList.add('disabled');
+    if(o.correct)el.classList.add('show-correct');
+  });
+  const fb=document.getElementById('dojoFeedback');
+  const correctOpt=sc.opts.find(o=>o.correct);
+  if(fb){
+    fb.innerHTML=`⏰ <strong style="color:var(--ac)">Hết giờ!</strong> Đáp án đúng là <strong>${correctOpt?.k}</strong>.<br><br>${correctOpt?.fb||''}`;
+    fb.className='dojo-feedback show timeout';
+  }
+  document.getElementById('dojoArena')?.classList.add('shake');
+  setTimeout(()=>document.getElementById('dojoArena')?.classList.remove('shake'),400);
+  updDojoStreak();
+  document.getElementById('hudCombo').textContent='x'+dojoState.combo;
+  document.getElementById('hudWrong').textContent=dojoState.wrong;
+  const nb=document.getElementById('dojoNextBtn');
+  if(nb)nb.style.display='block';
+}
+// ===================== BACKUP / RESTORE =====================
+
+const BACKUP_VERSION='v8.0';
+const BACKUP_LAST_KEY='bds_last_backup';
+
+// Tất cả keys cần backup
+const BACKUP_KEYS=[
+  {key:'bds_c',       label:'Mini CRM',           icon:'🗄️'},
+  {key:'bds_khl',     label:'KH Theo Nhãn',        icon:'🎯'},
+  {key:'bds_t',       label:'Templates',           icon:'📌'},
+  {key:'bds_p',       label:'Hồ Sơ',               icon:'👤'},
+  {key:'bds_rm',      label:'Nhắc Lịch KH',        icon:'⏰'},
+  {key:'bds_cl',      label:'Lịch sử Content',     icon:'📊'},
+  {key:'bds_sc6',     label:'Chiến Thuật 6 Căn',   icon:'🏘️'},
+  {key:'bds_ss',      label:'Khảo Sát Nhà',        icon:'🔍'},
+  {key:'bds_ck',      label:'Checklist Buổi Sáng', icon:'☀️'},
+  {key:'bds_v8_saved_angles', label:'Góc Bán Yêu Thích', icon:'🎯'},
+  {key:'bds_quiz_history',    label:'Lịch Sử Trắc Nghiệm', icon:'🧠'},
+  {key:'bds_dojo_xp',         label:'XP Sparring Dojo',     icon:'⚔️'},
+  {key:'bds_last_val',        label:'Định Giá BĐS',         icon:'🏷️'},
+];
+
+// Lấy tất cả SPIN keys (bds_spin_*)
+function getSpinKeys(){
+  const keys=[];
+  try{
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(k&&k.startsWith('bds_spin_'))keys.push({key:k,label:'SPIN: '+k.replace('bds_spin_',''),icon:'🔄'});
+    }
+  }catch(e){}
+  return keys;
+}
+
+function getAllBackupKeys(){
+  return [...BACKUP_KEYS,...getSpinKeys()];
+}
+
+function buildBackupData(){
+  const data={
+    version:BACKUP_VERSION,
+    exportedAt:new Date().toISOString(),
+    app:'AUTO PRO CONTENT BĐS',
+    items:{}
+  };
+  getAllBackupKeys().forEach(({key})=>{
+    try{
+      const val=localStorage.getItem(key);
+      if(val)data.items[key]=val;
+    }catch(e){}
+  });
+  return data;
+}
+
+function getBackupSize(data){
+  const str=JSON.stringify(data);
+  const bytes=new TextEncoder().encode(str).length;
+  if(bytes<1024)return bytes+'B';
+  if(bytes<1024*1024)return (bytes/1024).toFixed(1)+'KB';
+  return (bytes/1024/1024).toFixed(2)+'MB';
+}
+
+function openBackupModal(){
+  document.getElementById('backupModal').classList.add('show');
+  renderBackupSummary();
+  // Check last backup
+  try{
+    const last=localStorage.getItem(BACKUP_LAST_KEY);
+    const el=document.getElementById('backupLastInfo');
+    if(last&&el){
+      const d=JSON.parse(last);
+      el.textContent=`Backup gần nhất: ${new Date(d.at).toLocaleString('vi-VN')} · ${d.size}`;
+    }
+  }catch(e){}
+}
+
+function closeBackupModal(){
+  document.getElementById('backupModal').classList.remove('show');
+}
+
+function renderBackupSummary(){
+  const allKeys=getAllBackupKeys();
+  const rows=document.getElementById('backupDataRows');
+  const sizeEl=document.getElementById('backupSizeLabel');
+  const progEl=document.getElementById('backupProgressFill');
+  if(!rows)return;
+  let html='';
+  let totalItems=0;
+  let presentKeys=0;
+  allKeys.forEach(({key,label,icon})=>{
+    try{
+      const val=localStorage.getItem(key);
+      if(!val)return;
+      presentKeys++;
+      let count='✓';
+      try{
+        const parsed=JSON.parse(val);
+        if(Array.isArray(parsed))count=parsed.length+' bản ghi';
+        else if(typeof parsed==='object')count='1 bản ghi';
+        else count='Có dữ liệu';
+        if(Array.isArray(parsed))totalItems+=parsed.length;
+        else totalItems++;
+      }catch(e){count='Có dữ liệu';}
+      html+=`<div class="backup-data-row">
+        <span class="backup-data-label">${icon} ${label}</span>
+        <span class="backup-data-count">${count}</span>
+      </div>`;
+    }catch(e){}
+  });
+  rows.innerHTML=html||'<div style="font-size:.75rem;color:var(--t3);text-align:center;padding:10px">Chưa có dữ liệu nào để backup</div>';
+  const data=buildBackupData();
+  const size=getBackupSize(data);
+  if(sizeEl)sizeEl.textContent=`${presentKeys}/${allKeys.length} loại dữ liệu · Kích thước: ${size}`;
+  if(progEl)progEl.style.width=Math.round(presentKeys/Math.max(allKeys.length,1)*100)+'%';
+}
+
+function exportBackupJSON(){
+  const data=buildBackupData();
+  const str=JSON.stringify(data,null,2);
+  const blob=new Blob([str],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  const date=new Date().toISOString().slice(0,10);
+  a.href=url;
+  a.download=`autopro-bds-backup-${date}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  // Save last backup info
+  try{
+    localStorage.setItem(BACKUP_LAST_KEY,JSON.stringify({at:new Date().toISOString(),size:getBackupSize(data)}));
+  }catch(e){}
+  renderBackupSummary();
+  toast('✅ Đã xuất file backup! Hãy lưu vào Google Drive để an toàn.');
+}
+
+function exportToGoogleDrive(){
+  // Step 1: download file first
+  exportBackupJSON();
+  // Step 2: open Google Drive in new tab
+  setTimeout(()=>{
+    window.open('https://drive.google.com/drive/my-drive','_blank');
+  },800);
+  toast('📂 File đã tải xuống · Google Drive đang mở · Upload file vào Drive nhé!');
+}
+
+function copyBackupJSON(){
+  const data=buildBackupData();
+  const str=JSON.stringify(data,null,2);
+  navigator.clipboard.writeText(str).then(()=>{
+    toast('✅ Đã copy JSON vào clipboard! Paste vào Google Keep, Notes hoặc bất kỳ đâu.');
+  }).catch(()=>{
+    // Fallback
+    const ta=document.createElement('textarea');
+    ta.value=str;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    toast('✅ Đã copy JSON vào clipboard!');
+  });
+}
+
+function importBackupJSON(input){
+  const file=input.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      processImport(data);
+    }catch(err){
+      toast('❌ File không hợp lệ — không phải JSON backup của app này!');
+    }
+  };
+  reader.readAsText(file);
+  // Reset input
+  input.value='';
+}
+
+function importFromPaste(){
+  const ta=document.getElementById('backupPasteArea');
+  const txt=(ta?.value||'').trim();
+  if(!txt)return toast('⚠️ Paste nội dung JSON vào ô bên trái trước!');
+  try{
+    const data=JSON.parse(txt);
+    processImport(data);
+    ta.value='';
+  }catch(e){
+    toast('❌ JSON không hợp lệ — kiểm tra lại nội dung paste!');
+  }
+}
+
+function processImport(data){
+  // Validate
+  if(!data.items||typeof data.items!=='object'){
+    return toast('❌ File backup không hợp lệ — thiếu dữ liệu items!');
+  }
+  const keys=Object.keys(data.items);
+  if(!keys.length)return toast('⚠️ File backup trống — không có dữ liệu để phục hồi!');
+
+  // Confirm
+  const exportedAt=data.exportedAt?new Date(data.exportedAt).toLocaleString('vi-VN'):'Không rõ';
+  const confirmed=confirm(
+    `⚠️ PHỤC HỒI DỮ LIỆU\n\n` +
+    `File backup ngày: ${exportedAt}\n` +
+    `Số loại dữ liệu: ${keys.length}\n\n` +
+    `Hành động này sẽ GHI ĐÈ toàn bộ dữ liệu hiện tại!\n` +
+    `Bạn có chắc muốn tiếp tục không?`
+  );
+  if(!confirmed)return;
+
+  // Restore
+  let restored=0;
+  try{
+    Object.entries(data.items).forEach(([key,val])=>{
+      localStorage.setItem(key,val);
+      restored++;
+    });
+  }catch(e){
+    toast('❌ Lỗi khi phục hồi: '+e.message);
+    return;
+  }
+
+  toast(`✅ Đã phục hồi ${restored} loại dữ liệu! Đang tải lại app...`);
+  closeBackupModal();
+  setTimeout(()=>{
+    // Reload app data
+    try{
+      const c=localStorage.getItem('bds_c');if(c)crm=JSON.parse(c);
+      const t=localStorage.getItem('bds_t');if(t)tpl=JSON.parse(t);
+      const p=localStorage.getItem('bds_p');if(p){prof=JSON.parse(p);loadProfInp();}
+      const rm=localStorage.getItem('bds_rm');if(rm)reminders=JSON.parse(rm);
+      const cl=localStorage.getItem('bds_cl');if(cl)contentLog=JSON.parse(cl);
+      loadSC();loadKHList();
+      updStats();buildHomeFeatures();buildHomeRecent();
+      toast('🎉 Phục hồi hoàn tất! Tất cả dữ liệu đã được khôi phục.');
+    }catch(e){
+      // Fallback: reload page
+      window.location.reload();
+    }
+  },1500);
+}
+
+// Close modal on overlay click
+document.addEventListener('DOMContentLoaded',()=>{
+  const modal=document.getElementById('backupModal');
+  if(modal)modal.addEventListener('click',e=>{if(e.target===modal)closeBackupModal();});
+});
+
+// ===================== PWA — INSTALL + OFFLINE =====================
+
+let _pwaInstallEvent=null;
+const PWA_DISMISSED_KEY='bds_pwa_dismissed';
+
+// Bắt sự kiện beforeinstallprompt (Chrome/Edge/Android)
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();
+  _pwaInstallEvent=e;
+  // Chỉ show nếu chưa từng dismiss
+  const dismissed=localStorage.getItem(PWA_DISMISSED_KEY);
+  if(!dismissed)setTimeout(showPWABanner,3000);
+});
+
+// Ẩn banner khi đã cài xong
+window.addEventListener('appinstalled',()=>{
+  hidePWABanner();
+  toast('🎉 Đã cài app lên màn hình thành công!');
+  localStorage.setItem(PWA_DISMISSED_KEY,'installed');
+});
+
+function showPWABanner(){
+  const banner=document.getElementById('pwaBanner');
+  if(banner)banner.classList.add('show');
+}
+
+function hidePWABanner(){
+  const banner=document.getElementById('pwaBanner');
+  if(banner)banner.classList.remove('show');
+}
+
+function dismissPWABanner(){
+  hidePWABanner();
+  localStorage.setItem(PWA_DISMISSED_KEY,'dismissed');
+}
+
+async function triggerPWAInstall(){
+  if(_pwaInstallEvent){
+    // Chrome/Edge/Android — native install prompt
+    _pwaInstallEvent.prompt();
+    const result=await _pwaInstallEvent.userChoice;
+    if(result.outcome==='accepted'){
+      toast('✅ Đang cài app... Kiểm tra màn hình chính nhé!');
+      localStorage.setItem(PWA_DISMISSED_KEY,'installed');
+    }
+    _pwaInstallEvent=null;
+    hidePWABanner();
+  } else {
+    // iOS Safari / Firefox — hướng dẫn thủ công
+    showPWAGuideModal();
+  }
+}
+
+function showPWAGuideModal(){
+  // Detect platform
+  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isSafari=/safari/i.test(navigator.userAgent)&&!/chrome/i.test(navigator.userAgent);
+  let guide='';
+  if(isIOS||isSafari){
+    guide=`<div style="line-height:1.9;font-size:.82rem;color:var(--t2)">
+      <div style="font-weight:700;color:var(--ac);margin-bottom:10px">📱 Trên iPhone / iPad (Safari):</div>
+      <div>1️⃣ Bấm nút <strong style="color:#fff">⬆️ Share</strong> ở thanh dưới trình duyệt</div>
+      <div>2️⃣ Cuộn xuống chọn <strong style="color:#fff">"Thêm vào Màn hình chính"</strong></div>
+      <div>3️⃣ Bấm <strong style="color:#fff">"Thêm"</strong> — app sẽ xuất hiện như app thật!</div>
+    </div>`;
+  } else {
+    guide=`<div style="line-height:1.9;font-size:.82rem;color:var(--t2)">
+      <div style="font-weight:700;color:var(--ac);margin-bottom:10px">🤖 Trên Android (Chrome):</div>
+      <div>1️⃣ Bấm menu <strong style="color:#fff">⋮</strong> ở góc trên phải Chrome</div>
+      <div>2️⃣ Chọn <strong style="color:#fff">"Thêm vào Màn hình chính"</strong></div>
+      <div>3️⃣ Bấm <strong style="color:#fff">"Thêm"</strong></div>
+      <hr style="border-color:var(--border);margin:12px 0">
+      <div style="font-weight:700;color:var(--bl);margin-bottom:6px">💻 Trên máy tính (Chrome/Edge):</div>
+      <div>Bấm icon <strong style="color:#fff">📲</strong> trên thanh địa chỉ → "Cài đặt"</div>
+    </div>`;
+  }
+  // Create modal dynamically
+  const existing=document.getElementById('pwaGuideModal');
+  if(existing)existing.remove();
+  const modal=document.createElement('div');
+  modal.id='pwaGuideModal';
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);z-index:1300;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML=`<div style="background:linear-gradient(135deg,#1a1e2e,#0d0f14);border:1.5px solid rgba(76,156,245,.3);border-radius:20px;padding:28px;max-width:420px;width:100%;position:relative">
+    <button onclick="document.getElementById('pwaGuideModal').remove()" style="position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.5);font-size:.9rem;cursor:pointer">✕</button>
+    <div style="font-size:1.8rem;margin-bottom:10px;text-align:center">📲</div>
+    <div style="font-weight:900;font-size:1rem;color:#fff;text-align:center;margin-bottom:16px">Cài App Lên Màn Hình Chính</div>
+    ${guide}
+    <div style="margin-top:14px;background:rgba(62,207,142,.08);border:1px solid rgba(62,207,142,.2);border-radius:10px;padding:10px 12px;font-size:.72rem;color:var(--gr)">
+      ✅ Sau khi cài: app mở như app thật, không cần gõ địa chỉ web, dùng được khi mất mạng!
+    </div>
+  </div>`;
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+  document.body.appendChild(modal);
+}
+
+// Offline/Online detection
+window.addEventListener('offline',()=>{
+  const bar=document.getElementById('offlineBar');
+  if(bar)bar.classList.add('show');
+});
+window.addEventListener('online',()=>{
+  const bar=document.getElementById('offlineBar');
+  if(bar){
+    bar.textContent='✅ Đã kết nối lại mạng!';
+    bar.style.background='rgba(62,207,142,.9)';
+    setTimeout(()=>{
+      bar.classList.remove('show');
+      bar.textContent='📵 Mất kết nối mạng — App vẫn hoạt động bình thường ✓';
+      bar.style.background='';
+    },2500);
+  }
+});
+
+// Register Service Worker
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').then(reg=>{
+      console.log('SW registered');
+    }).catch(()=>{
+      // SW không khả dụng — app vẫn chạy bình thường
+    });
+  });
 }
 
 // ===================== SPIN SELLING =====================

@@ -3,6 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f5a623">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AUTO PRO BĐS">
+<meta name="application-name" content="AUTO PRO BĐS">
+<meta name="description" content="Phần mềm AI tạo content BĐS #1 Việt Nam · 25+ tính năng thực chiến">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" sizes="180x180" href="icon-192.png">
 <title>AUTO PRO CONTENT BĐS v7 — AI Tạo Nội Dung Đa Nền Tảng</title>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -363,7 +372,120 @@ select option{background:var(--bg3)}
 .sc-plt-chip.done{background:rgba(62,207,142,.15);color:var(--gr)}
 .sc-week-sep{background:linear-gradient(135deg,rgba(245,166,35,.08),rgba(62,207,142,.05));font-size:.67rem;font-weight:700;color:var(--ac);padding:5px 9px;border-bottom:1px solid var(--border)}
 
-/* SPIN SELLING */
+/* ── QUIZ 3 TẦNG ── */
+.quiz-progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:20px}
+.quiz-progress-fill{height:100%;background:linear-gradient(90deg,var(--bl),var(--pu));border-radius:3px;transition:width .4s}
+.quiz-level-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.quiz-ltab{padding:7px 16px;border-radius:20px;font-size:.75rem;font-weight:700;border:1.5px solid var(--border);color:var(--t2);cursor:default;opacity:.5}
+.quiz-ltab.active{border-color:var(--bl);background:rgba(76,156,245,.1);color:var(--bl);opacity:1}
+.quiz-ltab.done{border-color:var(--gr);background:rgba(62,207,142,.1);color:var(--gr);opacity:1}
+.quiz-q-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:20px;margin-bottom:14px;animation:fadeUp .25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.quiz-q-num{font-size:.65rem;font-weight:700;color:var(--t3);font-family:'Space Mono',monospace;margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.quiz-q-level{padding:2px 8px;border-radius:8px;font-size:.6rem;font-weight:700}
+.quiz-q-text{font-size:.88rem;font-weight:600;color:var(--tx);line-height:1.6;margin-bottom:14px}
+.quiz-opts{display:grid;gap:8px}
+.quiz-opt{background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;cursor:pointer;font-size:.8rem;color:var(--t2);transition:.15s;display:flex;align-items:flex-start;gap:10px;text-align:left}
+.quiz-opt:hover{border-color:rgba(76,156,245,.4);background:rgba(76,156,245,.06);color:var(--tx)}
+.quiz-opt.selected{border-color:var(--bl);background:rgba(76,156,245,.1);color:var(--bl)}
+.quiz-opt.correct{border-color:var(--gr);background:rgba(62,207,142,.1);color:var(--gr)}
+.quiz-opt.wrong{border-color:var(--rd);background:rgba(239,83,80,.08);color:var(--rd)}
+.quiz-opt-key{width:22px;height:22px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0;margin-top:1px}
+.quiz-opt.selected .quiz-opt-key{background:var(--bl);color:#fff}
+.quiz-opt.correct .quiz-opt-key{background:var(--gr);color:#fff}
+.quiz-opt.wrong .quiz-opt-key{background:var(--rd);color:#fff}
+.quiz-explain{background:rgba(62,207,142,.07);border:1px solid rgba(62,207,142,.25);border-radius:9px;padding:11px 13px;margin-top:10px;font-size:.76rem;color:var(--t2);line-height:1.65;display:none}
+.quiz-explain.show{display:block}
+.quiz-nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap;gap:8px}
+/* Level 3 text area */
+.quiz-textarea{width:100%;min-height:90px;font-size:.8rem;padding:10px 13px;border-radius:9px;border:1.5px solid var(--border);background:var(--bg3);color:var(--tx);resize:vertical;font-family:inherit;transition:.15s}
+.quiz-textarea:focus{border-color:var(--bl);outline:none}
+/* Result card */
+.quiz-result{background:linear-gradient(135deg,#1a1e2e,#0d0f14);border-radius:16px;padding:28px;text-align:center;margin-top:16px}
+.quiz-result-score{font-size:3.5rem;font-weight:900;font-family:'Space Mono',monospace;line-height:1;margin-bottom:6px}
+.quiz-result-label{font-size:1rem;font-weight:700;margin-bottom:14px}
+.quiz-skill-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:20px;text-align:left}
+.quiz-skill-card{background:rgba(255,255,255,.05);border-radius:11px;padding:13px}
+.quiz-skill-bar{height:5px;border-radius:3px;background:var(--border);margin-top:6px;overflow:hidden}
+.quiz-skill-fill{height:100%;border-radius:3px;transition:width .6s}
+/* ── SPARRING DOJO ── */
+.dojo-tracks{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:20px}
+.dojo-track{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:.2s;text-align:center;position:relative}
+.dojo-track:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.dojo-track.active{border-color:var(--ac);background:rgba(245,166,35,.06)}
+.dojo-track-icon{font-size:1.8rem;margin-bottom:6px}
+.dojo-track-name{font-size:.78rem;font-weight:700;color:var(--tx);margin-bottom:3px}
+.dojo-track-count{font-size:.65rem;color:var(--t3)}
+.dojo-track-badge{position:absolute;top:-6px;right:-6px;background:var(--gr);color:#fff;font-size:.58rem;font-weight:700;padding:2px 6px;border-radius:8px}
+.dojo-arena{background:linear-gradient(135deg,#0d0f14,#1a1e2e);border:2px solid rgba(239,83,80,.3);border-radius:16px;padding:clamp(20px,4vw,32px);margin-bottom:16px;position:relative;overflow:hidden}
+.dojo-arena::before{content:'⚔️';position:absolute;right:20px;top:16px;font-size:3rem;opacity:.08}
+.dojo-timer-wrap{text-align:center;margin-bottom:20px}
+.dojo-timer{font-size:clamp(3rem,8vw,5rem);font-weight:900;font-family:'Space Mono',monospace;line-height:1;transition:color .3s}
+.dojo-timer.ok{color:var(--gr)}.dojo-timer.warn{color:var(--ac)}.dojo-timer.danger{color:var(--rd)}
+.dojo-timer-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin:8px auto;max-width:300px}
+.dojo-timer-fill{height:100%;border-radius:3px;transition:width .1s linear,background .3s}
+.dojo-situation{background:rgba(255,255,255,.05);border-radius:10px;padding:14px 16px;margin-bottom:16px;border-left:4px solid var(--rd)}
+.dojo-sit-label{font-size:.65rem;font-weight:700;color:var(--rd);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.dojo-sit-text{font-size:clamp(.85rem,2vw,1rem);color:#fff;line-height:1.6;font-weight:500}
+.dojo-opts{display:grid;gap:8px;margin-bottom:14px}
+.dojo-opt{background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:12px 15px;cursor:pointer;font-size:.82rem;color:rgba(255,255,255,.8);transition:.15s;display:flex;align-items:flex-start;gap:10px;text-align:left}
+.dojo-opt:hover:not(.disabled){border-color:rgba(245,166,35,.4);background:rgba(245,166,35,.07);color:#fff}
+.dojo-opt.selected-correct{border-color:var(--gr);background:rgba(62,207,142,.12);color:var(--gr)}
+.dojo-opt.selected-wrong{border-color:var(--rd);background:rgba(239,83,80,.1);color:var(--rd)}
+.dojo-opt.show-correct{border-color:var(--gr);background:rgba(62,207,142,.08)}
+.dojo-opt.disabled{cursor:default;pointer-events:none}
+.dojo-opt-key{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0}
+.dojo-feedback{border-radius:10px;padding:13px 15px;margin-bottom:12px;font-size:.8rem;line-height:1.65;display:none}
+.dojo-feedback.show{display:block}
+.dojo-feedback.correct{background:rgba(62,207,142,.1);border:1px solid rgba(62,207,142,.3);color:rgba(255,255,255,.8)}
+.dojo-feedback.wrong{background:rgba(239,83,80,.1);border:1px solid rgba(239,83,80,.3);color:rgba(255,255,255,.8)}
+.dojo-feedback.timeout{background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.3);color:rgba(255,255,255,.8)}
+.dojo-hud{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.dojo-hud-item{background:rgba(255,255,255,.05);border-radius:10px;padding:8px 14px;text-align:center;flex:1;min-width:70px}
+.dojo-hud-n{font-size:1.3rem;font-weight:900;font-family:'Space Mono',monospace}
+.dojo-hud-l{font-size:.6rem;color:var(--t3);margin-top:1px}
+.dojo-streak-bar{display:flex;gap:4px;justify-content:center;margin:8px 0}
+.dojo-streak-dot{width:12px;height:12px;border-radius:50%;background:var(--border);transition:.3s}
+.dojo-streak-dot.on{background:var(--ac);box-shadow:0 0 8px rgba(245,166,35,.5)}
+.dojo-belt{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border-radius:10px;padding:10px 14px;margin-bottom:12px}
+.dojo-belt-icon{font-size:1.4rem}
+.dojo-belt-info h4{font-size:.82rem;font-weight:700;color:#fff}
+.dojo-belt-info p{font-size:.68rem;color:var(--t3)}
+.dojo-xp-bar{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:4px}
+.dojo-xp-fill{height:100%;border-radius:3px;transition:width .5s}
+.dojo-result{text-align:center;padding:24px 0}
+.dojo-result-score{font-size:3rem;font-weight:900;font-family:'Space Mono',monospace;color:var(--ac);line-height:1;margin-bottom:6px}
+@keyframes goldFlash{0%,100%{opacity:1}50%{opacity:.3}}
+.gold-flash{animation:goldFlash .3s ease 3}
+@keyframes shakeAnim{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.shake{animation:shakeAnim .3s ease}
+/* ── BACKUP / RESTORE ── */
+.backup-modal{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);z-index:1100;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;visibility:hidden;transition:opacity .3s}
+.backup-modal.show{opacity:1;visibility:visible}
+.backup-box{background:linear-gradient(135deg,#1a1e2e,#0d0f14);border:1.5px solid rgba(62,207,142,.3);border-radius:20px;padding:clamp(20px,5vw,36px);max-width:520px;width:100%;position:relative;transform:scale(.9);transition:transform .3s;max-height:90vh;overflow-y:auto}
+.backup-modal.show .backup-box{transform:scale(1)}
+.backup-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.5);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.backup-close:hover{background:rgba(255,255,255,.15);color:#fff}
+.backup-section{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;margin-bottom:12px}
+.backup-section-title{font-size:.78rem;font-weight:700;color:var(--gr);margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.backup-data-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.75rem}
+.backup-data-row:last-child{border:none}
+.backup-data-label{color:var(--t2)}
+.backup-data-count{color:var(--ac);font-weight:700;font-family:'Space Mono',monospace}
+.backup-progress{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:8px}
+.backup-progress-fill{height:100%;background:linear-gradient(90deg,var(--gr),var(--bl));border-radius:2px;transition:width .4s}
+.gdrive-btn{display:flex;align-items:center;gap:10px;width:100%;padding:13px 16px;border-radius:11px;border:1.5px solid;font-size:.82rem;font-weight:700;cursor:pointer;transition:.2s;background:transparent;text-align:left}
+.gdrive-btn:hover{transform:translateY(-1px)}
+/* ── PWA INSTALL BANNER ── */
+.pwa-banner{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);z-index:1200;background:linear-gradient(135deg,#1a1e2e,#0d0f14);border:1.5px solid rgba(245,166,35,.4);border-radius:16px;padding:14px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 16px 40px rgba(0,0,0,.5);transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;opacity:0;pointer-events:none;max-width:340px;width:calc(100% - 32px)}
+.pwa-banner.show{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto}
+.pwa-banner-icon{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--ac),var(--a2));display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+.pwa-banner-text h4{font-size:.82rem;font-weight:800;color:#fff;margin-bottom:2px}
+.pwa-banner-text p{font-size:.68rem;color:rgba(255,255,255,.5);line-height:1.4}
+.pwa-banner-actions{display:flex;gap:6px;margin-left:auto;flex-shrink:0}
+/* Offline indicator */
+.offline-bar{position:fixed;top:0;left:0;right:0;background:rgba(239,83,80,.9);color:#fff;font-size:.72rem;font-weight:700;text-align:center;padding:6px;z-index:1300;transform:translateY(-100%);transition:.3s}
+.offline-bar.show{transform:translateY(0)}
 .spin-phase{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px;text-align:center;cursor:pointer;transition:.2s}
 .spin-phase:hover{border-color:rgba(156,110,245,.4)}
 .spin-phase.active{border-color:var(--pu);background:rgba(156,110,245,.1)}
@@ -533,6 +655,8 @@ select option{background:var(--bg3)}
     <div class="ni" onclick="nav('salescripts')"><span class="ic">💬</span><span class="ntxt">Câu Chốt Sale</span></div>
     <div class="ni" onclick="nav('khlabels')"><span class="ic">🎯</span><span class="ntxt">KH Theo Nhãn</span><span class="nbdg" id="rmSideCount" style="background:var(--rd);color:#fff;display:none">0</span></div>
     <div class="ni" onclick="nav('spin')"><span class="ic">🔄</span><span class="ntxt">SPIN Selling</span><span class="nbdg" style="background:var(--pu);color:#fff">NEW</span></div>
+    <div class="ni" onclick="nav('quiz')"><span class="ic">🧠</span><span class="ntxt">Trắc Nghiệm</span><span class="nbdg" style="background:var(--bl);color:#fff">3 Tầng</span></div>
+    <div class="ni" onclick="nav('dojo')"><span class="ic">⚔️</span><span class="ntxt">Sparring Dojo</span><span class="nbdg" style="background:var(--rd);color:#fff">NEW</span></div>
     <div class="ni" onclick="nav('timeline')"><span class="ic">📋</span><span class="ntxt">Timeline KH</span></div>
   </div>
   <div class="nsec">
@@ -562,6 +686,7 @@ select option{background:var(--bg3)}
     <div class="ni" onclick="nav('earn')"><span class="ic">💰</span><span class="ntxt">Kiếm Tiền</span></div>
     <div class="ni" onclick="nav('charity')"><span class="ic">❤️</span><span class="ntxt">Trái Tim Nhân Ái</span></div>
     <div class="ni" onclick="nav('prof')"><span class="ic">👤</span><span class="ntxt">Hồ Sơ</span></div>
+    <div class="ni" onclick="openBackupModal()" style="border-top:1px solid var(--border);margin-top:6px;padding-top:8px"><span class="ic">💾</span><span class="ntxt">Sao Lưu / Phục Hồi</span><span class="nbdg" style="background:var(--gr);color:#fff">Cloud</span></div>
   </div>
 </div>
 
@@ -577,7 +702,7 @@ select option{background:var(--bg3)}
       <span style="background:var(--card);border:1px solid var(--border);color:var(--t3);font-size:.68rem;padding:2px 9px;border-radius:17px;font-weight:600">🌐 Website</span>
     </div>
     <h1>AUTO PRO CONTENT BĐS</h1>
-    <p class="sub">Trợ lý AI tạo nội dung tin đăng đa nền tảng — tối ưu chuyển đổi theo tâm lý khách hàng.<br><span style="color:var(--ac);font-weight:700">v8.0 🔥 Mới: 6 Nền Tảng · V8 AI Analysis · Chiến Thuật 6 Căn · Lịch 30 Ngày</span></p>
+    <p class="sub">Trợ lý AI tạo nội dung tin đăng đa nền tảng — tối ưu chuyển đổi theo tâm lý khách hàng.<br><span style="color:var(--ac);font-weight:700">v7.0 🔥 Mới: Chiến Thuật 6 Căn · 30 Content · Lịch 30 Ngày Tự Động</span></p>
     <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
       <button class="btn btn-p" onclick="nav('sixcan')">🏘️ Chiến Thuật 6 Căn</button>
       <button class="btn btn-s" onclick="nav('gen')">✍️ Tạo Content</button>
@@ -588,7 +713,7 @@ select option{background:var(--bg3)}
   <div class="strow">
     <div class="stc"><div class="stnum" id="stTotal">0</div><div class="stlbl">Content đã tạo</div></div>
     <div class="stc"><div class="stnum" id="stTpl">0</div><div class="stlbl">Templates</div></div>
-    <div class="stc"><div class="stnum">6</div><div class="stlbl">Nền tảng</div></div>
+    <div class="stc"><div class="stnum">4</div><div class="stlbl">Nền tảng</div></div>
     <div class="stc"><div class="stnum" id="stReminders">0</div><div class="stlbl">Nhắc lịch</div></div>
   </div>
   <div class="sec">🏠 WORKFLOW MỚI v7</div>
@@ -619,7 +744,7 @@ select option{background:var(--bg3)}
 
 <!-- GENERATOR -->
 <div class="pg" id="pg-gen">
-  <div class="ptit"><div><h2>✍️ Tạo Content BĐS Đa Nền Tảng</h2><p>1 input → 6 nền tảng → tối ưu tâm lý KH</p></div></div>
+  <div class="ptit"><div><h2>✍️ Tạo Content BĐS Đa Nền Tảng</h2><p>1 input → 4 nền tảng → tối ưu tâm lý KH</p></div></div>
   <div class="cbar">
     <div class="cbi">✍️ Tạo Content</div><span class="cbar-arr">→</span>
     <div class="cbi dim" onclick="nav('sch')">📅 Lịch 7 Ngày</div><span class="cbar-arr">→</span>
@@ -822,8 +947,6 @@ select option{background:var(--bg3)}
       <div class="ptab on" onclick="showPlt(this,'fb')">📘 Facebook</div>
       <div class="ptab" onclick="showPlt(this,'zalo')">💬 Zalo</div>
       <div class="ptab" onclick="showPlt(this,'tiktok')">🎵 TikTok</div>
-      <div class="ptab" onclick="showPlt(this,'ig')">📸 Instagram</div>
-      <div class="ptab" onclick="showPlt(this,'threads')">🧵 Threads</div>
       <div class="ptab" onclick="showPlt(this,'web')">🌐 Website</div>
     </div>
     <div id="pltContent"></div>
@@ -833,7 +956,7 @@ select option{background:var(--bg3)}
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;flex-wrap:wrap;gap:6px">
         <div style="font-size:.81rem;font-weight:700;color:var(--tx);display:flex;align-items:center;gap:7px">
           📌 Quản lý đăng tin
-          <span id="trackerProgress" style="font-size:.67rem;font-weight:600;color:var(--t3);background:var(--bg3);border-radius:10px;padding:2px 8px">0/6 nền tảng</span>
+          <span id="trackerProgress" style="font-size:.67rem;font-weight:600;color:var(--t3);background:var(--bg3);border-radius:10px;padding:2px 8px">0/4 nền tảng</span>
         </div>
         <button class="btn btn-r btn-xs" onclick="resetTracker()" title="Reset tất cả">🔄 Reset</button>
       </div>
@@ -881,34 +1004,6 @@ select option{background:var(--bg3)}
           </div>
         </div>
 
-        <!-- Instagram -->
-        <div class="tracker-row" id="tr_ig" onclick="togglePosted('ig')">
-          <div class="tr-left">
-            <div class="tr-cb" id="cb_ig"></div>
-            <div>
-              <div class="tr-name">📸 Instagram</div>
-              <div class="tr-time" id="tt_ig">Chưa đăng</div>
-            </div>
-          </div>
-          <div class="tr-note-wrap">
-            <input type="text" id="tn_ig" class="tr-note" placeholder="Link post / Reels..." onclick="event.stopPropagation()" onchange="saveTrackerNote('ig',this.value)">
-          </div>
-        </div>
-
-        <!-- Threads -->
-        <div class="tracker-row" id="tr_threads" onclick="togglePosted('threads')">
-          <div class="tr-left">
-            <div class="tr-cb" id="cb_threads"></div>
-            <div>
-              <div class="tr-name">🧵 Threads</div>
-              <div class="tr-time" id="tt_threads">Chưa đăng</div>
-            </div>
-          </div>
-          <div class="tr-note-wrap">
-            <input type="text" id="tn_threads" class="tr-note" placeholder="Link thread..." onclick="event.stopPropagation()" onchange="saveTrackerNote('threads',this.value)">
-          </div>
-        </div>
-
         <!-- Website -->
         <div class="tracker-row" id="tr_web" onclick="togglePosted('web')">
           <div class="tr-left">
@@ -936,7 +1031,7 @@ select option{background:var(--bg3)}
       </div>
       <!-- All done banner -->
       <div id="trackerDone" style="display:none;margin-top:10px;background:linear-gradient(135deg,rgba(62,207,142,.15),rgba(245,166,35,.08));border:1px solid rgba(62,207,142,.4);border-radius:9px;padding:9px 13px;font-size:.78rem;font-weight:700;color:var(--gr);text-align:center">
-        🎉 Đã đăng đủ 6 nền tảng! Content này phủ sóng toàn diện rồi!
+        🎉 Đã đăng đủ 4 nền tảng! Content này phủ sóng toàn diện rồi!
       </div>
     </div>
 
@@ -1291,7 +1386,7 @@ select option{background:var(--bg3)}
   </div>
   <div class="tool-pg" id="tool-objection"><div class="card"><div class="ctit"><span class="dot"></span>🗣️ Kịch Bản Xử Lý Phản Đối</div><div class="fg" style="margin-bottom:10px"><label>🏠 BĐS</label><input type="text" id="obj_prop" placeholder="Nhà phố Q7, 80m², 6.5 tỷ"></div><div class="fg"><label>❓ Phản đối</label><div class="pgr" id="objPills"><div class="pill on" onclick="spill(this,'obj','price')" data-v="price">Sao đắt vậy?</div><div class="pill" onclick="spill(this,'obj','legal')" data-v="legal">Pháp lý chắc?</div><div class="pill" onclick="spill(this,'obj','think')" data-v="think">Suy nghĩ thêm</div><div class="pill" onclick="spill(this,'obj','compare')" data-v="compare">Chỗ khác rẻ</div><div class="pill" onclick="spill(this,'obj','money')" data-v="money">Chưa đủ tiền</div></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doObj()">🗣️ Sinh Kịch Bản</button></div><div id="objOut" class="hidden"></div></div>
   <div class="tool-pg" id="tool-story"><div class="card"><div class="ctit"><span class="dot"></span>📱 Script Story/Reels FB & Zalo</div><div class="fg2"><div class="fg"><label>🏠 BĐS</label><input type="text" id="story_prop" placeholder="Nhà phố Q7, 80m², 6.5 tỷ"></div><div class="fg"><label>⏱️ Thời lượng</label><div class="pgr" style="margin-top:4px"><div class="pill on" onclick="spill(this,'story_dur','15s')" data-v="15s">15 giây</div><div class="pill" onclick="spill(this,'story_dur','30s')" data-v="30s">30 giây</div><div class="pill" onclick="spill(this,'story_dur','60s')" data-v="60s">60s Reels</div></div></div><div class="fg full"><label>📱 Nền tảng</label><div class="pgr" style="margin-top:4px"><div class="pill on" onclick="spill(this,'story_plt','FB Story')" data-v="FB Story">📘 FB Story</div><div class="pill" onclick="spill(this,'story_plt','FB Reels')" data-v="FB Reels">📘 FB Reels</div><div class="pill" onclick="spill(this,'story_plt','Zalo Story')" data-v="Zalo Story">💬 Zalo Story</div></div></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doStory()">📱 Tạo Script</button></div><div id="storyOut" class="hidden"></div></div>
-  <div class="tool-pg" id="tool-hashtag"><div class="card"><div class="ctit"><span class="dot"></span>🏷️ Hashtag Generator BĐS</div><div class="fg2"><div class="fg"><label>🏠 Loại nhà</label><input type="text" id="ht_type" placeholder="Nhà phố, căn hộ..."></div><div class="fg"><label>📍 Khu vực</label><input type="text" id="ht_loc" placeholder="Quận 7, Bình Thạnh..."></div><div class="fg"><label>💰 Phân khúc</label><select id="ht_seg"><option value="mid">Trung cấp (3-7 tỷ)</option><option value="budget">Bình dân (dưới 3 tỷ)</option><option value="high">Cao cấp (7-15 tỷ)</option><option value="luxury">Luxury (trên 15 tỷ)</option></select></div><div class="fg"><label>🎯 Mục đích</label><select id="ht_goal"><option value="sell">Bán nhà</option><option value="rent">Cho thuê</option><option value="invest">Đầu tư</option></select></div><div class="fg full"><label>📱 Nền tảng</label><div class="pgr" style="margin-top:4px"><div class="pill on" onclick="spill(this,'ht_plt','FB')" data-v="FB">📘 Facebook</div><div class="pill" onclick="spill(this,'ht_plt','Zalo')" data-v="Zalo">💬 Zalo</div><div class="pill" onclick="spill(this,'ht_plt','TikTok')" data-v="TikTok">🎵 TikTok</div><div class="pill" onclick="spill(this,'ht_plt','Instagram')" data-v="Instagram">📸 Instagram</div><div class="pill" onclick="spill(this,'ht_plt','Threads')" data-v="Threads">🧵 Threads</div><div class="pill" onclick="spill(this,'ht_plt','Website')" data-v="Website">🌐 Website</div></div></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doHashtag()">🏷️ Tạo Hashtag</button></div><div id="hashtagOut" class="hidden"></div></div>
+  <div class="tool-pg" id="tool-hashtag"><div class="card"><div class="ctit"><span class="dot"></span>🏷️ Hashtag Generator BĐS</div><div class="fg2"><div class="fg"><label>🏠 Loại nhà</label><input type="text" id="ht_type" placeholder="Nhà phố, căn hộ..."></div><div class="fg"><label>📍 Khu vực</label><input type="text" id="ht_loc" placeholder="Quận 7, Bình Thạnh..."></div><div class="fg"><label>💰 Phân khúc</label><select id="ht_seg"><option value="mid">Trung cấp (3-7 tỷ)</option><option value="budget">Bình dân (dưới 3 tỷ)</option><option value="high">Cao cấp (7-15 tỷ)</option><option value="luxury">Luxury (trên 15 tỷ)</option></select></div><div class="fg"><label>🎯 Mục đích</label><select id="ht_goal"><option value="sell">Bán nhà</option><option value="rent">Cho thuê</option><option value="invest">Đầu tư</option></select></div><div class="fg full"><label>📱 Nền tảng</label><div class="pgr" style="margin-top:4px"><div class="pill on" onclick="spill(this,'ht_plt','FB')" data-v="FB">📘 Facebook</div><div class="pill" onclick="spill(this,'ht_plt','Zalo')" data-v="Zalo">💬 Zalo</div><div class="pill" onclick="spill(this,'ht_plt','TikTok')" data-v="TikTok">🎵 TikTok</div><div class="pill" onclick="spill(this,'ht_plt','Website')" data-v="Website">🌐 Website</div></div></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doHashtag()">🏷️ Tạo Hashtag</button></div><div id="hashtagOut" class="hidden"></div></div>
   <div class="tool-pg" id="tool-coldcall"><div class="card"><div class="ctit"><span class="dot"></span>📞 Script Cold Call</div><div class="fg2"><div class="fg"><label>🏠 BĐS</label><input type="text" id="cc_prop" placeholder="Nhà phố Q7, 6.5 tỷ"></div><div class="fg"><label>🧠 Tâm lý KH</label><select id="cc_psy"><option value="Tham">💰 Tham</option><option value="Si">🤔 Si</option><option value="Sân">🔥 Sân</option><option value="Nghi ngờ">🔍 Nghi ngờ</option></select></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doColdCall()">📞 Tạo Script</button></div><div id="ccOut" class="hidden"></div></div>
   <div class="tool-pg" id="tool-checklist"><div class="card"><div class="ctit"><span class="dot"></span>📋 Checklist Pháp Lý BĐS</div><div style="font-size:.76rem;color:var(--t2);margin-bottom:11px">Tặng KH → Tăng uy tín chuyên gia → KH tin tưởng hơn khi mua qua bạn.</div><div class="fg"><label>🏠 Loại BĐS</label><div class="pgr" style="margin-top:4px"><div class="pill on" onclick="spill(this,'cl_type','Nhà phố')" data-v="Nhà phố">Nhà phố</div><div class="pill" onclick="spill(this,'cl_type','Căn hộ')" data-v="Căn hộ">Căn hộ</div><div class="pill" onclick="spill(this,'cl_type','Đất nền')" data-v="Đất nền">Đất nền</div></div></div><button class="btn btn-p btn-full" style="margin-top:11px" onclick="doChecklist()">📋 Tạo Checklist</button></div><div id="clOut" class="hidden"></div></div>
   <div class="tool-pg" id="tool-persona">
@@ -1590,7 +1685,7 @@ select option{background:var(--bg3)}
         <option value="">📌 Tất cả trạng thái</option>
         <option value="new">🆕 Chưa đăng nền tảng nào</option>
         <option value="partial">⏳ Đang đăng dở</option>
-        <option value="full">✅ Đủ 6 nền tảng</option>
+        <option value="full">✅ Đủ 4 nền tảng</option>
       </select>
       <!-- Sort -->
       <select id="crmFSort" onchange="filterCRM()" style="font-size:.7rem;padding:3px 7px;border-radius:7px;background:var(--bg3);border:1px solid var(--border);color:var(--t2);height:26px">
@@ -2112,6 +2207,165 @@ select option{background:var(--bg3)}
   <div id="spinAnalysis" style="display:none"></div>
 </div>
 
+
+<!-- ==================== QUIZ 3 TẦNG ==================== -->
+<div class="pg" id="pg-quiz">
+  <div class="ptit">
+    <div><h2>🧠 Trắc Nghiệm Tư Duy & Kỹ Năng Chốt Deal</h2><p>Bài test 3 tầng chẩn đoán điểm nghẽn · 33 câu · Tối đa 30 điểm</p></div>
+  </div>
+  <div style="background:linear-gradient(135deg,rgba(76,156,245,.12),rgba(156,110,245,.08));border:1px solid rgba(76,156,245,.3);border-radius:12px;padding:14px 16px;margin-bottom:16px">
+    <div style="font-weight:800;font-size:.9rem;color:var(--bl);margin-bottom:6px">📌 Về bài test này</div>
+    <div style="font-size:.78rem;color:var(--t2);line-height:1.75">Đây không phải bài kiểm tra lý thuyết — đây là <strong style="color:var(--bl)">"kính hiển vi chẩn đoán"</strong> soi chiếu vào từng phản xạ thực tế của bạn. Trả lời theo <strong style="color:var(--ac)">thực tế đang làm</strong>, không chọn theo đáp án bạn biết là đúng về lý thuyết.</div>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+      <div style="background:rgba(76,156,245,.12);border-radius:8px;padding:6px 12px;font-size:.72rem;color:var(--bl)">⭐ Level 1: 20 câu nhận thức (20 điểm)</div>
+      <div style="background:rgba(156,110,245,.12);border-radius:8px;padding:6px 12px;font-size:.72rem;color:var(--pu)">🎯 Level 2: 10 câu tình huống (10 điểm)</div>
+      <div style="background:rgba(62,207,142,.12);border-radius:8px;padding:6px 12px;font-size:.72rem;color:var(--gr)">💭 Level 3: 3 câu tự phản tư (không tính điểm)</div>
+    </div>
+  </div>
+  <div class="quiz-level-tabs" id="quizLevelTabs">
+    <div class="quiz-ltab active" id="qltab0">Level 1 · Nhận thức</div>
+    <div class="quiz-ltab" id="qltab1">Level 2 · Tình huống</div>
+    <div class="quiz-ltab" id="qltab2">Level 3 · Tự phản tư</div>
+  </div>
+  <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quizProgressFill" style="width:0%"></div></div>
+  <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--t3);margin-bottom:14px">
+    <span id="quizQCounter">Câu 1/33</span>
+    <span id="quizScoreDisplay">Điểm: 0/30</span>
+  </div>
+  <div id="quizQArea"></div>
+  <div id="quizResultArea" style="display:none"></div>
+  <div id="quizStartWrap" style="text-align:center;padding:20px 0">
+    <button class="btn btn-p" style="font-size:1rem;padding:14px 40px" onclick="startQuiz()">🧠 Bắt Đầu Làm Bài</button>
+    <div style="font-size:.72rem;color:var(--t3);margin-top:10px">Khoảng 15-20 phút · Trả lời trung thực để chẩn đoán chính xác</div>
+  </div>
+</div>
+
+
+<!-- ==================== SPARRING DOJO ==================== -->
+<div class="pg" id="pg-dojo">
+  <div class="ptit">
+    <div><h2>⚔️ Sparring Dojo — Phòng Luyện Phản Xạ Thực Chiến</h2><p>4 track · Tình huống thật · Bấm giờ · Tích điểm XP · Lên đai</p></div>
+  </div>
+
+  <!-- Intro banner -->
+  <div style="background:linear-gradient(135deg,rgba(239,83,80,.12),rgba(245,166,35,.08));border:1px solid rgba(239,83,80,.3);border-radius:12px;padding:13px 16px;margin-bottom:18px">
+    <div style="font-weight:800;font-size:.9rem;color:var(--rd);margin-bottom:5px">⚔️ Luyện phản xạ như võ sĩ — không phải học lý thuyết</div>
+    <div style="font-size:.76rem;color:var(--t2);line-height:1.7">Mỗi tình huống có <strong style="color:var(--ac)">đồng hồ đếm ngược 30 giây</strong>. Chọn phản ứng đúng → nhận XP. Sai → mất điểm combo. Trả lời đủ nhanh → bonus XP. Lên đai từ Trắng đến Đen.</div>
+  </div>
+
+  <!-- Belt + XP display -->
+  <div class="dojo-belt" id="dojoBelt">
+    <div class="dojo-belt-icon" id="dojoBeltIcon">🥋</div>
+    <div class="dojo-belt-info" style="flex:1">
+      <h4 id="dojoBeltName">Đai Trắng</h4>
+      <p id="dojoBeltDesc">0 XP · Cần 100 XP để lên Đai Vàng</p>
+      <div class="dojo-xp-bar"><div class="dojo-xp-fill" id="dojoXPFill" style="width:0%;background:var(--ac)"></div></div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:1.3rem;font-weight:900;color:var(--ac);font-family:'Space Mono',monospace" id="dojoTotalXP">0</div>
+      <div style="font-size:.62rem;color:var(--t3)">Total XP</div>
+    </div>
+  </div>
+
+  <!-- Audio toolbar -->
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:rgba(239,83,80,.06);border:1px solid rgba(239,83,80,.2);border-radius:10px;padding:10px 14px;margin-bottom:16px">
+    <div style="font-size:.75rem;font-weight:700;color:var(--rd)">🔊 Âm thanh</div>
+    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:.76rem;color:var(--t2)">
+      <input type="checkbox" id="dojoAutoSpeakToggle" onchange="dojoAutoSpeak=this.checked;this.nextElementSibling.textContent=this.checked?'✅ Tự động đọc giọng KH':'Tự động đọc giọng KH'" style="width:15px;height:15px;accent-color:var(--rd)">
+      <span>Tự động đọc giọng KH</span>
+    </label>
+    <div style="font-size:.67rem;color:var(--t3)">Hoặc bấm nút 🔊 trong mỗi tình huống</div>
+  </div>
+
+  <!-- Track selector -->
+  <div style="font-size:.72rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">Chọn Track Luyện Tập</div>
+  <div class="dojo-tracks" id="dojoTracks">
+    <div class="dojo-track" onclick="selectDojoTrack('objection')">
+      <div class="dojo-track-icon">🛡️</div>
+      <div class="dojo-track-name">Xử lý Phản đối</div>
+      <div class="dojo-track-count">12 tình huống</div>
+      <span class="dojo-track-badge">HOT</span>
+    </div>
+    <div class="dojo-track" onclick="selectDojoTrack('closing')">
+      <div class="dojo-track-icon">🎯</div>
+      <div class="dojo-track-name">Chốt Deal</div>
+      <div class="dojo-track-count">10 tình huống</div>
+    </div>
+    <div class="dojo-track" onclick="selectDojoTrack('discovery')">
+      <div class="dojo-track-icon">🔍</div>
+      <div class="dojo-track-name">Khám phá KH</div>
+      <div class="dojo-track-count">10 tình huống</div>
+    </div>
+    <div class="dojo-track" onclick="selectDojoTrack('negotiation')">
+      <div class="dojo-track-icon">🤝</div>
+      <div class="dojo-track-name">Đàm phán</div>
+      <div class="dojo-track-count">8 tình huống</div>
+    </div>
+  </div>
+
+  <!-- HUD -->
+  <div class="dojo-hud" id="dojoHUD" style="display:none">
+    <div class="dojo-hud-item"><div class="dojo-hud-n" id="hudRound">1</div><div class="dojo-hud-l">Tình huống</div></div>
+    <div class="dojo-hud-item"><div class="dojo-hud-n" id="hudScore" style="color:var(--ac)">0</div><div class="dojo-hud-l">XP phiên này</div></div>
+    <div class="dojo-hud-item"><div class="dojo-hud-n" id="hudCombo" style="color:var(--pu)">x1</div><div class="dojo-hud-l">Combo</div></div>
+    <div class="dojo-hud-item"><div class="dojo-hud-n" id="hudCorrect" style="color:var(--gr)">0</div><div class="dojo-hud-l">Đúng</div></div>
+    <div class="dojo-hud-item"><div class="dojo-hud-n" id="hudWrong" style="color:var(--rd)">0</div><div class="dojo-hud-l">Sai</div></div>
+  </div>
+
+  <!-- Streak dots -->
+  <div class="dojo-streak-bar" id="dojoStreakBar" style="display:none">
+    <div class="dojo-streak-dot" id="sdot0"></div>
+    <div class="dojo-streak-dot" id="sdot1"></div>
+    <div class="dojo-streak-dot" id="sdot2"></div>
+    <div class="dojo-streak-dot" id="sdot3"></div>
+    <div class="dojo-streak-dot" id="sdot4"></div>
+  </div>
+
+  <!-- Arena -->
+  <div class="dojo-arena" id="dojoArena" style="display:none">
+    <!-- Timer -->
+    <div class="dojo-timer-wrap">
+      <div class="dojo-timer ok" id="dojoTimer">30</div>
+      <div class="dojo-timer-bar"><div class="dojo-timer-fill" id="dojoTimerFill" style="width:100%;background:var(--gr)"></div></div>
+      <div style="font-size:.65rem;color:var(--t3);margin-top:4px" id="dojoTimerLabel">Phản xạ trong 30 giây</div>
+    </div>
+
+    <!-- Track + difficulty label -->
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <span style="font-size:.65rem;font-weight:700;padding:3px 9px;border-radius:8px;background:rgba(239,83,80,.15);color:var(--rd)" id="dojoTrackLabel">Track</span>
+      <span style="font-size:.65rem;font-weight:700;padding:3px 9px;border-radius:8px" id="dojoDiffLabel">Cơ bản</span>
+    </div>
+
+    <!-- Situation -->
+    <div class="dojo-situation">
+      <div class="dojo-sit-label">🎬 Tình huống thực tế</div>
+      <div class="dojo-sit-text" id="dojoSitText">Đang tải tình huống...</div>
+    </div>
+
+    <!-- KH says -->
+    <div style="margin-bottom:14px">
+      <div style="font-size:.65rem;font-weight:700;color:var(--t3);margin-bottom:6px">KH nói với bạn:</div>
+      <div style="background:rgba(76,156,245,.08);border:1px solid rgba(76,156,245,.2);border-radius:10px;padding:12px 14px;font-size:.88rem;color:rgba(255,255,255,.9);font-style:italic;line-height:1.6" id="dojoKHSays">"..."</div>
+    </div>
+
+    <!-- Options -->
+    <div style="font-size:.65rem;font-weight:700;color:var(--t3);margin-bottom:8px">Bạn phản ứng thế nào?</div>
+    <div class="dojo-opts" id="dojoOpts"></div>
+
+    <!-- Feedback -->
+    <div class="dojo-feedback" id="dojoFeedback"></div>
+
+    <!-- Nav buttons -->
+    <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap" id="dojoNavBtns" style="display:none">
+      <button class="btn btn-s btn-sm" onclick="dojoQuit()">⏹ Kết thúc</button>
+      <button class="btn btn-p btn-sm" id="dojoNextBtn" onclick="dojoNext()" style="display:none">Tiếp theo →</button>
+    </div>
+  </div>
+
+  <!-- Result area -->
+  <div id="dojoResultArea" style="display:none"></div>
+</div>
+
 <!-- ==================== KH LABELS ==================== -->
 <div class="pg" id="pg-khlabels">
   <div class="ptit"><div><h2>🎯 Quản Lý KH Theo Nhãn</h2><p>Nóng 🔴 · Ấm 🟡 · Lạnh ⚫ · Đã chốt ✅</p></div></div>
@@ -2542,5 +2796,92 @@ function showPersonaTab(el,idx){
 
 <!-- LOAD JAVASCRIPT FILE -->
 <script src="app-logic.js"></script>
+<!-- ==================== OFFLINE BAR ==================== -->
+<div class="offline-bar" id="offlineBar">📵 Mất kết nối mạng — App vẫn hoạt động bình thường ✓</div>
+
+<!-- ==================== PWA INSTALL BANNER ==================== -->
+<div class="pwa-banner" id="pwaBanner">
+  <div class="pwa-banner-icon">🏠</div>
+  <div class="pwa-banner-text">
+    <h4>Cài app lên màn hình!</h4>
+    <p>Mở nhanh · Dùng offline · Không cần trình duyệt</p>
+  </div>
+  <div class="pwa-banner-actions">
+    <button class="btn btn-p btn-sm" id="pwaInstallBtn" onclick="triggerPWAInstall()" style="white-space:nowrap">📲 Cài ngay</button>
+    <button class="btn btn-s btn-sm" onclick="dismissPWABanner()" style="padding:6px 8px">✕</button>
+  </div>
+</div>
+
+<!-- ==================== BACKUP / RESTORE MODAL ==================== -->
+<div class="backup-modal" id="backupModal">
+  <div class="backup-box">
+    <button class="backup-close" onclick="closeBackupModal()">✕</button>
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:2rem;margin-bottom:8px">💾</div>
+      <div style="font-size:1.1rem;font-weight:900;color:#fff">Sao Lưu & Phục Hồi Dữ Liệu</div>
+      <div style="font-size:.75rem;color:var(--t3);margin-top:4px">Bảo vệ toàn bộ dữ liệu BĐS của bạn</div>
+    </div>
+
+    <!-- Data summary -->
+    <div class="backup-section" id="backupDataSummary">
+      <div class="backup-section-title">📊 Dữ liệu hiện có</div>
+      <div id="backupDataRows"></div>
+      <div class="backup-progress"><div class="backup-progress-fill" id="backupProgressFill" style="width:0%"></div></div>
+      <div style="font-size:.67rem;color:var(--t3);margin-top:6px;text-align:right" id="backupSizeLabel">Tính toán...</div>
+    </div>
+
+    <!-- Export section -->
+    <div class="backup-section">
+      <div class="backup-section-title">⬆️ Xuất & Sao Lưu</div>
+      <div style="display:grid;gap:8px">
+        <button class="gdrive-btn" style="border-color:rgba(62,207,142,.4);color:var(--gr)" onclick="exportBackupJSON()">
+          <span style="font-size:1.3rem">📥</span>
+          <div>
+            <div>Tải xuống file JSON</div>
+            <div style="font-size:.65rem;color:var(--t3);font-weight:400;margin-top:2px">Lưu về máy · Rồi upload thủ công lên Google Drive</div>
+          </div>
+        </button>
+        <button class="gdrive-btn" style="border-color:rgba(66,133,244,.5);color:#4285f4" onclick="exportToGoogleDrive()">
+          <span style="font-size:1.3rem">🔵</span>
+          <div>
+            <div>Mở Google Drive</div>
+            <div style="font-size:.65rem;color:var(--t3);font-weight:400;margin-top:2px">Tải file JSON xong → upload vào Drive của bạn</div>
+          </div>
+        </button>
+        <button class="gdrive-btn" style="border-color:rgba(245,166,35,.4);color:var(--ac)" onclick="copyBackupJSON()">
+          <span style="font-size:1.3rem">📋</span>
+          <div>
+            <div>Copy JSON vào clipboard</div>
+            <div style="font-size:.65rem;color:var(--t3);font-weight:400;margin-top:2px">Paste vào bất kỳ nơi nào để lưu trữ</div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Import section -->
+    <div class="backup-section">
+      <div class="backup-section-title" style="color:var(--bl)">⬇️ Phục Hồi Dữ Liệu</div>
+      <div style="font-size:.74rem;color:var(--t3);margin-bottom:10px;line-height:1.6">⚠️ Phục hồi sẽ <strong style="color:var(--rd)">ghi đè</strong> toàn bộ dữ liệu hiện tại. Hãy xuất backup trước khi phục hồi!</div>
+      <div style="display:grid;gap:8px">
+        <label class="gdrive-btn" style="border-color:rgba(76,156,245,.4);color:var(--bl);cursor:pointer">
+          <span style="font-size:1.3rem">📂</span>
+          <div>
+            <div>Chọn file JSON để phục hồi</div>
+            <div style="font-size:.65rem;color:var(--t3);font-weight:400;margin-top:2px">File backup đã tải từ trước</div>
+          </div>
+          <input type="file" accept=".json" id="backupFileInput" style="display:none" onchange="importBackupJSON(this)">
+        </label>
+        <div style="display:flex;gap:8px;align-items:flex-start">
+          <textarea id="backupPasteArea" class="quiz-textarea" placeholder='Hoặc paste nội dung JSON vào đây rồi bấm "Phục hồi"...' rows="3" style="font-size:.72rem"></textarea>
+          <button class="btn btn-p btn-sm" style="flex-shrink:0;margin-top:2px" onclick="importFromPaste()">⬇️ Phục hồi</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Last backup info -->
+    <div style="text-align:center;font-size:.65rem;color:var(--t3)" id="backupLastInfo">Chưa có thông tin backup gần nhất</div>
+  </div>
+</div>
+
 </body>
 </html>
